@@ -68,7 +68,7 @@ async function gerarRelatorioMarkdown(caminho: string, options: GuardianExportOp
   lines.push('# Relatório Guardian - Verificação de Integridade');
   lines.push('');
   lines.push(`**Gerado em:** ${new Date().toISOString()}`);
-  lines.push(`**Comando:** \`sensei guardian\``);
+  lines.push(`**Comando:** \`prometheus guardian\``);
   lines.push('');
 
   // Status
@@ -175,7 +175,7 @@ export async function exportarRelatoriosGuardian(options: GuardianExportOptions)
 
     // Gerar timestamp único para os arquivos
     const ts = new Date().toISOString().replace(/[:.]/g, '-');
-    const nomeBase = `sensei-guardian-${ts}`;
+    const nomeBase = `prometheus-guardian-${ts}`;
 
     // Gerar relatório Markdown
     const caminhoMd = path.join(dir, `${nomeBase}.md`);

@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
 
+// SENSEI: Revisar ocorrências 'unhandled-async' (1). Ver relatorio:
+// relatorios/prometheus-relatorio-summary-2026-02-24T22-21-50-731Z.json
+
+
 import path from 'node:path';
 
 import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
@@ -38,7 +42,7 @@ export function comandoFormatar(
 ): Command {
   return new Command('formatar')
     .description(
-      'Aplica a formatação interna estilo Sensei (whitespace, seções, finais de linha)',
+      'Aplica a formatação interna estilo Prometheus (whitespace, seções, finais de linha)',
     )
     .option(
       '--check',
@@ -79,12 +83,12 @@ export function comandoFormatar(
         const check = write ? false : Boolean(opts.check ?? true);
 
         const engineRaw = String(
-          opts.engine || process.env.SENSEI_FORMAT_ENGINE || 'auto',
+          opts.engine || process.env.PROMETHEUS_FORMAT_ENGINE || 'auto',
         ).trim();
         const engine =
           engineRaw === 'interno' ||
-          engineRaw === 'prettier' ||
-          engineRaw === 'auto'
+            engineRaw === 'prettier' ||
+            engineRaw === 'auto'
             ? engineRaw
             : 'auto';
 
@@ -150,16 +154,17 @@ export function comandoFormatar(
           }
 
           const src = typeof e.content === 'string' ? e.content : '';
-          const res =
-            engine === 'interno'
-              ? formatarPrettierMinimo({ code: src, relPath })
-              : engine === 'prettier'
-                ? await formatarComPrettierProjeto({
+          try {
+            const res =
+              engine === 'interno'
+                ? formatarPrettierMinimo({ code: src, relPath })
+                : engine === 'prettier'
+                  ? await formatarComPrettierProjeto({
                     code: src,
                     relPath,
                     baseDir,
                   })
-                : (() => {
+                  : (() => {
                     // auto: tenta prettier; se não disponível/sem parser, cai no interno.
                     return formatarComPrettierProjeto({
                       code: src,
@@ -168,15 +173,20 @@ export function comandoFormatar(
                     });
                   })();
 
-          const resolved =
-            engine === 'auto'
-              ? await (async () => {
+            var resolved =
+              engine === 'auto'
+                ? await (async () => {
                   const r = await res;
                   if (!r.ok) return r;
                   if (r.parser !== 'unknown') return r;
                   return formatarPrettierMinimo({ code: src, relPath });
                 })()
-              : await Promise.resolve(res);
+                : await Promise.resolve(res);
+          } catch (e) {
+            result.erros++;
+            log.erro(`Falha ao executar formatação para ${relPath}: ${e instanceof Error ? e.message : String(e)}`);
+            continue;
+          }
 
           if (!resolved.ok) {
             result.erros++;

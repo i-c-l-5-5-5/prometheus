@@ -20,7 +20,7 @@ import { ExcecoesMensagens } from '@core/messages/core/excecoes-messages.js';
 import type { MigrationResult } from '@';
 
 import { log } from '../messages/log/log.js';
-import { MIGRACAO_MAPA,SENSEI_ARQUIVOS, SENSEI_DIRS, type SenseiFilePath } from './paths.js';
+import { MIGRACAO_MAPA,PROMETHEUS_ARQUIVOS, PROMETHEUS_DIRS, type SenseiFilePath } from './paths.js';
 
 /**
  * Opções para operações de leitura
@@ -114,13 +114,13 @@ async function tryMigrate(targetPath: string): Promise<MigrationResult> {
 /**
  * Lê arquivo JSON do registry
  *
- * @param filePath Caminho do arquivo (use SENSEI_FILES.*)
+ * @param filePath Caminho do arquivo (use PROMETHEUS_FILES.*)
  * @param options Opções de leitura
  * @returns Conteúdo parseado do JSON
  *
  * @example
  * ```ts
- * const config = await readJSON(SENSEI_FILES.CONFIG, {
+ * const config = await readJSON(PROMETHEUS_FILES.CONFIG, {
  *   default: {}
  * });
  * ```
@@ -170,13 +170,13 @@ export async function readJSON<T = unknown>(fileCaminho: SenseiFilePath | string
 /**
  * Escreve arquivo JSON no registry
  *
- * @param filePath Caminho do arquivo (use SENSEI_FILES.*)
+ * @param filePath Caminho do arquivo (use PROMETHEUS_FILES.*)
  * @param data Dados a serem salvos
  * @param options Opções de escrita
  *
  * @example
  * ```ts
- * await writeJSON(SENSEI_FILES.GUARDIAN_BASELINE, snapshot, {
+ * await writeJSON(PROMETHEUS_FILES.GUARDIAN_BASELINE, snapshot, {
  *   createDirs: true,
  *   backup: true
  * });
@@ -213,7 +213,7 @@ export async function writeJSON<T = unknown>(fileCaminho: SenseiFilePath | strin
 /**
  * Deleta arquivo do registry
  *
- * @param filePath Caminho do arquivo (use SENSEI_FILES.*)
+ * @param filePath Caminho do arquivo (use PROMETHEUS_FILES.*)
  * @param options Opções de deleção
  */
 export async function deleteJSON(fileCaminho: SenseiFilePath | string, options: {
@@ -241,7 +241,7 @@ export async function deleteJSON(fileCaminho: SenseiFilePath | string, options: 
 /**
  * Lista todos os arquivos JSON em um diretório do registry
  *
- * @param dirPath Caminho do diretório (use SENSEI_DIRS.*)
+ * @param dirPath Caminho do diretório (use PROMETHEUS_DIRS.*)
  * @returns Lista de caminhos completos
  */
 export async function listJSONFiles(dirPath: string): Promise<string[]> {
@@ -269,6 +269,6 @@ export const ArquivoRegistro = {
   write: writeJSON,
   delete: deleteJSON,
   list: listJSONFiles,
-  paths: SENSEI_ARQUIVOS,
-  dirs: SENSEI_DIRS
+  paths: PROMETHEUS_ARQUIVOS,
+  dirs: PROMETHEUS_DIRS
 } as const;

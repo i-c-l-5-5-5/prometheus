@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 /**
- * Sistema de Mensagens Centralizado do Sensei
+ * Sistema de Mensagens Centralizado do Prometheus
  *
  * Este módulo centraliza TODAS as mensagens, logs e templates do sistema.
  * Organizado em subpastas por domínio:

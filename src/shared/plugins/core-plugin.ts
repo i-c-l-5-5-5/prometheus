@@ -14,7 +14,7 @@ import type { BabelFileExtra, ParserOptions, ParserPlugin, RawAst } from '@';
 const localRequire = createRequire(import.meta.url);
 
 /**
- * Plugin core do Sensei - contém parsers para linguagens principais
+ * Plugin core do Prometheus - contém parsers para linguagens principais
  * JavaScript, TypeScript, HTML, CSS, XML
  */
 export class CorePlugin implements ParserPlugin {

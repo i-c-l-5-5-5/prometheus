@@ -4,7 +4,7 @@
  */
 
 /**
- * Contexto para emissão de conselhos sensei
+ * Contexto para emissão de conselhos prometheus
  */
 export interface ConselhoContextoSenseial {
   hora?: number;

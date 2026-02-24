@@ -213,7 +213,7 @@ export async function iniciarInquisicao(
     incluirMetadados = true,
     skipExec = false
   } = options;
-  log.info(`${S.scan} Iniciando a Inquisição do Sensei em: ${baseDir}`);
+  log.info(`${S.scan} Iniciando a Inquisição do Prometheus em: ${baseDir}`);
   const fileMap = await scanRepository(baseDir, {
     includeContent,
     onProgress: msg => {

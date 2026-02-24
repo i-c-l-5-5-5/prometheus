@@ -1,6 +1,6 @@
-# Sensei CLI
+# Prometheus CLI
 
-> Proveniência e Autoria: Este documento integra o projeto Sensei (licença MIT).
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
 > Nada aqui implica cessão de direitos morais/autorais.
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
@@ -11,20 +11,20 @@
 
 **Versão Atual:** 0.3.9 | **Node.js:** >=24.12.0 | **Licença:** MIT
 
-[![Stars](https://img.shields.io/github/stars/md-555-37/sensei?style=social)](https://github.com/md-555-37/sensei/stargazers)
-[![Forks](https://img.shields.io/github/forks/md-555-37/sensei?style=social)](https://github.com/md-555-37/sensei/network/members)
-[![Issues](https://img.shields.io/github/issues/md-555-37/sensei)](https://github.com/md-555-37/sensei/issues)
-[![Contributors](https://img.shields.io/github/contributors/md-555-37/sensei)](https://github.com/md-555-37/sensei/graphs/contributors)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/md-555-37/sensei/blob/main/CONTRIBUTING.md)
+[![Stars](https://img.shields.io/github/stars/md-555-37/prometheus?style=social)](https://github.com/md-555-37/prometheus/stargazers)
+[![Forks](https://img.shields.io/github/forks/md-555-37/prometheus?style=social)](https://github.com/md-555-37/prometheus/network/members)
+[![Issues](https://img.shields.io/github/issues/md-555-37/prometheus)](https://github.com/md-555-37/prometheus/issues)
+[![Contributors](https://img.shields.io/github/contributors/md-555-37/prometheus)](https://github.com/md-555-37/prometheus/graphs/contributors)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/md-555-37/prometheus/blob/main/CONTRIBUTING.md)
 
 ## 🚀 Demo Rápido
 
 ```bash
 # Teste em 30 segundos sem instalar (requer Node.js 24+)
-npx github:md-555/sensei diagnosticar --help
+npx github:md-555/prometheus diagnosticar --help
 ```
 
-## 💡 Por que usar o Sensei?
+## 💡 Por que usar o Prometheus?
 
 - ⚡ **Performance**: Pool de workers para análise paralela de projetos grandes
 - 🔒 **Segurança**: Guardian verifica integridade de arquivos via hashing
@@ -35,11 +35,11 @@ npx github:md-555/sensei diagnosticar --help
 
 ---
 
-Sensei é uma CLI modular para analisar, diagnosticar e manter projetos (JS/TS e multi-stack leve). Entrega diagnósticos estruturais, verificação de integridade (Guardian), sugestão de reorganização e métricas — tudo com contratos JSON para CI.
+Prometheus é uma CLI modular para analisar, diagnosticar e manter projetos (JS/TS e multi-stack leve). Entrega diagnósticos estruturais, verificação de integridade (Guardian), sugestão de reorganização e métricas — tudo com contratos JSON para CI.
 
 ---
 
-> Nota de cobertura: Gate local transitório configurado em **70%** (por métrica) em `sensei.config.json` para acelerar a adição incremental de testes. No **CI Principal** o gate é forçado para **90%** via variáveis de ambiente (`COVERAGE_GATE_*`). Arquivos listados em `scripts/coverage-exclude.json` serão reintegrados gradualmente.
+> Nota de cobertura: Gate local transitório configurado em **70%** (por métrica) em `prometheus.config.json` para acelerar a adição incremental de testes. No **CI Principal** o gate é forçado para **90%** via variáveis de ambiente (`COVERAGE_GATE_*`). Arquivos listados em `scripts/coverage-exclude.json` serão reintegrados gradualmente.
 
 ## 🚀 Instalação e Primeiros Passos
 
@@ -47,8 +47,8 @@ Sensei é uma CLI modular para analisar, diagnosticar e manter projetos (JS/TS e
 
 ```bash
 # Clone o repositório
-git clone https://github.com/md-555-37/sensei.git
-cd sensei
+git clone https://github.com/md-555-37/prometheus.git
+cd prometheus
 
 # Instale dependências e compile
 npm install
@@ -61,7 +61,7 @@ node dist/bin/index.js diagnosticar --json
 **Windows (PowerShell):**
 
 ```powershell
-git clone https://github.com/md-555-37/sensei.git; cd sensei; npm install; npm run build; node dist/bin/index.js diagnosticar --json
+git clone https://github.com/md-555-37/prometheus.git; cd prometheus; npm install; npm run build; node dist/bin/index.js diagnosticar --json
 ```
 
 ### Instalação Global (Opcional)
@@ -70,27 +70,27 @@ git clone https://github.com/md-555-37/sensei.git; cd sensei; npm install; npm r
 # Instala globalmente para usar em qualquer projeto
 npm install -g .
 
-# Agora você pode usar apenas 'sensei' ao invés de 'node dist/bin/index.js'
-sensei diagnosticar --json
+# Agora você pode usar apenas 'prometheus' ao invés de 'node dist/bin/index.js'
+prometheus diagnosticar --json
 ```
 
 ### Primeiro Uso - Comandos Essenciais
 
 ```bash
 # Diagnóstico completo do projeto atual
-sensei diagnosticar
+prometheus diagnosticar
 
 # Ver apenas problemas críticos (modo executivo)
-sensei diagnosticar --executive
+prometheus diagnosticar --executive
 
 # Análise rápida (apenas varredura, sem correções)
-sensei diagnosticar --scan-only
+prometheus diagnosticar --scan-only
 
 # Saída estruturada para CI/CD
-sensei diagnosticar --json
+prometheus diagnosticar --json
 
 # Verificar integridade dos arquivos
-sensei guardian --diff
+prometheus guardian --diff
 ```
 
 ## ✨ Capacidades
@@ -122,16 +122,16 @@ O sistema de análise inclui uma vasta gama de analistas e detectores para uma c
 
 ```bash
 # Paralelização automática ativada por padrão
-sensei diagnosticar
+prometheus diagnosticar
 
 # Configuração manual
-WORKER_POOL_MAX_WORKERS=4 sensei diagnosticar
+WORKER_POOL_MAX_WORKERS=4 prometheus diagnosticar
 ```
 
 #### Sistema de Supressão Inline
 
 ```typescript
-// @sensei-disable-next-line hardcoded-secrets
+// @prometheus-disable-next-line hardcoded-secrets
 const apiKey = "development-key-only";
 ```
 
@@ -149,45 +149,45 @@ Benefícios gerais:
 
 ```bash
 # Modo seguro (recomendado para começar)
-sensei diagnosticar --safe-mode
+prometheus diagnosticar --safe-mode
 
 # Modo verbose (mais detalhes)
-sensei diagnosticar --verbose
+prometheus diagnosticar --verbose
 
 # Modo silencioso (menos output)
-sensei diagnosticar --silence
+prometheus diagnosticar --silence
 
 # Apenas varredura (não executa correções)
-sensei diagnosticar --scan-only
+prometheus diagnosticar --scan-only
 ```
 
 ### Saídas Diferentes
 
 ```bash
 # Saída JSON para ferramentas/automação
-sensei diagnosticar --json
+prometheus diagnosticar --json
 
 # Saída compacta (menos detalhes)
-sensei diagnosticar --compacto
+prometheus diagnosticar --compacto
 
 # Modo executivo (apenas problemas críticos)
-sensei diagnosticar --executive
+prometheus diagnosticar --executive
 
 # Exportar relatório para arquivo
-sensei diagnosticar --export relatorio.md
+prometheus diagnosticar --export relatorio.md
 ```
 
 ### Debug e Desenvolvimento
 
 ```bash
 # Modo debug (informações detalhadas)
-sensei diagnosticar --debug
+prometheus diagnosticar --debug
 
 # Ver apenas erros
-sensei diagnosticar --only-errors
+prometheus diagnosticar --only-errors
 
 # Timeout personalizado (em segundos)
-sensei diagnosticar --timeout 60
+prometheus diagnosticar --timeout 60
 ```
 
 ## 📋 Workflows de Desenvolvimento
@@ -220,23 +220,23 @@ npm run build
 npm test
 
 # Análise completa
-sensei diagnosticar --json
+prometheus diagnosticar --json
 
 # Verificar integridade
-sensei guardian --diff --json
+prometheus guardian --diff --json
 ```
 
 ### Debug de Problemas
 
 ```bash
 # Modo debug completo
-sensei diagnosticar --debug --verbose
+prometheus diagnosticar --debug --verbose
 
 # Apenas um tipo específico de análise
-sensei diagnosticar --include "src/**/*.ts" --debug
+prometheus diagnosticar --include "src/**/*.ts" --debug
 
 # Ver logs detalhados
-DEBUG=* sensei diagnosticar
+DEBUG=* prometheus diagnosticar
 ```
 
 ## 🔧 Troubleshooting Comum
@@ -269,51 +269,51 @@ node dist/bin/index.js diagnosticar
 
 ```bash
 # Aumente o timeout
-sensei diagnosticar --timeout 120
+prometheus diagnosticar --timeout 120
 
 # Ou via variável
-SENSEI_ANALISE_TIMEOUT_POR_ANALISTA_MS=60000 sensei diagnosticar
+PROMETHEUS_ANALISE_TIMEOUT_POR_ANALISTA_MS=60000 prometheus diagnosticar
 ```
 
 ### "Muitos arquivos analisados"
 
 ```bash
 # Restrinja a análise
-sensei diagnosticar --include "src/**" --exclude "**/*.test.*"
+prometheus diagnosticar --include "src/**" --exclude "**/*.test.*"
 
 # Use modo scan-only para preview
-sensei diagnosticar --scan-only
+prometheus diagnosticar --scan-only
 ```
 
 ### "Problemas de performance"
 
 ```bash
 # Reduza workers
-WORKER_POOL_MAX_WORKERS=1 sensei diagnosticar
+WORKER_POOL_MAX_WORKERS=1 prometheus diagnosticar
 
 # Use modo conservador
 # Use modo conservador
-PONTUACAO_MODO=conservador sensei diagnosticar
+PONTUACAO_MODO=conservador prometheus diagnosticar
 ```
 
 ## 📚 Comandos Principais
 
 | Comando        | Descrição                             | Uso Comum                              |
 | -------------- | ------------------------------------- | -------------------------------------- |
-| `diagnosticar` | Análise completa do projeto           | `sensei diagnosticar --json`          |
-| `guardian`     | Verificação de integridade            | `sensei guardian --diff`              |
-| `podar`        | Remoção segura de arquivos órfãos     | `sensei podar --dry-run`              |
-| `reestruturar` | Reorganização de estrutura do projeto | `sensei reestruturar --somente-plano` |
-| `formatar`     | Formatação de código                  | `sensei formatar --write`             |
-| `fix-types`    | Correção de tipos inseguros           | `sensei fix-types --dry-run`          |
-| `metricas`     | Visualizar métricas agregadas         | `sensei metricas --json`              |
-| `perf`         | Análise de performance                | `sensei perf compare`                 |
-| `analistas`    | Listar analistas disponíveis          | `sensei analistas --json`             |
-| `otimizar-svg` | Otimização de arquivos SVG            | `sensei otimizar-svg --write`         |
-| `atualizar`    | Atualização segura do Sensei         | `sensei atualizar`                    |
-| `reverter`     | Reverter mudanças de reestruturação   | `sensei reverter listar`              |
-| `names`        | Extrair nomes para tradução           | `sensei names`                        |
-| `rename`       | Aplicar renomeação de variáveis       | `sensei rename`                       |
+| `diagnosticar` | Análise completa do projeto           | `prometheus diagnosticar --json`          |
+| `guardian`     | Verificação de integridade            | `prometheus guardian --diff`              |
+| `podar`        | Remoção segura de arquivos órfãos     | `prometheus podar --dry-run`              |
+| `reestruturar` | Reorganização de estrutura do projeto | `prometheus reestruturar --somente-plano` |
+| `formatar`     | Formatação de código                  | `prometheus formatar --write`             |
+| `fix-types`    | Correção de tipos inseguros           | `prometheus fix-types --dry-run`          |
+| `metricas`     | Visualizar métricas agregadas         | `prometheus metricas --json`              |
+| `perf`         | Análise de performance                | `prometheus perf compare`                 |
+| `analistas`    | Listar analistas disponíveis          | `prometheus analistas --json`             |
+| `otimizar-svg` | Otimização de arquivos SVG            | `prometheus otimizar-svg --write`         |
+| `atualizar`    | Atualização segura do Prometheus         | `prometheus atualizar`                    |
+| `reverter`     | Reverter mudanças de reestruturação   | `prometheus reverter listar`              |
+| `names`        | Extrair nomes para tradução           | `prometheus names`                        |
+| `rename`       | Aplicar renomeação de variáveis       | `prometheus rename`                       |
 
 ## 🧪 Testes
 
@@ -335,19 +335,19 @@ Gate no CI: aplicado somente no workflow `CI Principal` com 90% (env). Documenta
 
 ```bash
 # Analisar apenas arquivos TypeScript
-sensei diagnosticar --include "**/*.ts" --include "**/*.tsx"
+prometheus diagnosticar --include "**/*.ts" --include "**/*.tsx"
 
 # Analisar apenas uma pasta específica
-sensei diagnosticar --include "src/**/*"
+prometheus diagnosticar --include "src/**/*"
 
 # Excluir testes e documentação
-sensei diagnosticar --exclude "**/*.test.*" --exclude "**/*.spec.*" --exclude "docs/**"
+prometheus diagnosticar --exclude "**/*.test.*" --exclude "**/*.spec.*" --exclude "docs/**"
 
 # Analisar apenas arquivos modificados recentemente (git)
-sensei diagnosticar --include "$(git diff --name-only HEAD~1)"
+prometheus diagnosticar --include "$(git diff --name-only HEAD~1)"
 
 # Misturar include e exclude
-sensei diagnosticar --include "src/**/*.ts" --exclude "src/**/*.test.ts"
+prometheus diagnosticar --include "src/**/*.ts" --exclude "src/**/*.test.ts"
 ```
 
 ### Regras Importantes
@@ -361,17 +361,17 @@ sensei diagnosticar --include "src/**/*.ts" --exclude "src/**/*.test.ts"
 
 ```bash
 # Apenas código fonte (excluindo testes e config)
-sensei diagnosticar --include "src/**" --include "lib/**" --exclude "**/*.test.*"
+prometheus diagnosticar --include "src/**" --include "lib/**" --exclude "**/*.test.*"
 
 # Apenas arquivos JavaScript/TypeScript
-sensei diagnosticar --include "**/*.{js,ts,jsx,tsx,mjs,cjs}"
+prometheus diagnosticar --include "**/*.{js,ts,jsx,tsx,mjs,cjs}"
 
 # Excluir diretórios comuns
-sensei diagnosticar --exclude "node_modules/**" --exclude "dist/**" --exclude ".git/**" --exclude "coverage/**"
+prometheus diagnosticar --exclude "node_modules/**" --exclude "dist/**" --exclude ".git/**" --exclude "coverage/**"
 
 # Análise focada em uma feature específica
 # Análise focada em uma feature específica
-sensei diagnosticar --include "src/features/auth/**" --include "src/components/auth/**"
+prometheus diagnosticar --include "src/features/auth/**" --include "src/components/auth/**"
 ```
 
 ## 🌍 Variáveis de Ambiente Essenciais
@@ -437,7 +437,7 @@ export ALLOW_EXEC=false
 export DEV_MODE=true
 export WORKER_POOL_MAX_WORKERS=2
 export PONTUACAO_MODO=conservador
-sensei diagnosticar --verbose
+prometheus diagnosticar --verbose
 ```
 
 **Para CI/CD:**
@@ -446,7 +446,7 @@ sensei diagnosticar --verbose
 export SAFE_MODE=true
 export REPORT_SILENCE_LOGS=true
 export WORKER_POOL_MAX_WORKERS=4
-sensei diagnosticar --json
+prometheus diagnosticar --json
 ```
 
 **Para análise rápida:**
@@ -454,7 +454,7 @@ sensei diagnosticar --json
 ```bash
 export WORKER_POOL_MAX_WORKERS=1
 export PONTUACAO_MODO=permissivo
-sensei diagnosticar --scan-only
+prometheus diagnosticar --scan-only
 ```
 
 ````
@@ -509,7 +509,7 @@ sensei diagnosticar --scan-only
 
 Os arquivos de configuração ficam na raiz do projeto e são carregados em tempo de execução.
 
-### sensei.config.json (principal)
+### prometheus.config.json (principal)
 
 Exemplo (trecho real):
 
@@ -520,7 +520,7 @@ Exemplo (trecho real):
       "node_modules/**",
       "**/node_modules/**",
       ".pnpm/**",
-      "**/.sensei/**",
+      "**/.prometheus/**",
       "dist/**",
       "**/dist/**",
       "coverage/**",
@@ -533,7 +533,7 @@ Exemplo (trecho real):
       "yarn.lock",
       "pnpm-lock.yaml",
       "**/.git/**",
-      "preview-sensei/**",
+      "preview-prometheus/**",
       "tests/fixtures/**"
     ],
     "globalInclude": [],
@@ -542,7 +542,7 @@ Exemplo (trecho real):
     "defaultExcludes": null
   },
   "ESTRUTURA_ARQUIVOS_RAIZ_MAX": 50,
-  "REPO_ARQUETIPO": "sensei-self",
+  "REPO_ARQUETIPO": "prometheus-self",
   "STRUCTURE_AUTO_FIX": false,
   "REPORT_EXPORT_ENABLED": false,
   "coverageGate": {
@@ -562,7 +562,7 @@ Campos úteis:
 - STRUCTURE_AUTO_FIX: ativa técnicas mutáveis (off por padrão)
 - coverageGate: limiares de cobertura por métrica (90%)
 
-### sensei.config.safe.json (modo seguro)
+### prometheus.config.safe.json (modo seguro)
 
 Exemplo (trecho real):
 
@@ -574,14 +574,14 @@ Exemplo (trecho real):
   "ALLOW_MUTATE_FS": false,
   "STRUCTURE_AUTO_FIX": false,
   "REPORT_EXPORT_ENABLED": false,
-  "SENSEI_ALLOW_EXEC": 1,
-  "SENSEI_ANALISE_TIMEOUT_POR_ANALISTA_MS": 10000,
+  "PROMETHEUS_ALLOW_EXEC": 1,
+  "PROMETHEUS_ANALISE_TIMEOUT_POR_ANALISTA_MS": 10000,
   "productionDefaults": {
     "NODE_ENV": "development",
-    "SENSEI_MAX_ANALYST_TIMEOUT_MS": 10000,
+    "PROMETHEUS_MAX_ANALYST_TIMEOUT_MS": 10000,
     "WORKER_POOL_MAX_WORKERS": 2,
     "WORKER_POOL_BATCH_SIZE": 10,
-    "SENSEI_WORKER_HEARTBEAT_MS": 5000,
+    "PROMETHEUS_WORKER_HEARTBEAT_MS": 5000,
     "LOG_ESTRUTURADO": false,
     "REPORT_SILENCE_LOGS": true
   }
@@ -593,14 +593,14 @@ Recomendações:
 - Mantenha SAFE_MODE habilitado em CI e ambientes compartilhados
 - Ajuste productionDefaults para limitar workers/silenciar logs em pipelines
 
-### sensei.repo.arquetipo.json (perfil do repositório)
+### prometheus.repo.arquetipo.json (perfil do repositório)
 
 Exemplo (trecho real):
 
 ```json
 {
   "arquetipoOficial": "cli-modular",
-  "descricao": "Projeto personalizado: sensei",
+  "descricao": "Projeto personalizado: prometheus",
   "estruturaPersonalizada": {
     "arquivosChave": [
       "eslint.config.js",
@@ -657,7 +657,7 @@ Exemplo (trecho real):
     "recomendado": ["src/", "tests/", "docs/", "README.md", ".env.example"]
   },
   "metadata": { "criadoEm": "2025-09-06T22:15:41.078Z", "versao": "1.0.0" },
-  "nome": "sensei"
+  "nome": "prometheus"
 }
 ```
 
@@ -669,7 +669,7 @@ Dicas:
 
 ### Variáveis de ambiente (.env)
 
-Você pode configurar o Sensei via variáveis de ambiente (úteis para CI e ajustes locais). Um arquivo de exemplo está disponível em `.env.example`.
+Você pode configurar o Prometheus via variáveis de ambiente (úteis para CI e ajustes locais). Um arquivo de exemplo está disponível em `.env.example`.
 
 Principais variáveis:
 
@@ -678,10 +678,10 @@ Principais variáveis:
   - `WORKER_POOL_MAX_WORKERS` (número ou `auto`)
   - `WORKER_POOL_BATCH_SIZE` (número)
   - `WORKER_POOL_TIMEOUT_MS` (ms por analista; padrão 30000)
-  - `SENSEI_WORKER_HEARTBEAT_MS` (ms; batimento do worker)
+  - `PROMETHEUS_WORKER_HEARTBEAT_MS` (ms; batimento do worker)
 - Tempo de análise:
-  - `SENSEI_ANALISE_TIMEOUT_POR_ANALISTA_MS` (ms)
-  - `SENSEI_MAX_ANALYST_TIMEOUT_MS` (ms; alias compatível)
+  - `PROMETHEUS_ANALISE_TIMEOUT_POR_ANALISTA_MS` (ms)
+  - `PROMETHEUS_MAX_ANALYST_TIMEOUT_MS` (ms; alias compatível)
 - Pontuação Adaptativa:
   - `PONTUACAO_MODO` (padrao|conservador|permissivo)
   - `PONTUACAO_FATOR_ESCALA` (override numérico)
@@ -701,7 +701,7 @@ Exemplos rápidos:
 export WORKER_POOL_MAX_WORKERS=4
 export PONTUACAO_MODO=conservador
 export COVERAGE_GATE_LINES=90
-sensei diagnosticar --json
+prometheus diagnosticar --json
 ```
 
 ```powershell
@@ -709,7 +709,7 @@ sensei diagnosticar --json
 $env:WORKER_POOL_MAX_WORKERS = 4
 $env:PONTUACAO_MODO = "conservador"
 $env:COVERAGE_GATE_LINES = 90
-sensei diagnosticar --json
+prometheus diagnosticar --json
 ```
 
 ## 📖 Leituras Adicionais

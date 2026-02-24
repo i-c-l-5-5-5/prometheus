@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2025 Sensei Contributors
+// SPDX-FileCopyrightText: 2025 Prometheus Contributors
 
 /**
  * @module cli/diagnostico/exporters/json-exporter
@@ -34,11 +34,46 @@ export function gerarRelatorioJson(dados: Partial<RelatorioJson>, options: Parti
     maxOcorrencias: options.maxOcorrencias
   };
 
+  // Lista configurável de tipos a omitir
+  const omitTypes = Array.isArray(options.omitTypes) ? options.omitTypes : [];
+
   // Processar ocorrências
   let ocorrencias = dados.ocorrencias || [];
   if (opts.maxOcorrencias && ocorrencias.length > opts.maxOcorrencias) {
     ocorrencias = ocorrencias.slice(0, opts.maxOcorrencias);
   }
+
+  // Filtrar/normalizar ocorrências para relatório resumido
+  const IGNORE_TIPOS_WHEN_NO_CONTEXT = new Set([
+    'interface-inline-exportada',
+    'tipo-literal-inline-complexo'
+  ]);
+
+  const processedOcorrencias = (opts.includeDetails ? ocorrencias : []).filter((o: any) => {
+    // omitir tipos configurados explicitamente
+    if (o && o.tipo && omitTypes.includes(String(o.tipo))) return false;
+    // se não incluir contexto, removemos certos tipos ruidosos
+    if (!opts.includeContext && IGNORE_TIPOS_WHEN_NO_CONTEXT.has(o.tipo)) {
+      return false;
+    }
+    return true;
+  }).map((o: any) => {
+    // Montar forma reduzida de ocorrência adequada para relatório
+    const arquivo = o.relPath || o.arquivo || '';
+    const nivel = (o.nivel === 'erro' || o.nivel === 'aviso' || o.nivel === 'info') ? o.nivel : 'info';
+    const mapped: any = {
+      arquivo: String(arquivo),
+      nivel: nivel,
+      tipo: String(o.tipo || 'outros'),
+      mensagem: String(o.mensagem || ''),
+    };
+    if (opts.includeContext) {
+      if (o.linha !== undefined) mapped.linha = Number(o.linha);
+      if (o.coluna !== undefined) mapped.coluna = Number(o.coluna);
+      if (o.contexto) mapped.contexto = o.contexto;
+    }
+    return mapped as Ocorrencia;
+  });
 
   // Construir relatório
   const relatorio: RelatorioJson = {
@@ -77,7 +112,7 @@ export function gerarRelatorioJson(dados: Partial<RelatorioJson>, options: Parti
       },
       porCategoria: {}
     },
-    ocorrencias: opts.includeDetails ? ocorrencias : [],
+    ocorrencias: processedOcorrencias as RelatorioJson['ocorrencias'],
     ...(dados.guardian && {
       guardian: dados.guardian
     }),
@@ -94,6 +129,8 @@ export function gerarRelatorioJson(dados: Partial<RelatorioJson>, options: Parti
       sugestoes: dados.sugestoes
     })
   };
+
+  // Não adicionar propriedades extras ao schema do relatório (manter compatibilidade com `RelatorioJson`)
 
   // Serializar para JSON
   const indent = opts.compact ? 0 : 2;

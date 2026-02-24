@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// @sensei-disable tipo-literal-inline-complexo
+// @prometheus-disable tipo-literal-inline-complexo
 // Justificativa: tipos inline para opções de comando CLI são locais e não precisam de extração
 import { OperarioEstrutura } from '@analistas/estrategistas/operario-estrutura.js';
 // Registro de analistas será carregado dinamicamente para permitir injeção de dependências
@@ -23,7 +23,7 @@ import { asTecnicas, extrairMensagemErro } from '@';
  * Aplica correções estruturais e otimizações ao repositório
  */
 export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void): Command {
-  return new Command('reestruturar').description('Aplica correções estruturais e otimizações ao repositório.').option('-a, --auto', 'Aplica correções automaticamente sem confirmação (CUIDADO!)', false).option('--aplicar', 'Alias de --auto (deprecated futuramente)', false).option('--somente-plano', 'Exibe apenas o plano sugerido e sai (dry-run)', false).option('--domains', 'Organiza por domains/<entidade>/<categoria>s (opcional; preset sensei usa flat)', false).option('--flat', 'Organiza por src/<categoria>s (sem domains)', false).option('--prefer-estrategista', 'Força uso do estrategista (ignora plano de arquitetos)', false).option('--preset <nome>', 'Preset de estrutura (sensei|node-community|ts-lib). Se omitido, não sugere estrutura automaticamente.').option('--categoria <pair>', 'Override de categoria no formato chave=valor (ex.: controller=handlers). Pode repetir a flag.', (val: string, prev: string[]) => {
+  return new Command('reestruturar').description('Aplica correções estruturais e otimizações ao repositório.').option('-a, --auto', 'Aplica correções automaticamente sem confirmação (CUIDADO!)', false).option('--aplicar', 'Alias de --auto (deprecated futuramente)', false).option('--somente-plano', 'Exibe apenas o plano sugerido e sai (dry-run)', false).option('--domains', 'Organiza por domains/<entidade>/<categoria>s (opcional; preset prometheus usa flat)', false).option('--flat', 'Organiza por src/<categoria>s (sem domains)', false).option('--prefer-estrategista', 'Força uso do estrategista (ignora plano de arquitetos)', false).option('--preset <nome>', 'Preset de estrutura (prometheus|node-community|ts-lib). Se omitido, não sugere estrutura automaticamente.').option('--categoria <pair>', 'Override de categoria no formato chave=valor (ex.: controller=handlers). Pode repetir a flag.', (val: string, prev: string[]) => {
     prev.push(val);
     return prev;
   }, [] as string[]).option('--include <padrao>', 'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)', (val: string, prev: string[]) => {
@@ -58,10 +58,10 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
     }).start();
     const baseDir = process.cwd();
     try {
-      // Caminho r�pido de teste: quando SENSEI_TEST_FAST=1 pulamos varredura e inquisicao pesadas.
+      // Caminho r�pido de teste: quando PROMETHEUS_TEST_FAST=1 pulamos varredura e inquisicao pesadas.
       // Mant�m apenas valida��o e gera��o de plano via Operario (mockado nos testes),
       // reduzindo drasticamente o tempo e riscos de timeouts RPC do Vitest.
-      if (process.env.SENSEI_TEST_FAST === '1') {
+      if (process.env.PROMETHEUS_TEST_FAST === '1') {
         const fileEntriesComAst: FileEntryWithAst[] = [];
         const map = parsearCategorias(opts.categoria);
         if (opts.domains && opts.flat) {
@@ -115,7 +115,7 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
         return;
       }
       // Aplica flags globais (inclui/exclude) no config
-      // O scanner centralizado j� respeita sensei.config.json e as flags
+      // O scanner centralizado j� respeita prometheus.config.json e as flags
       // O resultado j� vem filtrado
       let fileEntriesComAst: FileEntryWithAst[] = [];
       let analiseParaCorrecao: ResultadoInquisicao | {
@@ -270,7 +270,7 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
         let answer = '';
         if (process.env.VITEST) {
           // Permite simular resposta customizada via variável de ambiente
-          answer = process.env.SENSEI_REESTRUTURAR_ANSWER ?? 's';
+          answer = process.env.PROMETHEUS_REESTRUTURAR_ANSWER ?? 's';
         } else {
           try {
             const readline = await import('node:readline/promises');

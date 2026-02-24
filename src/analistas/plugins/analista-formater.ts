@@ -4,7 +4,7 @@ import { formatarPrettierMinimo } from '@shared/impar/formater.js';
 
 import { criarAnalista, criarOcorrencia } from '@';
 
-const disableEnv = process.env.SENSEI_DISABLE_PLUGIN_FORMATADOR === '1';
+const disableEnv = process.env.PROMETHEUS_DISABLE_PLUGIN_FORMATADOR === '1';
 type Msg = ReturnType<typeof criarOcorrencia>;
 function msg(message: string, relPath: string, nivel: (typeof SeverityNiveis)[keyof typeof SeverityNiveis] = SeverityNiveis.warning, line = 1): Msg {
   return criarOcorrencia({
@@ -31,7 +31,7 @@ function primeiraLinhaDiferente(a: string, b: string): number {
 export const analistaFormatador = criarAnalista({
   nome: 'analista-formatador',
   categoria: 'formatacao',
-  descricao: 'Verifica formatação mínima interna do Sensei (JSON/Markdown/YAML).',
+  descricao: 'Verifica formatação mínima interna do Prometheus (JSON/Markdown/YAML).',
   global: false,
   test: (relPath: string): boolean => /\.(json|md|markdown|ya?ml)$/i.test(relPath),
   aplicar: async (src, relPath): Promise<Msg[] | null> => {

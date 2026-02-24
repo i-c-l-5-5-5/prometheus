@@ -8,7 +8,7 @@ import { AnalystOrigens, AnalystTipos, ReactHooksMensagens, SeverityNiveis } fro
 
 import { criarAnalista, criarOcorrencia } from '@';
 
-const disableEnv = process.env.SENSEI_DISABLE_PLUGIN_REACT_HOOKS === '1';
+const disableEnv = process.env.PROMETHEUS_DISABLE_PLUGIN_REACT_HOOKS === '1';
 type Msg = ReturnType<typeof criarOcorrencia>;
 function hasHooksUsage(src: string): boolean {
   return /use(State|Effect|Memo|Callback|Reducer|Ref|LayoutEffect|ImperativeHandle|Transition)/.test(src);

@@ -174,7 +174,7 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
       // Normaliza para separador POSIX para que micromatch funcione de forma consistente no Windows
       const relPath = toPosix(relPathRaw);
 
-      // Regra fixa do Sensei: não analisar testes (deixa para o runner, ex.: Vitest)
+      // Regra fixa do Prometheus: não analisar testes (deixa para o runner, ex.: Vitest)
       const isTestLike = (p: string): boolean => {
         const rp = toPosix(p);
         if (/(^|\/)__(tests|mocks)__(\/|$)/.test(rp)) return true;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// @sensei-disable tipo-literal-inline-complexo
+// @prometheus-disable tipo-literal-inline-complexo
 // Justificativa: tipos inline para opções de comando CLI são locais e não precisam de extração
 // Importar handler modular do Guardian (Sprint 2)
 // Registro de analistas será carregado dinamicamente para permitir injeção de dependências
@@ -16,7 +16,7 @@ import type { FileEntry, FileEntryWithAst, Tecnica } from '@';
 import { asTecnicas, extrairMensagemErro, IntegridadeStatus } from '@';
 
 export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void): Command {
-  return new Command('guardian').description('Gerencia e verifica a integridade do ambiente do Sensei.')
+  return new Command('guardian').description('Gerencia e verifica a integridade do ambiente do Prometheus.')
   // Alinhar com comportamento tolerante usado em outros comandos/testes
   .allowUnknownOption(true).allowExcessArguments(true).option('-a, --accept-baseline', 'Aceita o baseline atual como o novo baseline de integridade').option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline').option('--full-scan', 'Executa verificação sem aplicar GUARDIAN_IGNORE_PATTERNS (não persistir baseline)').option('--json', 'Saída em JSON estruturado (para CI/integracoes)').action(async function (this: Command, opts: {
     acceptBaseline?: boolean;

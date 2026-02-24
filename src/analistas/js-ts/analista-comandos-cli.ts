@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// @sensei-disable tipo-inseguro-unknown
+// @prometheus-disable tipo-inseguro-unknown
 // Justificativa: unknown é usado para manipulação segura de nós AST com tipagem defensiva
 import type { NodePath } from '@babel/traverse';
 import type { ArrowFunctionExpression, BlockStatement, CallExpression, ClassDeclaration, ClassMethod, FunctionDeclaration, FunctionExpression, Identifier, ImportDeclaration, MemberExpression, NewExpression, Node, StringLiteral, VariableDeclaration, VariableDeclarator } from '@babel/types';

@@ -16,7 +16,7 @@ export function comandoAtualizar(
   aplicarFlagsGlobais: (opts: Record<string, unknown>) => void,
 ): Command {
   return new Command('atualizar')
-    .description('Atualiza o Sensei se a integridade estiver preservada')
+    .description('Atualiza o Prometheus se a integridade estiver preservada')
     .option('--global', 'atualiza globalmente via npm i -g')
     .action(async function (this: Command, opts: { global?: boolean }) {
       try {
@@ -63,13 +63,13 @@ export function comandoAtualizar(
             '🌀 Guardian gerou novo baseline ou detectou alterações. Prosseguindo com cautela.',
           );
           log.info(
-            'Recomendado: `sensei guardian --diff` e `sensei guardian --accept-baseline` antes de atualizar.',
+            'Recomendado: `prometheus guardian --diff` e `prometheus guardian --accept-baseline` antes de atualizar.',
           );
         }
 
         const cmd = opts.global
-          ? 'npm install -g sensei@latest'
-          : 'npm install sensei@latest';
+          ? 'npm install -g prometheus@latest'
+          : 'npm install prometheus@latest';
 
         logSistema.atualizacaoExecutando(cmd);
         executarShellSeguro(cmd, { stdio: 'inherit' });

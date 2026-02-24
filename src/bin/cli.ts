@@ -59,7 +59,7 @@ async function aplicarFlagsGlobais(opts: unknown) {
   config.REPORT_SILENCE_LOGS = Boolean(flags.silence);
   config.REPORT_EXPORT_ENABLED = Boolean(flags.export);
   config.REPORT_EXPORT_FULL = Boolean((flags as Record<string, unknown>)['exportFull']);
-  const debugAtivo = Boolean(flags.debug) || process.env.SENSEI_DEBUG === 'true';
+  const debugAtivo = Boolean(flags.debug) || process.env.PROMETHEUS_DEBUG === 'true';
   config.DEV_MODE = debugAtivo;
   config.SCAN_ONLY = Boolean(flags.scanOnly);
   // Se silence está ativo, verbose é sempre falso
@@ -85,7 +85,7 @@ export async function mainCli(): Promise<void> {
 
   // Handler de rejeições não tratadas com mensagem identificável (usado por testes e ops)
   function __sensei_unhandledRejectionHandler(err: ErrorLike) {
-    const MARCADOR = 'Sensei: unhandled rejection';
+    const MARCADOR = 'Prometheus: unhandled rejection';
     const mensagem = extrairMensagemErro(err);
     console.error(MARCADOR, mensagem);
     if (!process.env.VITEST) {
@@ -120,7 +120,7 @@ export async function mainCli(): Promise<void> {
     if (process.env.NODE_ENV === 'production') {
       try {
         // Em dist/bin, o safe config está na raiz do pacote: subir dois níveis
-        const safeCfgCaminho = join(__dirname, '..', '..', 'sensei.config.safe.json');
+        const safeCfgCaminho = join(__dirname, '..', '..', 'prometheus.config.safe.json');
         const raw = await lerArquivoTexto(safeCfgCaminho);
         const safeCfg = raw ? JSON.parse(raw) : {};
         const prod = safeCfg?.productionDefaults;
@@ -162,7 +162,7 @@ export async function mainCli(): Promise<void> {
       console.log(chalk.cyan('\n📊 RESUMO DA CONVERSA'));
       console.log(`Total: ${resumo.totalMessages}`);
       console.log(`Usuário: ${resumo.userMessages}`);
-      console.log(`Sensei: ${resumo.assistantMessages}`);
+      console.log(`Prometheus: ${resumo.assistantMessages}`);
       if (resumo.firstMessage) console.log(`Primeira: ${resumo.firstMessage}`);
       if (resumo.lastMessage) console.log(`Última: ${resumo.lastMessage}`);
       console.log('');
@@ -203,7 +203,7 @@ export async function mainCli(): Promise<void> {
 // Global handler para reduzir falsos-positivos e capturar rejeições não tratadas.
 // A mensagem contém um marcador único para que testes possam verificar o registro.
 function __sensei_unhandledRejectionHandler(err: ErrorLike) {
-  const MARCADOR = 'Sensei: unhandled rejection';
+  const MARCADOR = 'Prometheus: unhandled rejection';
   const mensagem = extrairMensagemErro(err);
   // Mensagem identificável: usada pelos testes unitários para detectar o handler
   // e por operadores para diagnóstico rápido.

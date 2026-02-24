@@ -106,7 +106,7 @@ async function gerarRelatorioMarkdown(caminho: string, options: FixTypesExportOp
   lines.push('# Relatório de Análise de Tipos Inseguros');
   lines.push('');
   lines.push(`**Gerado em:** ${new Date().toISOString()}`);
-  lines.push(`**Comando:** \`sensei fix-types\``);
+  lines.push(`**Comando:** \`prometheus fix-types\``);
   lines.push(`**Confiança Mínima:** ${minConfidence}%`);
   lines.push('');
 
@@ -255,7 +255,7 @@ export async function exportarRelatoriosFixTypes(options: FixTypesExportOptions)
 
     // Gerar timestamp único para os arquivos
     const ts = new Date().toISOString().replace(/[:.]/g, '-');
-    const nomeBase = `sensei-fix-types-${ts}`;
+    const nomeBase = `prometheus-fix-types-${ts}`;
 
     // Gerar relatório Markdown
     const caminhoMd = path.join(dir, `${nomeBase}.md`);

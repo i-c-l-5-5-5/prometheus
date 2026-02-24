@@ -1,13 +1,13 @@
-> **Proveniência e Autoria**: Este documento integra o projeto Sensei (licença MIT).
+> **Proveniência e Autoria**: Este documento integra o projeto Prometheus (licença MIT).
 > Nada aqui implica cessão de direitos morais/autorais.
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-# 🤝 Guia de Contribuição para o Projeto Sensei
+# 🤝 Guia de Contribuição para o Projeto Prometheus
 
-**Agradecemos seu interesse em contribuir para o Sensei!** 🎉
+**Agradecemos seu interesse em contribuir para o Prometheus!** 🎉
 
-O Sensei é uma ferramenta de análise de código estático desenvolvida para ajudar desenvolvedores a manterem código de alta qualidade. Valorizamos todas as formas de contribuição, desde correções de bugs e novas funcionalidades até melhorias na documentação e relatórios de issues.
+O Prometheus é uma ferramenta de análise de código estático desenvolvida para ajudar desenvolvedores a manterem código de alta qualidade. Valorizamos todas as formas de contribuição, desde correções de bugs e novas funcionalidades até melhorias na documentação e relatórios de issues.
 
 Este guia visa facilitar sua participação no projeto, garantindo que suas contribuições sejam eficazes e alinhadas com nossos padrões de qualidade.
 
@@ -32,11 +32,11 @@ Antes de começar a contribuir, certifique-se de que possui:
 # Fork o repositório no GitHub (botão "Fork" no canto superior direito)
 
 # Clone seu fork (substitua SEU-USUARIO pelo seu nome de usuário)
-git clone https://github.com/SEU-USUARIO/sensei.git
-cd sensei
+git clone https://github.com/SEU-USUARIO/prometheus.git
+cd prometheus
 
 # Adicione o repositório upstream como remote
-git remote add upstream https://github.com/md-555/sensei.git
+git remote add upstream https://github.com/md-555/prometheus.git
 ```
 
 ### 2. Instalação de Dependências
@@ -77,8 +77,8 @@ git checkout -b feature/sua-contribuicao-descritiva
 
 ### 🐛 Correção de Bugs
 
-- Issues com label [`bug`](https://github.com/md-555/sensei/labels/bug)
-- Issues com label [`good-first-issue`](https://github.com/md-555/sensei/labels/good-first-issue)
+- Issues com label [`bug`](https://github.com/md-555/prometheus/labels/bug)
+- Issues com label [`good-first-issue`](https://github.com/md-555/prometheus/labels/good-first-issue)
 - Priorize bugs críticos e regressions
 
 ### ✨ Novas Funcionalidades
@@ -309,4 +309,4 @@ Ao contribuir para este projeto, você concorda que suas contribuições serão 
 
 ---
 
-**Obrigado por contribuir para o Sensei!**
+**Obrigado por contribuir para o Prometheus!**

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// @sensei-disable tipo-literal-inline-complexo
+// @prometheus-disable tipo-literal-inline-complexo
 // Justificativa: tipos inline para opções de comando CLI são locais e não precisam de extração
 import { optionsDiagnosticar } from '@cli/options-diagnosticar.js';
 import { processarDiagnostico } from '@cli/processamento-diagnostico.js';
@@ -73,7 +73,7 @@ export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, u
     }
 
     // Fast mode de teste: retorna estrutura mínima simulada sem executar análise completa
-    if (process.env.SENSEI_TEST_FAST === '1') {
+    if (process.env.PROMETHEUS_TEST_FAST === '1') {
       if (opts.json) {
         // Estrutura mínima para satisfazer consumidores dos testes
         console.log(JSON.stringify({

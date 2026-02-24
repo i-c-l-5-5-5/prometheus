@@ -5,7 +5,7 @@ import { maskPythonComments, maskPythonStringsAndComments } from '@shared/helper
 
 import { criarAnalista, criarOcorrencia } from '@';
 
-const disableEnv = process.env.SENSEI_DISABLE_PLUGIN_PYTHON === '1';
+const disableEnv = process.env.PROMETHEUS_DISABLE_PLUGIN_PYTHON === '1';
 type Msg = ReturnType<typeof criarOcorrencia>;
 function isPythonFile(relPath: string): boolean {
   return /\.(py|pyx|pyi)$/i.test(relPath);

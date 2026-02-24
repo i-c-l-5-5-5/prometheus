@@ -19,7 +19,7 @@ export class PluginRegistry {
     this.config = {
       enabled: ['core'],
       autoload: true,
-      registry: '@sensei/plugins',
+      registry: '@prometheus/plugins',
       ...config
     };
     this.userConfiguredEnabled = !!config?.enabled;

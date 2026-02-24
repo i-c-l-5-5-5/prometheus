@@ -234,7 +234,7 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
     // Executar Guardian se solicitado
     if (config.GUARDIAN_ENABLED) {
       // Usa optional chaining para evitar erro quando o mock não prover `fase`
-      (log as typeof log & LogExtensions).fase?.('Verificando integridade do Sensei');
+      (log as typeof log & LogExtensions).fase?.('Verificando integridade do Prometheus');
       try {
         const resultado = await scanSystemIntegrity(fileEntries, {
           suppressLogs: true
@@ -286,12 +286,12 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
       if (config.REPORT_EXPORT_ENABLED) {
         try {
           const ts = new Date().toISOString().replace(/[:.]/g, '-');
-          const dir = typeof config.REPORT_OUTPUT_DIR === 'string' ? config.REPORT_OUTPUT_DIR : path.join(baseDir, 'sensei-reports');
+          const dir = typeof config.REPORT_OUTPUT_DIR === 'string' ? config.REPORT_OUTPUT_DIR : path.join(baseDir, 'prometheus-reports');
           const fs = await import('node:fs');
           await fs.promises.mkdir(dir, {
             recursive: true
           });
-          const nome = `sensei-scan-${ts}`;
+          const nome = `prometheus-scan-${ts}`;
           const resumo = {
             modo: 'scan-only',
             totalArquivos: fileEntries.length,
@@ -453,7 +453,7 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
         }
       }
     } catch { }
-    // Aplicar supressões configuradas em sensei.config.json
+    // Aplicar supressões configuradas em prometheus.config.json
     ocorrenciasFiltradas = aplicarSupressaoOcorrencias(ocorrenciasFiltradas, config as unknown as FiltrosConfig || undefined);
     const totalOcorrenciasProcessadas = ocorrenciasFiltradas.length;
 
@@ -589,7 +589,7 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
             logSistema.autoFixEstatisticas(estatisticas);
 
             // Validação ESLint pós-auto-fix para harmonia total
-            if (process.env.SENSEI_ESLINT_VALIDATION !== '0' && autoCorrecaoConfiguracao.validateAfterFix) {
+            if (process.env.PROMETHEUS_ESLINT_VALIDATION !== '0' && autoCorrecaoConfiguracao.validateAfterFix) {
               try {
                 log.info(MENSAGENS_AUTOFIX.logs.validacaoEslint);
                 const {
@@ -1305,12 +1305,12 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
         emitirConselhoSenseial(contextoConselho);
         if (config.REPORT_EXPORT_ENABLED) {
           const ts = new Date().toISOString().replace(/[:.]/g, '-');
-          const dir = typeof config.REPORT_OUTPUT_DIR === 'string' ? config.REPORT_OUTPUT_DIR : path.join(baseDir, 'sensei-reports');
+          const dir = typeof config.REPORT_OUTPUT_DIR === 'string' ? config.REPORT_OUTPUT_DIR : path.join(baseDir, 'prometheus-reports');
           const fs = await import('node:fs');
           await fs.promises.mkdir(dir, {
             recursive: true
           });
-          const outputCaminho = path.join(dir, `sensei-diagnostico-${ts}.md`);
+          const outputCaminho = path.join(dir, `prometheus-diagnostico-${ts}.md`);
           const resultadoCompleto = {
             ...resultadoExecucao,
             fileEntries: fileEntriesComAst,
@@ -1384,7 +1384,7 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
               ocorrencias: ocorrenciasLimpas
             };
             const salvar = await getSalvarEstado();
-            await salvar(path.join(dir, `sensei-relatorio-summary-${ts}.json`), relatorioResumo);
+            await salvar(path.join(dir, `prometheus-relatorio-summary-${ts}.json`), relatorioResumo);
 
             // Se exportação full estiver ativa, grava também o payload completo em arquivo separado
             let fragmentResultado: {
@@ -1410,7 +1410,7 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
                 log.info(CliProcessamentoDiagnosticoMensagens.relatorioFullFragmentado(fragmentResultado.manifestFile));
               } catch {
                 // Fallback: salvar como único arquivo caso a fragmentação falhe
-                await salvar(path.join(dir, `sensei-relatorio-full-${ts}.json`), relatorioFull);
+                await salvar(path.join(dir, `prometheus-relatorio-full-${ts}.json`), relatorioFull);
               }
             }
 
@@ -1622,13 +1622,13 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
           if (config.REPORT_EXPORT_ENABLED) {
             try {
               const ts = new Date().toISOString().replace(/[:.]/g, '-');
-              const dir = typeof config.REPORT_OUTPUT_DIR === 'string' ? config.REPORT_OUTPUT_DIR : path.join(baseDir, 'sensei-reports');
+              const dir = typeof config.REPORT_OUTPUT_DIR === 'string' ? config.REPORT_OUTPUT_DIR : path.join(baseDir, 'prometheus-reports');
               const fs = await import('node:fs');
               await fs.promises.mkdir(dir, {
                 recursive: true
               });
               const salvar = await getSalvarEstado();
-              await salvar(path.join(dir, `sensei-diagnostico-${ts}.json`), saidaComMeta);
+              await salvar(path.join(dir, `prometheus-diagnostico-${ts}.json`), saidaComMeta);
               log.sucesso(CliProcessamentoDiagnosticoMensagens.relatoriosExportadosPara(dir));
             } catch (e) {
               log.erro(CliProcessamentoDiagnosticoMensagens.falhaSalvarRelatorioJson((e as Error).message));

@@ -5,7 +5,7 @@ import { maskXmlNonCode } from '@shared/helpers/masking.js';
 
 import { criarAnalista, criarOcorrencia } from '@';
 
-const disableEnv = process.env.SENSEI_DISABLE_PLUGIN_XML === '1';
+const disableEnv = process.env.PROMETHEUS_DISABLE_PLUGIN_XML === '1';
 type Msg = ReturnType<typeof criarOcorrencia>;
 function warn(message: string, relPath: string, line?: number, nivel: (typeof SeverityNiveis)[keyof typeof SeverityNiveis] = SeverityNiveis.warning): Msg {
   return criarOcorrencia({

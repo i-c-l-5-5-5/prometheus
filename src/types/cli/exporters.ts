@@ -33,7 +33,7 @@ export interface RelatorioJson {
       exclude?: string[];
       globalExclude?: string[];
     };
-    /** Versão do Sensei */
+    /** Versão do Prometheus */
     senseiVersion?: string;
     /** Nome do projeto */
     projectNome?: string;
@@ -109,6 +109,8 @@ export interface JsonExportOptions {
 
   /** Limitar número de ocorrências */
   maxOcorrencias?: number;
+  /** Lista de tipos de ocorrência a omitir no exportador (ex.: ['interface-inline-exportada']) */
+  omitTypes?: string[];
 }
 
 /* ================================

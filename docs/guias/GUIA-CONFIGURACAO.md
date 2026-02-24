@@ -1,6 +1,6 @@
-# ⚙️ Guia de Configuração do Sensei
+# ⚙️ Guia de Configuração do Prometheus
 
-> Proveniência e Autoria: Este documento integra o projeto Sensei (licença MIT).
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
 > Última atualização: 15 de janeiro de 2026
 
 ---
@@ -20,7 +20,7 @@
 
 ## Visão Geral
 
-O Sensei oferece um sistema flexível de configuração que permite adaptar a análise às necessidades específicas de cada projeto. A configuração pode ser feita através de:
+O Prometheus oferece um sistema flexível de configuração que permite adaptar a análise às necessidades específicas de cada projeto. A configuração pode ser feita através de:
 
 - **Arquivos JSON** - Configuração persistente e versionável
 - **Variáveis de ambiente** - Configuração dinâmica para CI/CD
@@ -31,16 +31,16 @@ O Sensei oferece um sistema flexível de configuração que permite adaptar a an
 A ordem de precedência (maior para menor prioridade):
 
 1. **Argumentos CLI** - `--timeout 60`
-2. **Variáveis de ambiente** - `SENSEI_ANALISE_TIMEOUT_POR_ANALISTA_MS=60000`
-3. **sensei.config.json** - Configuração local do projeto
-4. **sensei.config.safe.json** - Configurações de segurança
+2. **Variáveis de ambiente** - `PROMETHEUS_ANALISE_TIMEOUT_POR_ANALISTA_MS=60000`
+3. **prometheus.config.json** - Configuração local do projeto
+4. **prometheus.config.safe.json** - Configurações de segurança
 5. **Valores padrão do código** - Defaults internos
 
 ---
 
 ## Arquivos de Configuração
 
-### 1. sensei.config.json (Principal)
+### 1. prometheus.config.json (Principal)
 
 Arquivo de configuração principal na raiz do projeto.
 
@@ -92,7 +92,7 @@ Arquivo de configuração principal na raiz do projeto.
 | `coverageGate`                | object  | Limiares de cobertura de testes          |
 | `TYPE_SAFETY`                 | object  | Configurações do sistema de type-safety  |
 
-### 2. sensei.config.safe.json (Modo Seguro)
+### 2. prometheus.config.safe.json (Modo Seguro)
 
 Configurações de segurança para ambientes de produção e CI/CD.
 
@@ -118,7 +118,7 @@ Configurações de segurança para ambientes de produção e CI/CD.
 | `ALLOW_EXEC`      | `false`           | Impede execução de comandos |
 | `ALLOW_MUTATE_FS` | `false`           | Bloqueia modificações no FS |
 
-### 3. sensei.repo.arquetipo.json (Perfil do Repositório)
+### 3. prometheus.repo.arquetipo.json (Perfil do Repositório)
 
 Define a estrutura esperada do projeto para análise de conformidade.
 
@@ -150,7 +150,7 @@ WORKER_POOL_BATCH_SIZE=10
 WORKER_POOL_TIMEOUT_MS=30000
 
 # === Tempo de Análise ===
-SENSEI_ANALISE_TIMEOUT_POR_ANALISTA_MS=30000
+PROMETHEUS_ANALISE_TIMEOUT_POR_ANALISTA_MS=30000
 
 # === Pontuação Adaptativa ===
 PONTUACAO_MODO=padrao       # padrao | conservador | permissivo
@@ -200,21 +200,21 @@ COVERAGE_GATE_STATEMENTS=90
 
 ```bash
 # Apenas TypeScript
-sensei diagnosticar --include "**/*.ts" --include "**/*.tsx"
+prometheus diagnosticar --include "**/*.ts" --include "**/*.tsx"
 
 # Apenas código fonte
-sensei diagnosticar --include "src/**"
+prometheus diagnosticar --include "src/**"
 
 # Excluir testes
-sensei diagnosticar --exclude "**/*.test.*" --exclude "**/*.spec.*"
+prometheus diagnosticar --exclude "**/*.test.*" --exclude "**/*.spec.*"
 
 # Código TypeScript sem testes
-sensei diagnosticar \
+prometheus diagnosticar \
   --include "src/**/*.ts" \
   --exclude "**/*.test.ts"
 
 # Monorepo - apenas um pacote
-sensei diagnosticar --include "packages/my-package/**"
+prometheus diagnosticar --include "packages/my-package/**"
 ```
 
 ### Configuração de Filtros via JSON
@@ -363,7 +363,7 @@ REPORT_SILENCE_LOGS=true
 
 ```bash
 # 1. Criar configuração básica
-cat > sensei.config.json << 'EOF'
+cat > prometheus.config.json << 'EOF'
 {
   "INCLUDE_EXCLUDE_RULES": {
     "globalExcludeGlob": ["node_modules/**", "dist/**", "coverage/**"]
@@ -433,43 +433,45 @@ echo ".env" >> .gitignore
 
 ```bash
 # Verificar se arquivo existe
-ls -la sensei.config.json
+ls -la prometheus.config.json
 
 # Validar JSON
-cat sensei.config.json | jq .
+cat prometheus.config.json | jq .
 
 # Debug de carregamento
-DEBUG=config sensei diagnosticar
+DEBUG=config prometheus diagnosticar
 ```
 
 ### Conflito de Variáveis
 
 ```bash
 # Listar variáveis atuais
-env | grep SENSEI
+env | grep PROMETHEUS
 
-# Limpar todas env vars do Sensei
-unset $(env | grep SENSEI | cut -d= -f1)
+# Limpar todas env vars do Prometheus
+unset $(env | grep PROMETHEUS | cut -d= -f1)
 ```
 
 ### Debug de Filtros
 
 ```bash
 # Visualizar arquivos que serão analisados
-sensei diagnosticar --verbose --scan-only
+prometheus diagnosticar --verbose --scan-only
 
 # Modo debug mostra decisões de filtro
-sensei diagnosticar --debug --scan-only
+prometheus diagnosticar --debug --scan-only
 ```
 
 ### Armadilhas Comuns
 
 ```bash
 # ❌ Errado - apenas nível raiz de src/
-sensei diagnosticar --include "src/*.ts"
+# ❌ Errado - apenas nível raiz de src/
+prometheus diagnosticar --include "src/*.ts"
 
 # ✅ Correto - recursivo em src/
-sensei diagnosticar --include "src/**/*.ts"
+# ✅ Correto - recursivo em src/
+prometheus diagnosticar --include "src/**/*.ts"
 ```
 
 ---

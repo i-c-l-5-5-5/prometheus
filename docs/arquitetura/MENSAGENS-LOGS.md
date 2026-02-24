@@ -1,21 +1,19 @@
 # Guia de Centralização de Mensagens e Logs
 
-> Proveniência e Autoria: Este documento integra o projeto Sensei (licença MIT).
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
 > Nada aqui implica cessão de direitos morais/autorais.
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
 
-Este guia documenta como produzir saídas consistentes no Sensei usando os módulos centralizados de mensagens e a API de logs.
+Este guia documenta como produzir saídas consistentes no Prometheus usando os módulos centralizados de mensagens e a API de logs.
 
 ## Onde estão as mensagens
 
-- Diretório: `src/core/messages/`
-- Entrypoint: `src/core/messages/index.ts` (use para importar tudo)
-- Componentes principais:
-  - `log`: API de logging (info, aviso, erro, sucesso), adaptada ao contexto (CLI/CI)
-  - `ICONES_DIAGNOSTICO`: catálogo de ícones/textos padronizados
-  - `CABECALHOS`: cabeçalhos e textos comuns por seção (analistas, diagnóstico, reestruturar)
-  - Catálogos específicos (ex: `fix-types-messages.ts`)
+- `log`: API de logging (info, aviso, erro, sucesso), adaptada ao contexto (CLI/CI)
+- `ICONES_DIAGNOSTICO`: catálogo de ícones/textos padronizados
+- `CABECALHOS`: cabeçalhos e textos comuns por seção (analistas, diagnóstico, reestruturar)
+- Catálogos específicos (ex: `fix-types-messages.ts`)
+Este guia documenta como produzir saídas consistentes no Prometheus usando os módulos centralizados de mensagens e a API de logs.
 
 ## Boas práticas
 

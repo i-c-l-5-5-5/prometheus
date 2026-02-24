@@ -1,11 +1,11 @@
-# 📚 Guia Completo de Comandos do Sensei
+# 📚 Guia Completo de Comandos do Prometheus
 
-> Proveniência e Autoria: Este documento integra o projeto Sensei (licença MIT).
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
 > Última atualização: 15 de janeiro de 2026
 
 ## 🎯 Visão Geral
 
-O Sensei oferece diversos comandos para análise, diagnóstico e manutenção de projetos. Este guia detalha cada comando, suas opções e casos de uso.
+O Prometheus oferece diversos comandos para análise, diagnóstico e manutenção de projetos. Este guia detalha cada comando, suas opções e casos de uso.
 
 **Requisitos:** Node.js >=25.0.0
 
@@ -33,10 +33,10 @@ Comando principal para análise completa do projeto.
 ### Uso Básico
 
 ```bash
-sensei diagnosticar
+prometheus diagnosticar
 ```
 
-Durante a execução, o Sensei exibe um indicador visual “🔎 Diagnóstico em execução...” para sinalizar processamento.
+Durante a execução, o Prometheus exibe um indicador visual “🔎 Diagnóstico em execução...” para sinalizar processamento.
 
 ### Opções Principais
 
@@ -44,96 +44,96 @@ Durante a execução, o Sensei exibe um indicador visual “🔎 Diagnóstico em
 
 ```bash
 # Modo detalhado (mais informações)
-sensei diagnosticar --full
+prometheus diagnosticar --full
 
 # Modo compacto (padrão): consolida progresso e mostra o essencial
-sensei diagnosticar --compact
+prometheus diagnosticar --compact
 
 # Modo executivo: apenas problemas críticos/alta prioridade
-sensei diagnosticar --executive
+prometheus diagnosticar --executive
 
 # Apenas varredura (não prepara AST, sem análise completa)
-sensei diagnosticar --scan-only
+prometheus diagnosticar --scan-only
 ```
 
 #### Formatos de Saída
 
 ```bash
 # Saída JSON para ferramentas/automação
-sensei diagnosticar --json
+prometheus diagnosticar --json
 
 # Exportar resumo/manifest
-sensei diagnosticar --export
+prometheus diagnosticar --export
 
 # Exportar dump completo (fragmentado em shards)
-sensei diagnosticar --export-full
+prometheus diagnosticar --export-full
 
 # JSON ASCII (compat legada)
-sensei diagnosticar --json-ascii
+prometheus diagnosticar --json-ascii
 ```
 
 #### Filtros
 
 ```bash
 # Incluir padrões
-sensei diagnosticar --include "src/**" --include "scripts/**"
+prometheus diagnosticar --include "src/**" --include "scripts/**"
 
 # Excluir padrões
-sensei diagnosticar --exclude "**/*.test.*" --exclude "**/__tests__/**"
+prometheus diagnosticar --exclude "**/*.test.*" --exclude "**/__tests__/**"
 
 # Excluir testes rapidamente
-sensei diagnosticar --exclude-tests
+prometheus diagnosticar --exclude-tests
 ```
 
 #### Auto-Fix
 
 ```bash
 # Ativar auto-fix
-sensei diagnosticar --auto-fix
+prometheus diagnosticar --auto-fix
 
 # Modo conservador / agressivo / equilibrado
-sensei diagnosticar --auto-fix-mode conservative
-sensei diagnosticar --auto-fix-mode aggressive
-sensei diagnosticar --auto-fix-mode balanced
+prometheus diagnosticar --auto-fix-mode conservative
+prometheus diagnosticar --auto-fix-mode aggressive
+prometheus diagnosticar --auto-fix-mode balanced
 
 # Atalhos
-sensei diagnosticar --fix            # alias de --auto-fix
-sensei diagnosticar --fix-safe       # alias de --auto-fix --auto-fix-mode conservative
+prometheus diagnosticar --fix            # alias de --auto-fix
+prometheus diagnosticar --fix-safe       # alias de --auto-fix --auto-fix-mode conservative
 
 # Dry-run (preview sem modificar)
-SENSEI_ALLOW_MUTATE_FS=1 sensei diagnosticar --auto-fix --dry-run
+PROMETHEUS_ALLOW_MUTATE_FS=1 prometheus diagnosticar --auto-fix --dry-run
 ```
 
 #### Timeout e Performance
 
 ```bash
 # Modo rápido (menos checks)
-sensei diagnosticar --fast
+prometheus diagnosticar --fast
 
 # Confiar no compilador (reduz falsos positivos comuns)
-sensei diagnosticar --trust-compiler
+prometheus diagnosticar --trust-compiler
 
 # Verificar ciclos com heurística extra
-sensei diagnosticar --verify-cycles
+prometheus diagnosticar --verify-cycles
 
 # Ajustes de timeout via ambiente (por analista)
-SENSEI_ANALISE_TIMEOUT_POR_ANALISTA_MS=60000 sensei diagnosticar
+PROMETHEUS_ANALISE_TIMEOUT_POR_ANALISTA_MS=60000 prometheus diagnosticar
 ```
 
 ### Exemplos de Uso
 
 ```bash
 # Padrão compacto com resumo útil
-sensei diagnosticar --compact
+prometheus diagnosticar --compact
 
 # Detalhado (inclui amostra maior e blocos completos)
-sensei diagnosticar --full
+prometheus diagnosticar --full
 
 # Para CI/CD estruturado
-sensei diagnosticar --json --export
+prometheus diagnosticar --json --export
 
 # Correção automática segura
-SENSEI_ALLOW_MUTATE_FS=1 sensei diagnosticar --fix-safe --dry-run
+PROMETHEUS_ALLOW_MUTATE_FS=1 prometheus diagnosticar --fix-safe --dry-run
 ```
 
 ---
@@ -146,26 +146,26 @@ Verificação de integridade dos arquivos via hashes.
 
 ```bash
 # Criar baseline inicial
-sensei guardian
+prometheus guardian
 
 # Verificar alterações
-sensei guardian --diff
+prometheus guardian --diff
 ```
 
 ### Opções
 
 ```bash
 # Saída JSON
-sensei guardian --json
+prometheus guardian --json
 
 # Modo verbose
-sensei guardian --verbose
+prometheus guardian --verbose
 
 # Aceitar alterações como novo baseline
-sensei guardian --accept
+prometheus guardian --accept
 
 # Forçar recriação do baseline
-sensei guardian --force
+prometheus guardian --force
 ```
 
 ### Status de Retorno
@@ -180,13 +180,13 @@ sensei guardian --force
 
 ```bash
 # Verificação rápida no CI
-sensei guardian --diff --json
+prometheus guardian --diff --json
 
 # Criar baseline após mudanças válidas
-sensei guardian --accept
+prometheus guardian --accept
 
 # Debug detalhado
-sensei guardian --diff --verbose
+prometheus guardian --diff --verbose
 ```
 
 ---
@@ -199,36 +199,36 @@ Remoção segura de arquivos órfãos (não referenciados).
 
 ```bash
 # Dry-run (preview sem remover)
-sensei podar --dry-run
+prometheus podar --dry-run
 
 # Remoção efetiva
-sensei podar
+prometheus podar
 ```
 
 ### Opções
 
 ```bash
 # Modo interativo (confirma cada arquivo)
-sensei podar --interactive
+prometheus podar --interactive
 
 # Saída JSON
-sensei podar --json
+prometheus podar --json
 
 # Verbose (mostrar análise detalhada)
-sensei podar --verbose
+prometheus podar --verbose
 ```
 
 ### Exemplos
 
 ```bash
 # Análise de arquivos órfãos
-sensei podar --dry-run --verbose
+prometheus podar --dry-run --verbose
 
 # Limpeza automática
-sensei podar --json
+prometheus podar --json
 
 # Limpeza com confirmação
-sensei podar --interactive
+prometheus podar --interactive
 ```
 
 ---
@@ -241,36 +241,36 @@ Visualização de métricas e histórico agregado.
 
 ```bash
 # Exibir métricas atuais
-sensei metricas
+prometheus metricas
 
 # Formato JSON
-sensei metricas --json
+prometheus metricas --json
 ```
 
 ### Opções
 
 ```bash
 # Exibir histórico
-sensei metricas --history
+prometheus metricas --history
 
 # Comparar com período anterior
-sensei metricas --compare
+prometheus metricas --compare
 
 # Exportar para arquivo
-sensei metricas --export metricas.json
+prometheus metricas --export metricas.json
 ```
 
 ### Exemplos
 
 ```bash
 # Dashboard de métricas
-sensei metricas --verbose
+prometheus metricas --verbose
 
 # Análise de tendências
-sensei metricas --history --json
+prometheus metricas --history --json
 
 # Comparação temporal
-sensei metricas --compare --full
+prometheus metricas --compare --full
 ```
 
 ---
@@ -283,37 +283,37 @@ Análise de performance e comparação de snapshots.
 
 ```bash
 # Criar snapshot de performance
-sensei perf snapshot
+prometheus perf snapshot
 
 # Comparar snapshots
-sensei perf compare
+prometheus perf compare
 ```
 
 ### Opções
 
 ```bash
 # Comparar com baseline
-sensei perf compare --baseline
+prometheus perf compare --baseline
 
 # Saída JSON
-sensei perf --json
+prometheus perf --json
 
 # Limites personalizados
-sensei perf compare --threshold 10
+prometheus perf compare --threshold 10
 ```
 
 ### Exemplos
 
 ```bash
 # Benchmark antes de mudanças
-sensei perf snapshot --name "antes-refactor"
+prometheus perf snapshot --name "antes-refactor"
 
 # Benchmark depois e comparar
-sensei perf snapshot --name "depois-refactor"
-sensei perf compare antes-refactor depois-refactor
+prometheus perf snapshot --name "depois-refactor"
+prometheus perf compare antes-refactor depois-refactor
 
 # Análise de regressão no CI
-sensei perf compare --baseline --json
+prometheus perf compare --baseline --json
 ```
 
 ---
@@ -326,36 +326,36 @@ Listar e documentar analistas disponíveis.
 
 ```bash
 # Listar todos os analistas
-sensei analistas
+prometheus analistas
 
 # Formato JSON
-sensei analistas --json
+prometheus analistas --json
 ```
 
 ### Opções
 
 ```bash
 # Gerar documentação
-sensei analistas --doc docs/ANALISTAS.md
+prometheus analistas --doc docs/ANALISTAS.md
 
 # Mostrar apenas ativos
-sensei analistas --active-only
+prometheus analistas --active-only
 
 # Incluir metadados
-sensei analistas --full
+prometheus analistas --full
 ```
 
 ### Exemplos
 
 ```bash
 # Catálogo completo
-sensei analistas --full --json
+prometheus analistas --full --json
 
 # Documentação automática
-sensei analistas --doc docs/ANALISTAS-GERADO.md
+prometheus analistas --doc docs/ANALISTAS-GERADO.md
 
 # Debug de analistas
-sensei diagnosticar --listar-analistas
+prometheus diagnosticar --listar-analistas
 ```
 
 ---
@@ -368,40 +368,40 @@ Correção interativa de tipos inseguros (any/unknown).
 
 ```bash
 # Modo interativo
-sensei fix-types --interactive
+prometheus fix-types --interactive
 
 # Auto-fix conservador
-sensei fix-types --auto-fix --auto-fix-mode conservative
+prometheus fix-types --auto-fix --auto-fix-mode conservative
 ```
 
 ### Opções
 
 ```bash
 # Mostrar diff antes de aplicar
-sensei fix-types --show-diff
+prometheus fix-types --show-diff
 
 # Dry-run
-sensei fix-types --dry-run
+prometheus fix-types --dry-run
 
 # Validar sintaxe após correção
-sensei fix-types --validate-only
+prometheus fix-types --validate-only
 
 # Focar em tipo específico
-sensei fix-types --tipo any
-sensei fix-types --tipo unknown
+prometheus fix-types --tipo any
+prometheus fix-types --tipo unknown
 ```
 
 ### Exemplos
 
 ```bash
 # Correção segura e interativa
-sensei fix-types --interactive --show-diff
+prometheus fix-types --interactive --show-diff
 
 # Correção automática de 'any'
-sensei fix-types --tipo any --auto-fix --dry-run
+prometheus fix-types --tipo any --auto-fix --dry-run
 
 # Validação pós-correção
-sensei fix-types --validate-only
+prometheus fix-types --validate-only
 ```
 
 ---
@@ -414,44 +414,44 @@ Reorganização de estrutura do projeto com plano de moves.
 
 ```bash
 # Ver plano sem aplicar
-sensei reestruturar --somente-plano
+prometheus reestruturar --somente-plano
 
 # Aplicar reestruturação
-sensei reestruturar --auto
+prometheus reestruturar --auto
 ```
 
 ### Opções
 
 ```bash
 # Organização por domains
-sensei reestruturar --domains
+prometheus reestruturar --domains
 
 # Organização flat
-sensei reestruturar --flat
+prometheus reestruturar --flat
 
 # Usar preset específico
-sensei reestruturar --preset sensei
-sensei reestruturar --preset node-community
-sensei reestruturar --preset ts-lib
+prometheus reestruturar --preset prometheus
+prometheus reestruturar --preset node-community
+prometheus reestruturar --preset ts-lib
 
 # Override de categoria
-sensei reestruturar --categoria controller=handlers
+prometheus reestruturar --categoria controller=handlers
 
 # Filtros
-sensei reestruturar --include "src/**" --exclude "**/*.test.*"
+prometheus reestruturar --include "src/**" --exclude "**/*.test.*"
 ```
 
 ### Exemplos
 
 ```bash
 # Preview de reestruturação
-sensei reestruturar --somente-plano --verbose
+prometheus reestruturar --somente-plano --verbose
 
 # Aplicar com preset
-sensei reestruturar --preset sensei --auto
+prometheus reestruturar --preset prometheus --auto
 
 # Reestruturar apenas uma pasta
-sensei reestruturar --include "src/old-module/**" --auto
+prometheus reestruturar --include "src/old-module/**" --auto
 ```
 
 ---
@@ -464,23 +464,23 @@ Aplica formatação de código com Prettier ou motor interno.
 
 ```bash
 # Verificar formatação
-sensei formatar --check
+prometheus formatar --check
 
 # Aplicar formatação
-sensei formatar --write
+prometheus formatar --write
 ```
 
 ### Opções
 
 ```bash
 # Escolher motor
-sensei formatar --engine auto      # padrão (tenta Prettier, fallback interno)
-sensei formatar --engine prettier  # força Prettier
-sensei formatar --engine interno   # usa motor interno
+prometheus formatar --engine auto      # padrão (tenta Prettier, fallback interno)
+prometheus formatar --engine prettier  # força Prettier
+prometheus formatar --engine interno   # usa motor interno
 
 # Filtros de arquivos
-sensei formatar --include "src/**/*.ts"
-sensei formatar --exclude "**/*.generated.*"
+prometheus formatar --include "src/**/*.ts"
+prometheus formatar --exclude "**/*.generated.*"
 ```
 
 ### Arquivos Suportados
@@ -496,13 +496,13 @@ sensei formatar --exclude "**/*.generated.*"
 
 ```bash
 # Verificar tudo antes de commit
-sensei formatar --check
+prometheus formatar --check
 
 # Formatar apenas arquivos TypeScript
-sensei formatar --write --include "**/*.ts"
+prometheus formatar --write --include "**/*.ts"
 
 # CI: verificar formatação
-sensei formatar --check || exit 1
+prometheus formatar --check || exit 1
 ```
 
 ---
@@ -515,69 +515,69 @@ Otimiza arquivos SVG usando otimizador interno (compatível com svgo).
 
 ```bash
 # Preview sem modificar
-sensei otimizar-svg --dry
+prometheus otimizar-svg --dry
 
 # Aplicar otimizações
-sensei otimizar-svg --write
+prometheus otimizar-svg --write
 ```
 
 ### Opções
 
 ```bash
 # Diretório específico
-sensei otimizar-svg --dir assets/icons
+prometheus otimizar-svg --dir assets/icons
 
 # Filtros
-sensei otimizar-svg --include "**/*.svg"
-sensei otimizar-svg --exclude "**/node_modules/**"
+prometheus otimizar-svg --include "**/*.svg"
+prometheus otimizar-svg --exclude "**/node_modules/**"
 ```
 
 ### Exemplos
 
 ```bash
 # Analisar potencial de otimização
-sensei otimizar-svg --dry --verbose
+prometheus otimizar-svg --dry --verbose
 
 # Otimizar pasta de ícones
-sensei otimizar-svg --dir src/assets/icons --write
+prometheus otimizar-svg --dir src/assets/icons --write
 
 # Otimizar SVGs específicos
-sensei otimizar-svg --include "public/**/*.svg" --write
+prometheus otimizar-svg --include "public/**/*.svg" --write
 ```
 
 ---
 
 ## atualizar
 
-Atualiza o Sensei com verificação de integridade prévia via Guardian.
+Atualiza o Prometheus com verificação de integridade prévia via Guardian.
 
 ### Uso Básico
 
 ```bash
 # Atualização local
-sensei atualizar
+prometheus atualizar
 
 # Atualização global
-sensei atualizar --global
+prometheus atualizar --global
 ```
 
 ### Fluxo de Execução
 
 1. Executa análise do projeto
 2. Verifica integridade via Guardian
-3. Se OK, executa `npm install sensei@latest`
+3. Se OK, executa `npm install prometheus@latest`
 4. Reporta sucesso/falha
 
 ### Exemplos
 
 ```bash
 # Atualização segura
-sensei atualizar
+prometheus atualizar
 
 # Se Guardian detectar alterações, primeiro aceite:
-sensei guardian --diff
-sensei guardian --accept-baseline
-sensei atualizar
+prometheus guardian --diff
+prometheus guardian --accept-baseline
+prometheus atualizar
 ```
 
 ---
@@ -590,49 +590,49 @@ Gerencia o mapa de reversão para operações de reestruturação.
 
 ```bash
 # Listar todos os moves registrados
-sensei reverter listar
+prometheus reverter listar
 
 # Reverter arquivo específico
-sensei reverter arquivo <caminho>
+prometheus reverter arquivo <caminho>
 
 # Reverter move por ID
-sensei reverter move <id>
+prometheus reverter move <id>
 
 # Limpar histórico de reversão
-sensei reverter limpar
-sensei reverter limpar --force
+prometheus reverter limpar
+prometheus reverter limpar --force
 ```
 
 ### Exemplos
 
 ```bash
 # Ver histórico de moves
-sensei reverter listar
+prometheus reverter listar
 
 # Reverter um arquivo movido
-sensei reverter arquivo src/new-location/file.ts
+prometheus reverter arquivo src/new-location/file.ts
 
 # Reverter move específico
-sensei reverter move abc123def
+prometheus reverter move abc123def
 
 # Limpar tudo (cuidado!)
-sensei reverter limpar --force
+prometheus reverter limpar --force
 ```
 
 ---
 
 ## histórico
 
-Utilitários globais para gerenciar o histórico de interações do Sensei.
+Utilitários globais para gerenciar o histórico de interações do Prometheus.
 
 ### Flags
 
 ```bash
-sensei --historico         # Exibe resumo do histórico
-sensei --limpar-historico  # Limpa o histórico persistido
+prometheus --historico         # Exibe resumo do histórico
+prometheus --limpar-historico  # Limpa o histórico persistido
 ```
 
-O histórico é persistido em `~/.sensei/history.json`. Cada execução do CLI registra os argumentos usados.
+O histórico é persistido em `~/.prometheus/history.json`. Cada execução do CLI registra os argumentos usados.
 
 ## 🌍 Variáveis de Ambiente Globais
 
@@ -667,20 +667,20 @@ export PONTUACAO_FATOR_ESCALA=2.0
 
 ```bash
 # 1. Análise inicial
-sensei diagnosticar --verbose
+prometheus diagnosticar --verbose
 
 # 2. Correção de tipos
-sensei fix-types --interactive
+prometheus fix-types --interactive
 
 # 3. Verificação de integridade
-sensei guardian --diff
+prometheus guardian --diff
 
 # 4. Limpeza de órfãos
-sensei podar --dry-run
-sensei podar
+prometheus podar --dry-run
+prometheus podar
 
 # 5. Análise final
-sensei diagnosticar --full --export relatorio-final.md
+prometheus diagnosticar --full --export relatorio-final.md
 ```
 
 ### Workflow de CI/CD
@@ -688,36 +688,36 @@ sensei diagnosticar --full --export relatorio-final.md
 ```bash
 # 1. Build e análise
 npm run build
-sensei diagnosticar --json --silence > diagnostico.json
+prometheus diagnosticar --json --silence > diagnostico.json
 
 # 2. Verificação de integridade
-sensei guardian --diff --json > guardian.json
+prometheus guardian --diff --json > guardian.json
 
 # 3. Métricas
-sensei metricas --json > metricas.json
+prometheus metricas --json > metricas.json
 
 # 4. Análise de performance
-sensei perf compare --baseline --json > perf.json
+prometheus perf compare --baseline --json > perf.json
 ```
 
 ### Workflow de Refatoração
 
 ```bash
 # 1. Snapshot antes
-sensei perf snapshot --name "antes-refactor"
-sensei guardian
+prometheus perf snapshot --name "antes-refactor"
+prometheus guardian
 
 # 2. Fazer mudanças...
 
 # 3. Análise após mudanças
-sensei diagnosticar --full
-sensei guardian --diff
+prometheus diagnosticar --full
+prometheus guardian --diff
 
 # 4. Performance comparison
-sensei perf compare antes-refactor --json
+prometheus perf compare antes-refactor --json
 
 # 5. Aceitar se OK
-sensei guardian --accept
+prometheus guardian --accept
 ```
 
 ---
@@ -741,11 +741,11 @@ npm install -g .
 
 ```bash
 # Aumentar timeout
-sensei diagnosticar --timeout 120
+prometheus diagnosticar --timeout 120
 
 # Via variável
-export SENSEI_ANALISE_TIMEOUT_POR_ANALISTA_MS=120000
-sensei diagnosticar
+export PROMETHEUS_ANALISE_TIMEOUT_POR_ANALISTA_MS=120000
+prometheus diagnosticar
 ```
 
 ### Performance Lenta
@@ -753,10 +753,10 @@ sensei diagnosticar
 ```bash
 # Reduzir workers
 export WORKER_POOL_MAX_WORKERS=1
-sensei diagnosticar
+prometheus diagnosticar
 
 # Restringir escopo
-sensei diagnosticar --include "src/**" --exclude "**/*.test.*"
+prometheus diagnosticar --include "src/**" --exclude "**/*.test.*"
 ```
 
 ---
@@ -765,8 +765,8 @@ sensei diagnosticar --include "src/**" --exclude "**/*.test.*"
 
 - [README Principal](../README.md)
 - [Sistema de Type Safety](TYPE-SAFETY-SYSTEM.md)
-- [Filtros Include/Exclude](GUIA_FILTROS_SENSEI.md)
-- [Configuração Local](CONFIGURAR-SENSEI-LOCAL.md)
+- [Filtros Include/Exclude](GUIA_FILTROS_PROMETHEUS.md)
+- [Configuração Local](CONFIGURAR-PROMETHEUS-LOCAL.md)
 
 ---
 

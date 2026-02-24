@@ -37,7 +37,7 @@ const LICENCA_PADROES: MarkdownLicensePatterns = {
 const PADRAO_LISTA_BRANCA: MarkdownWhitelistConfig = {
   paths: ['.github/copilot-instructions.md', 'docs/POLICY-PROVENIENCIA.md', 'docs/partials/AVISO-PROVENIENCIA.md'],
   patterns: ['**/relatorios/**', 'docs/historico/**', 'tests/**', 'tmp*.md'],
-  dirs: ['pre-public', 'preview-sensei', '.abandonados', '.deprecados', 'relatorios']
+  dirs: ['pre-public', 'preview-prometheus', '.abandonados', '.deprecados', 'relatorios']
 };
 
 /**
@@ -100,9 +100,9 @@ function hasRiskReferenceMarker(content: string): boolean {
   return /<!--\s*RISCO_REFERENCIA_OK\s*-->/i.test(content);
 }
 function hasSenseiIgnoreMarker(content: string, key: string): boolean {
-  // Ex.: <!-- sensei-ignore: license-check -->
+  // Ex.: <!-- prometheus-ignore: license-check -->
   const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`<!--\\s*sensei-ignore\\s*:\\s*${escaped}\\s*-->`, 'i').test(content);
+  return new RegExp(`<!--\\s*prometheus-ignore\\s*:\\s*${escaped}\\s*-->`, 'i').test(content);
 }
 function mergeWhitelist(base: MarkdownWhitelistConfig, override: Partial<MarkdownWhitelistConfig> | undefined, mode: 'merge' | 'replace'): MarkdownWhitelistConfig {
   const o = override || {};
@@ -243,7 +243,7 @@ async function analisarArquivoMarkdown(fullCaminho: string, relPath: string, opt
 }
 
 /**
- * Converte análise para ocorrências do Sensei
+ * Converte análise para ocorrências do Prometheus
  */
 function converterParaOcorrencias(analise: MarkdownAnaliseArquivo): Ocorrencia[] {
   const ocorrencias: Ocorrencia[] = [];
