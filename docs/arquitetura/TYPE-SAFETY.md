@@ -1,11 +1,11 @@
-# 🔒 Sistema de Type Safety do Sensei
+# 🔒 Sistema de Type Safety do Prometheus
 
-> Proveniência e Autoria: Este documento integra o projeto Sensei (licença MIT).
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
 > Documentação atualizada em: 29 de novembro de 2025
 
 ## 📋 Visão Geral
 
-O Sensei possui um sistema inteligente de detecção e correção de tipos inseguros (`any`, `unknown`) que:
+O Prometheus possui um sistema inteligente de detecção e correção de tipos inseguros (`any`, `unknown`) que:
 
 1. **Detecta** uso de tipos inseguros no código TypeScript
 2. **Categoriza** automaticamente se o uso é legítimo ou problemático
@@ -257,54 +257,54 @@ function processData(input: unknown) {
 
 ```bash
 # Ver todos os tipos inseguros
-sensei diagnosticar
+prometheus diagnosticar
 
 # Apenas tipos inseguros
-sensei diagnosticar --filtro tipo-inseguro-any
-sensei diagnosticar --filtro tipo-inseguro-unknown
-sensei diagnosticar --filtro tipo-inseguro-any-assertion
+prometheus diagnosticar --filtro tipo-inseguro-any
+prometheus diagnosticar --filtro tipo-inseguro-unknown
+prometheus diagnosticar --filtro tipo-inseguro-any-assertion
 ```
 
 ### 2. Análise Detalhada
 
 ```bash
 # Modo completo com contexto
-sensei diagnosticar --full
+prometheus diagnosticar --full
 
 # JSON estruturado para CI
-sensei diagnosticar --filtro tipo-inseguro-any --json
+prometheus diagnosticar --filtro tipo-inseguro-any --json
 
 # Export para arquivo
-sensei diagnosticar --export relatorio-tipos.md
+prometheus diagnosticar --export relatorio-tipos.md
 ```
 
 ### 3. Correção Automática
 
 ```bash
 # Auto-fix conservador (apenas casos óbvios)
-sensei diagnosticar --auto-fix --auto-fix-mode conservative
+prometheus diagnosticar --auto-fix --auto-fix-mode conservative
 
 # Auto-fix permissivo (mais agressivo)
-sensei diagnosticar --auto-fix --auto-fix-mode permissive
+prometheus diagnosticar --auto-fix --auto-fix-mode permissive
 
 # Dry-run (preview sem modificar)
-sensei diagnosticar --auto-fix --dry-run
+prometheus diagnosticar --auto-fix --dry-run
 
 # Comando dedicado fix-types
-sensei fix-types --interactive
+prometheus fix-types --interactive
 ```
 
 ### 4. Modo Interativo
 
 ```bash
 # Escolher quais correções aplicar
-sensei fix-types --interactive
+prometheus fix-types --interactive
 
 # Ver diff antes de aplicar
-sensei fix-types --show-diff
+prometheus fix-types --show-diff
 
 # Apenas validar sintaxe após fix
-sensei fix-types --validate-only
+prometheus fix-types --validate-only
 ```
 
 ## 📊 Métricas e Estatísticas
@@ -334,7 +334,7 @@ sensei fix-types --validate-only
 
 ## 🔧 Configuração
 
-### sensei.config.json
+### prometheus.config.json
 
 ```json
 {
@@ -477,10 +477,10 @@ describe("categorizarUnknown", () => {
 
 ```bash
 # Ver decisões do categorizador
-DEBUG_TYPE_SAFETY=true sensei diagnosticar --verbose
+DEBUG_TYPE_SAFETY=true prometheus diagnosticar --verbose
 
 # Ver regex matches
-DEBUG_DETECTOR=true sensei diagnosticar
+DEBUG_DETECTOR=true prometheus diagnosticar
 ```
 
 ### Problemas Comuns
@@ -493,7 +493,7 @@ DEBUG_DETECTOR=true sensei diagnosticar
 
 ```bash
 # Verificar confiança dos casos
-sensei diagnosticar --filtro tipo-inseguro-unknown --full
+prometheus diagnosticar --filtro tipo-inseguro-unknown --full
 
 # Ajustar threshold
 export TYPE_SAFETY_CONFIDENCE_THRESHOLD=90
@@ -523,7 +523,7 @@ if (isMinhaInterface(data)) {
 
 ```bash
 # Reduzir escopo
-sensei diagnosticar --include "src/**/*.ts" --exclude "**/*.test.ts"
+prometheus diagnosticar --include "src/**/*.ts" --exclude "**/*.test.ts"
 
 # Desabilitar análise profunda
 export TYPE_SAFETY_DEEP_ANALYSIS=false
@@ -576,4 +576,4 @@ Para contribuir com melhorias no sistema de type-safety:
 
 **Última atualização:** 29 de novembro de 2025
 **Versão do documento:** 1.0.0
-**Autor:** Equipe Sensei
+**Autor:** Equipe Prometheus

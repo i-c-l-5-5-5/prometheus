@@ -10,7 +10,7 @@ import { ICONES_ACAO, ICONES_COMANDO, ICONES_DIAGNOSTICO, ICONES_RELATORIO } fro
 export const RelatorioMensagens = {
   /* -------------------------- RELATÓRIO PRINCIPAL (gerador-relatorio.ts) -------------------------- */
   principal: {
-    titulo: `${ICONES_RELATORIO.resumo} Relatório Sensei`,
+    titulo: `${ICONES_RELATORIO.resumo} Relatório Prometheus`,
     secoes: {
       metadados: {
         data: 'Data',
@@ -104,7 +104,7 @@ export const RelatorioMensagens = {
       }
     },
     instrucoes: {
-      diagnosticoDetalhado: 'Para diagnóstico detalhado, execute: sensei diagnosticar --export',
+      diagnosticoDetalhado: 'Para diagnóstico detalhado, execute: prometheus diagnosticar --export',
       tabelasVerbosas: 'Para ver tabelas com moldura no terminal (muito verboso), use: --debug'
     }
   },

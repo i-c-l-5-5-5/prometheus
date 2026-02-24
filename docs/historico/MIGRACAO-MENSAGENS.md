@@ -1,6 +1,6 @@
 # Resumo do Trabalho: Migração e Centralização de Mensagens
 
-> Proveniência e Autoria: Este documento integra o projeto Sensei (licença MIT).
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
 > Nada aqui implica cessão de direitos morais/autorais.
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
@@ -9,7 +9,7 @@ Data: 2025-11-30
 
 ## Objetivo
 
-Unificar e centralizar todas as mensagens e ícones do CLI em `src/core/messages/`, substituir `console.log` por API de logs (`log.*`) nas saídas não-JSON, e reduzir strings hardcoded nos comandos, mantendo compatibilidade com modos de saída JSON/CI.
+Unificar e centralizar todas as mensagens e ícones do CLI em `src/core/messages/`, substituir `console.log` por API de logs (`log.*`) nas saídas não-JSON, e reduzir strings hardcoded nos comandos, mantendo compatibilidade com modos de saída JSON/CI. Este trabalho foi aplicado ao projeto Prometheus.
 
 ## Principais Mudanças
 

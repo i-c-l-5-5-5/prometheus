@@ -75,7 +75,7 @@ function mapTsConfigAliases(rootAbs: string): VitestAlias[] {
 
 function createResolvePlugin(rootAbs: string) {
   return {
-    name: 'sensei-resolve-src-ts-from-js',
+    name: 'prometheus-resolve-src-ts-from-js',
     enforce: 'pre' as const,
     resolveId(source: string, importer?: string | undefined) {
       try {
@@ -150,7 +150,7 @@ function resolveSrcPattern(rootAbs: string, source: string) {
 function createTransformPlugin(rootAbs: string) {
   // Deprecated: kept for backward compat but split into two focused plugins below
   return {
-    name: 'sensei-transform-tests-js-to-ts',
+    name: 'prometheus-transform-tests-js-to-ts',
     enforce: 'pre' as const,
     transform: () => null,
   };
@@ -158,7 +158,7 @@ function createTransformPlugin(rootAbs: string) {
 
 function createTransformImportsPlugin(rootAbs: string) {
   return {
-    name: 'sensei-transform-imports-js-to-ts',
+    name: 'prometheus-transform-imports-js-to-ts',
     enforce: 'pre' as const,
     transform(code: string, id: string) {
       try {
@@ -201,7 +201,7 @@ function createTransformImportsPlugin(rootAbs: string) {
 
 function createTransformMocksPlugin(rootAbs: string) {
   return {
-    name: 'sensei-transform-mocks-js-to-ts',
+    name: 'prometheus-transform-mocks-js-to-ts',
     enforce: 'pre' as const,
     transform(code: string, id: string) {
       try {

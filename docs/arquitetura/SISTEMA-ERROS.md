@@ -1,6 +1,6 @@
 # Sistema de Relatório de Erros Detalhado
 
-> Proveniência e Autoria: Este documento integra o projeto Sensei (licença MIT).
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
 > Nada aqui implica cessão de direitos morais/autorais.
 > Conteúdos de terceiros não licenciados de forma compatível não devem ser incluídos.
 > Referências a materiais externos devem ser linkadas e reescritas com palavras próprias.
@@ -222,7 +222,7 @@ $ npm run diagnosticar -- --verbose
 ### Ajustar Timeout
 
 ```json
-// sensei.config.json
+// prometheus.config.json
 {
   "ANALISE_TIMEOUT_POR_ANALISTA_MS": 60000 // 60 segundos
 }
@@ -276,10 +276,10 @@ Tests  8 passed (8)
 
 | Ferramenta         | Stack Traces | Contexto de Arquivo | Modo Verbose |
 | ------------------ | ------------ | ------------------- | ------------ |
-| **Sensei (novo)** | ✅           | ✅                  | ✅           |
+| **Prometheus (novo)** | ✅           | ✅                  | ✅           |
 | ESLint             | ✅           | ✅                  | ✅           |
 | TypeScript         | ✅           | ✅                  | ⚠️ Limitado  |
-| Sensei (antigo)   | ❌           | ⚠️ Parcial          | ❌           |
+| Prometheus (antigo)   | ❌           | ⚠️ Parcial          | ❌           |
 
 ## Próximos Passos
 
@@ -314,7 +314,7 @@ Tests  8 passed (8)
 
 - [GUIA_COMANDOS.md](./GUIA_COMANDOS.md) - Comandos CLI
 - [CONFIGURACAO-GRANULAR.md](./CONFIGURACAO-GRANULAR.md) - Configuração de regras
-- [ROBUSTEZ_SENSEI.md](./ROBUSTEZ_SENSEI.md) - Tratamento de erros geral
+- [ROBUSTEZ_PROMETHEUS.md](./ROBUSTEZ_PROMETHEUS.md) - Tratamento de erros geral
 
 ## Contribuindo
 
@@ -348,6 +348,7 @@ Para melhorar o sistema de erros:
    ```
 
 3. **Contexto relevante**
+
    ```typescript
    mensagem: `Falha em '${tecnica}' para ${arquivo} na linha ${linha}: ${erro}`;
    ```

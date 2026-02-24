@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// SPDX-FileCopyrightText: 2025 Sensei Contributors
+// SPDX-FileCopyrightText: 2025 Prometheus Contributors
 
 /**
  * @module cli/diagnostico/handlers/auto-fix-handler

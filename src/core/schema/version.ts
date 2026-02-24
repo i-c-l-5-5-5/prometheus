@@ -2,7 +2,7 @@
 /**
  * Sistema de Versionamento de Schema para Relatórios JSON
  *
- * Este módulo gerencia versões de schema para relatórios JSON do Sensei,
+ * Este módulo gerencia versões de schema para relatórios JSON do Prometheus,
  * garantindo compatibilidade futura e evolução controlada dos formatos.
  */
 

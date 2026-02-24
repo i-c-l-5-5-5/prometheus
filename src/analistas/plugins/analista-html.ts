@@ -7,7 +7,7 @@ import { parseDocument } from 'htmlparser2';
 
 import { criarAnalista, criarOcorrencia } from '@';
 
-const disableEnv = process.env.SENSEI_DISABLE_PLUGIN_HTML === '1';
+const disableEnv = process.env.PROMETHEUS_DISABLE_PLUGIN_HTML === '1';
 type Msg = ReturnType<typeof criarOcorrencia>;
 function warn(message: string, relPath: string, line?: number): Msg {
   return criarOcorrencia({

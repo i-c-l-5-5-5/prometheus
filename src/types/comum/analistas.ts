@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: MIT
 
+// SENSEI: Revisar ocorrências 'unhandled-async' (1). Ver relatorio:
+// relatorios/prometheus-relatorio-summary-2026-02-24T22-21-50-731Z.json
+
+
 import type { NodePath } from '@babel/traverse';
 import type { Node } from '@babel/types';
 import { ExcecoesMensagens } from '@core/messages/core/excecoes-messages.js';
@@ -55,12 +59,24 @@ export function asTecnicas(items: (Tecnica | Analista)[]): import('@').Tecnica[]
     const test = item && typeof item.test === 'function' ? item.test as (r: string) => boolean : undefined;
 
     // preparar aplicar com fallback seguro (no-op retorna array vazio)
+    // Nota: capturamos erros internos para evitar promises rejeitadas sem tratamento
     const aplicar = item && typeof item.aplicar === 'function' ? async (conteudo: string, relPath: string, ast: object | null, fullCaminho?: string, contextoGlobal?: import('@').ContextoExecucao) => {
       const astParam = ast as import('@babel/traverse').NodePath<import('@babel/types').Node> | null;
-
-      // Chamamos usando a assinatura esperada da Técnica, sem `any`.
       const aplicarFn = item.aplicar as unknown as Tecnica['aplicar'];
-      return await aplicarFn(conteudo, relPath, astParam, fullCaminho, contextoGlobal);
+      try {
+        const r = await aplicarFn(conteudo, relPath, astParam, fullCaminho, contextoGlobal);
+        return r;
+      } catch (err) {
+        const mensagem = err instanceof Error ? err.message : String(err);
+        // Retornamos uma ocorrência descrevendo o erro do analista em vez de lançar
+        return [{
+          mensagem: `Erro ao executar analista ${nome}: ${mensagem}`,
+          nivel: 'erro',
+          relPath,
+          linha: 0,
+          tipo: 'executacao-analista'
+        } as import('@').Ocorrencia];
+      }
     } : async () => [];
     return {
       nome,

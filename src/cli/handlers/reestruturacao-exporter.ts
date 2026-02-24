@@ -80,7 +80,7 @@ export async function exportarRelatoriosReestruturacao(options: ReestruturacaoEx
 
     // Gerar timestamp único para os arquivos
     const ts = new Date().toISOString().replace(/[:.]/g, '-');
-    const nomeBase = `sensei-reestruturacao-${ts}`;
+    const nomeBase = `prometheus-reestruturacao-${ts}`;
 
     // Normalizar movimentos para formato padrão
     const movimentosNormalizados = normalizarMovimentos(movimentos);

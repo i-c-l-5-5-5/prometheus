@@ -1,13 +1,166 @@
-# 🚀 Guia de Início Rápido do Sensei
+# 🚀 Guia de Início Rápido do Prometheus
 
-> Proveniência e Autoria: Este documento integra o projeto Sensei (licença MIT).
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
 > Última atualização: 15 de janeiro de 2026
 
 ---
 
-## O que é o Sensei?
+## O que é o Prometheus?
 
-O **Sensei** é uma ferramenta de linha de comando (CLI) para analisar, diagnosticar e manter projetos JavaScript/TypeScript (e com suporte heurístico para outras linguagens). Ele identifica problemas de código, verifica integridade de arquivos e sugere melhorias estruturais.
+O **Prometheus** é uma ferramenta de linha de comando (CLI) para analisar, diagnosticar e manter projetos JavaScript/TypeScript (e com suporte heurístico para outras linguagens). Ele identifica problemas de código, verifica integridade de arquivos e sugere melhorias estruturais.
+
+**Requisitos:** Node.js >=25.0.0
+
+# 🚀 Guia de Início Rápido do Prometheus
+
+>
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
+Sugerimos usar um gerenciador de versões (nvm/fnm/volta). Exemplo com nvm:
+
+## O que é o Prometheus?
+
+O **Prometheus** é uma ferramenta de linha de comando (CLI) para analisar, diagnosticar e manter projetos JavaScript/TypeScript (e com suporte heurístico para outras linguagens). Ele identifica problemas de código, verifica integridade de arquivos e sugere melhorias estruturais.
+
+```bash
+nvm install 25
+nvm use 25
+cd prometheus
+node --version  # deve ser v25.x
+```
+
+O projeto também inclui um arquivo `.nvmrc` com o valor `25`. Ao clonar, execute `nvm use` para ativar automaticamente a versão correta.
+npm link
+---
+
+## Instalação
+
+npm install --save-dev /caminho/para/prometheus
+
+npx prometheus diagnosticar
+
+```bash
+npx github:ossmoralus/prometheus diagnosticar --help
+git clone https://github.com/ossmoralus/prometheus.git
+prometheus diagnosticar
+
+O Prometheus irá:
+# Instale as dependências e compile
+npm install
+prometheus diagnosticar
+
+prometheus diagnosticar --full
+npm link
+prometheus diagnosticar --scan-only
+
+### Opção 2: Instalação Local
+prometheus diagnosticar --json
+```bash
+prometheus diagnosticar --export
+npm install --save-dev /caminho/para/prometheus
+
+prometheus diagnosticar --include "src/**"
+npx prometheus diagnosticar
+prometheus diagnosticar --exclude "**/*.test.ts"
+
+prometheus diagnosticar --include "src/**" --exclude "**/*.test.ts"
+
+```bash
+prometheus diagnosticar --auto-fix --auto-fix-mode conservative
+npx github:ossmoralus/prometheus diagnosticar --help
+prometheus diagnosticar --auto-fix --dry-run
+
+---
+prometheus guardian
+## Primeiro Diagnóstico
+prometheus guardian --diff
+Execute o comando básico no diretório do seu projeto:
+prometheus guardian --accept
+```bash
+# Criar prometheus.config.json na raiz do projeto
+cat > prometheus.config.json << 'EOF'
+```
+
+// @prometheus-disable-next-line tipo-inseguro-any
+const dados: any = respostaExterna;
+
+// @prometheus-disable hardcoded-secrets
+const configKey = "chave_configuracao_publica";
+2. 🔍 **Analisar** código em busca de problemas
+3. 📊 **Exibir** um resumo com ocorrências encontradas
+name: Prometheus CI
+
+### Saída Típica
+
+```
+✅ Varredura concluída: 120 arquivos em 15 diretórios
+
+📊 Resumo das 25 ocorrências:
+
+  📋 Principais tipos:
+     • problemas-teste: 18
+     • tipo-inseguro-any: 4
+      - name: Instalar Prometheus
+        run: |
+          npm install
+          npm run build
+     • src/services/api.ts (5)
+        run: npx prometheus diagnosticar --json --export
+     • tests/unit/api.test.ts (2)
+
+prometheus diagnosticar --include "packages/my-package/**"
+```
+
+prometheus diagnosticar \
+---
+
+## Comandos Essenciais
+
+// prometheus.config.json
+
+### 1. Diagnóstico do Projeto
+
+```bash
+# Diagnóstico básico (modo compacto)
+prometheus diagnosticar
+
+# Diagnóstico detalhado
+prometheus diagnosticar --full
+
+# Apenas visualizar arquivos (sem análise)
+prometheus diagnosticar --scan-only
+```
+
+### 2. Exportar Resultados
+
+```bash
+# Saída JSON para CI/CD
+prometheus diagnosticar --json
+
+# Exportar relatório para arquivo
+prometheus diagnosticar --export
+```
+
+### 3. Filtrar Análise
+
+```bash
+# Analisar apenas pasta src/
+prometheus diagnosticar --include "src/**"
+
+## Configuração Rápida
+## Casos de Uso Comuns
+          node-version: "20"
+```bash
+
+# 🚀 Guia de Início Rápido do Prometheus
+
+> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
+> Última atualização: 15 de janeiro de 2026
+
+---
+
+## O que é o Prometheus?
+
+O **Prometheus** é uma ferramenta de linha de comando (CLI) para analisar, diagnosticar e manter projetos JavaScript/TypeScript (e com suporte heurístico para outras linguagens). Ele identifica problemas de código, verifica integridade de arquivos e sugere melhorias estruturais.
 
 **Requisitos:** Node.js >=25.0.0
 
@@ -30,14 +183,14 @@ O projeto também inclui um arquivo `.nvmrc` com o valor `25`. Ao clonar, execut
 
 ```bash
 # Clone o repositório
-git clone https://github.com/ossmoralus/sensei.git
-cd sensei
+git clone https://github.com/ossmoralus/prometheus.git
+cd prometheus
 
 # Instale as dependências e compile
 npm install
 npm run build
 
-# Link global (permite usar 'sensei' de qualquer diretório)
+# Link global (permite usar 'prometheus' de qualquer diretório)
 npm link
 ```
 
@@ -45,17 +198,17 @@ npm link
 
 ```bash
 # No diretório do seu projeto
-npm install --save-dev /caminho/para/sensei
+npm install --save-dev /caminho/para/prometheus
 
 # Use via npx
-npx sensei diagnosticar
+npx prometheus diagnosticar
 ```
 
 ### Opção 3: Teste Rápido (sem instalar)
 
 ```bash
 # Requer Node.js 24+
-npx github:ossmoralus/sensei diagnosticar --help
+npx github:ossmoralus/prometheus diagnosticar --help
 ```
 
 ---
@@ -65,10 +218,10 @@ npx github:ossmoralus/sensei diagnosticar --help
 Execute o comando básico no diretório do seu projeto:
 
 ```bash
-sensei diagnosticar
+prometheus diagnosticar
 ```
 
-O Sensei irá:
+O Prometheus irá:
 
 1. 📁 **Varrer** todos os arquivos do projeto
 2. 🔍 **Analisar** código em busca de problemas
@@ -102,59 +255,59 @@ O Sensei irá:
 
 ```bash
 # Diagnóstico básico (modo compacto)
-sensei diagnosticar
+prometheus diagnosticar
 
 # Diagnóstico detalhado
-sensei diagnosticar --full
+prometheus diagnosticar --full
 
 # Apenas visualizar arquivos (sem análise)
-sensei diagnosticar --scan-only
+prometheus diagnosticar --scan-only
 ```
 
 ### 2. Exportar Resultados
 
 ```bash
 # Saída JSON para CI/CD
-sensei diagnosticar --json
+prometheus diagnosticar --json
 
 # Exportar relatório para arquivo
-sensei diagnosticar --export
+prometheus diagnosticar --export
 ```
 
 ### 3. Filtrar Análise
 
 ```bash
 # Analisar apenas pasta src/
-sensei diagnosticar --include "src/**"
+prometheus diagnosticar --fast
 
 # Excluir testes
-sensei diagnosticar --exclude "**/*.test.ts"
+prometheus diagnosticar --exclude "**/*.test.ts"
 
 # Combinação
-sensei diagnosticar --include "src/**" --exclude "**/*.test.ts"
+prometheus diagnosticar --include "src/**" --exclude "**/*.test.ts"
 ```
 
 ### 4. Correção Automática
 
 ```bash
 # Correção conservadora (segura)
-sensei diagnosticar --auto-fix --auto-fix-mode conservative
+
 
 # Preview das correções (sem aplicar)
-sensei diagnosticar --auto-fix --dry-run
+# Limite o escopo
 ```
 
 ### 5. Verificação de Integridade (Guardian)
 
 ```bash
 # Criar baseline de hashes
-sensei guardian
+prometheus guardian
 
 # Verificar alterações
-sensei guardian --diff
+prometheus guardian --diff
 
 # Aceitar alterações atuais
-sensei guardian --accept
+prometheus guardian --accept
 ```
 
 ---
@@ -164,8 +317,8 @@ sensei guardian --accept
 ### Criar arquivo de configuração
 
 ```bash
-# Criar sensei.config.json na raiz do projeto
-cat > sensei.config.json << 'EOF'
+# Criar prometheus.config.json na raiz do projeto
+cat > prometheus.config.json << 'EOF'
 {
   "INCLUDE_EXCLUDE_RULES": {
     "globalExcludeGlob": [
@@ -189,10 +342,10 @@ EOF
 Use comentários inline para suprimir ocorrências específicas:
 
 ```typescript
-// @sensei-disable-next-line tipo-inseguro-any
+// @prometheus-disable-next-line tipo-inseguro-any
 const dados: any = respostaExterna;
 
-// @sensei-disable hardcoded-secrets
+// @prometheus-disable hardcoded-secrets
 const configKey = "chave_configuracao_publica";
 ```
 
@@ -210,141 +363,12 @@ const configKey = "chave_configuracao_publica";
 | `--export`    | Exportar relatório para arquivo     |
 | `--scan-only` | Apenas varrer arquivos, sem análise |
 
-### Filtros
-
-| Flag                 | Descrição                                 |
-| -------------------- | ----------------------------------------- |
-| `--include "padrão"` | Incluir arquivos que correspondem ao glob |
-| `--exclude "padrão"` | Excluir arquivos que correspondem ao glob |
-| `--exclude-tests`    | Excluir arquivos de teste                 |
-
-### Correções
-
-| Flag              | Descrição                                      |
-| ----------------- | ---------------------------------------------- |
-| `--auto-fix`      | Ativar correções automáticas                   |
-| `--auto-fix-mode` | Modo: `conservative`, `balanced`, `aggressive` |
-| `--dry-run`       | Preview das correções sem aplicar              |
-
-### Níveis de Log
-
-| Flag                | Descrição     |
-| ------------------- | ------------- |
-| `--log-level info`  | Nível padrão  |
-| `--log-level debug` | Mais detalhes |
-| `--log-level warn`  | Apenas avisos |
-| `--log-level error` | Apenas erros  |
-
----
-
-## Casos de Uso Comuns
-
-### Integração com CI/CD
-
-```yaml
-# .github/workflows/sensei.yml
-name: Sensei CI
-
-on: [push, pull_request]
-
-jobs:
-  diagnostico:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Instalar Sensei
-        run: |
-          npm install
-          npm run build
-
-      - name: Executar Diagnóstico
-        run: npx sensei diagnosticar --json --export
-```
-
-### Monorepo
-
-```bash
-# Analisar um pacote específico
-sensei diagnosticar --include "packages/my-package/**"
-
-# Analisar múltiplos pacotes
-sensei diagnosticar \
-  --include "packages/core/**" \
-  --include "packages/utils/**"
-```
-
-### Código Legado
-
-```json
-// sensei.config.json
-{
-  "rules": {
-    "tipo-inseguro": {
-      "exclude": ["src/legacy/**"]
-    }
-  }
-}
-```
-
----
-
-## Próximos Passos
-
-1. 📖 Leia o [Guia de Comandos](guias/GUIA-COMANDOS.md) completo
-2. ⚙️ Configure o [Guia de Configuração](guias/GUIA-CONFIGURACAO.md)
-3. 🔒 Entenda a [Segurança](arquitetura/SEGURANCA.md) do sistema
-4. 🧪 Explore o [Sistema de Type Safety](arquitetura/TYPE-SAFETY.md)
-
----
-
-## Ajuda Rápida
-
-```bash
-# Ver todos os comandos disponíveis
-sensei --help
-
-# Ajuda de um comando específico
-sensei diagnosticar --help
-
-# Listar analistas disponíveis
-sensei analistas --listar
-```
-
----
-
-## Problemas Comuns
-
-### "Comando não encontrado"
-
-```bash
-# Certifique-se de ter feito o link global
-npm link
-
-# Ou use npx
-npx sensei diagnosticar
-```
-
-### "Muitos falsos positivos"
-
-1. Use `--exclude` para filtrar arquivos de teste
-2. Configure `testPatterns.allowAnyType: true` para testes
-3. Use `// @sensei-disable-next-line` para casos específicos
-
-### "Análise muito lenta"
-
-```bash
-# Use modo rápido
-sensei diagnosticar --fast
-
-# Limite o escopo
-sensei diagnosticar --include "src/**"
+prometheus diagnosticar --include "src/**"
 
 # Aumente workers (paralelização)
-WORKER_POOL_MAX_WORKERS=4 sensei diagnosticar
+
+WORKER_POOL_MAX_WORKERS=4 prometheus diagnosticar
+
 ```
 
 ---

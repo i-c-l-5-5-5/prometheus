@@ -11,7 +11,7 @@ const disableEnv = (globalThis as {
   process?: {
     env?: Record<string, string | undefined>;
   };
-}).process?.env?.SENSEI_DISABLE_PLUGIN_CSS === '1';
+}).process?.env?.PROMETHEUS_DISABLE_PLUGIN_CSS === '1';
 type Msg = ReturnType<typeof criarOcorrencia>;
 function warn(message: string, relPath: string, line?: number, nivelArg: (typeof SeverityNiveis)[keyof typeof SeverityNiveis] = SeverityNiveis.warning): Msg {
   return criarOcorrencia({
@@ -415,7 +415,7 @@ function collectCssIssuesFromPostCssAst(root: Root, relPath: string): Msg[] {
 export const analistaCss = criarAnalista({
   nome: 'analista-css',
   categoria: 'estilo',
-  descricao: 'Lint de CSS do Sensei (com fallback heurístico).',
+  descricao: 'Lint de CSS do Prometheus (com fallback heurístico).',
   global: false,
   test: (relPath: string): boolean => /\.(css|scss|sass)$/i.test(relPath),
   aplicar: async (src, relPath): Promise<Msg[] | null> => {
@@ -424,7 +424,7 @@ export const analistaCss = criarAnalista({
     const roots = parseWithPostCssRoots(src, relPath);
     const astIssues = roots ? roots.flatMap(r => collectCssIssuesFromPostCssAst(r, relPath)) : [];
 
-    // Mantém regras stylelint-like para CSS puro (pipeline atual do Sensei).
+    // Mantém regras stylelint-like para CSS puro (pipeline atual do Prometheus).
     const cssLint = isCss ? collectCssIssuesLikeStylelint(src, relPath) ?? [] : [];
     const seen = new Set<string>();
     const merged: Msg[] = [];

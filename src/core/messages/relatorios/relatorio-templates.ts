@@ -198,7 +198,7 @@ export function gerarFooterRelatorio(timestampISO?: string): string[] {
   const lines: string[] = [];
   lines.push(RelatorioMensagens.comum.separadores.secao);
   lines.push('');
-  lines.push('_Gerado por Sensei CLI_');
+  lines.push('_Gerado por Prometheus CLI_');
   if (timestampISO) {
     lines.push(`_${timestampISO}_`);
   }

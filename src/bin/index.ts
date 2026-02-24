@@ -46,7 +46,7 @@ const entryUrl = pathToFileURL(entryCaminho).toString();
       process.exit(0);
     }
     const msg = typeof message === 'string' ? message : extrairMensagemErro(err);
-    console.error('Erro ao inicializar o sensei:', msg);
+    console.error('Erro ao inicializar o prometheus:', msg);
     if (err && typeof err === 'object' && 'stack' in err) {
       console.error((err as {
         stack?: string;
@@ -65,7 +65,7 @@ const entryUrl = pathToFileURL(entryCaminho).toString();
     process.exit(0);
   }
   const msg = typeof message === 'string' ? message : extrairMensagemErro(err);
-  console.error('Erro ao inicializar o sensei:', msg);
+  console.error('Erro ao inicializar o prometheus:', msg);
   if (err && typeof err === 'object' && 'stack' in err) {
     console.error((err as {
       stack?: string;

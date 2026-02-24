@@ -50,7 +50,8 @@
       "unhandled-async",
       "missing-jsdoc",
       "magic-constants",
-      "poor-naming"
+      "poor-naming",
+      "problemas-teste"
     ],
     "severity": {},
     "paths": []

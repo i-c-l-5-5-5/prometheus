@@ -30,7 +30,7 @@ export class ConversationMemory {
     return [...this.history];
   }
   getSummary(): {
-    // @sensei-disable: tipo-literal-inline-complexo
+    // @prometheus-disable: tipo-literal-inline-complexo
     totalMessages: number;
     userMessages: number;
     assistantMessages: number;
@@ -75,7 +75,7 @@ export class SenseiContextMemory {
       const parsed = JSON.parse(raw) as Partial<SenseiContextState>;
       if (parsed && parsed.schemaVersion === 1) {
         this.state = {
-          // @sensei-disable: tipo-literal-inline-complexo
+          // @prometheus-disable: tipo-literal-inline-complexo
           schemaVersion: 1,
           lastRuns: Array.isArray(parsed.lastRuns) ? parsed.lastRuns as SenseiRunRecord[] : [],
           preferences: parsed.preferences && typeof parsed.preferences === 'object' ? parsed.preferences as Record<string, unknown> : {}
@@ -87,7 +87,7 @@ export class SenseiContextMemory {
   }
   getState(): SenseiContextState {
     return {
-      // @sensei-disable: tipo-literal-inline-complexo
+      // @prometheus-disable: tipo-literal-inline-complexo
       schemaVersion: 1,
       lastRuns: [...this.state.lastRuns],
       preferences: {
@@ -106,7 +106,7 @@ export class SenseiContextMemory {
     await this.persist();
   }
   async recordRunStart(
-  // @sensei-disable: tipo-literal-inline-complexo
+  // @prometheus-disable: tipo-literal-inline-complexo
   input: {
     cwd: string;
     argv: string[];
@@ -129,7 +129,7 @@ export class SenseiContextMemory {
     return id;
   }
   async recordRunEnd(id: string,
-  // @sensei-disable: tipo-literal-inline-complexo
+  // @prometheus-disable: tipo-literal-inline-complexo
   update: {
     ok: boolean;
     exitCode?: number;
@@ -167,13 +167,13 @@ export class SenseiContextMemory {
 }
 export async function getDefaultMemory(): Promise<ConversationMemory> {
   // Preferimos memória por projeto (cwd) para evitar misturar repositórios.
-  const persistCaminho = join(process.cwd(), '.sensei', 'history.json');
+  const persistCaminho = join(process.cwd(), '.prometheus', 'history.json');
   const mem = new ConversationMemory(10, persistCaminho);
   await mem.init();
   return mem;
 }
 export async function getDefaultContextMemory(): Promise<SenseiContextMemory> {
-  const persistCaminho = join(process.cwd(), '.sensei', 'context.json');
+  const persistCaminho = join(process.cwd(), '.prometheus', 'context.json');
   const mem = new SenseiContextMemory(20, persistCaminho);
   await mem.init();
   return mem;

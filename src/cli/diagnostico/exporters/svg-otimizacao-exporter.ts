@@ -68,7 +68,7 @@ export async function exportarRelatorioSvgOtimizacao(params: {
       if (existing.exemplos.length < 10) existing.exemplos.push(c);
     }
   }
-  const outputCaminho = path.join(relatoriosDir, `sensei-svg-otimizacao-${ts}.md`);
+  const outputCaminho = path.join(relatoriosDir, `prometheus-svg-otimizacao-${ts}.md`);
   let md = '';
   md += '# Relatório de Otimização de SVG\n\n';
   md += `Gerado em: ${new Date().toISOString()}\n\n`;

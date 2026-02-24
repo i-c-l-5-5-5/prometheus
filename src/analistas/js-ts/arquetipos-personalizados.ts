@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-// @sensei-disable tipo-literal-inline-complexo
+// @prometheus-disable tipo-literal-inline-complexo
 // Justificativa: tipos locais para arquétipos personalizados
 /**
- * Sistema de Arquétipos Personalizados do Sensei
+ * Sistema de Arquétipos Personalizados do Prometheus
  *
  * Permite que usuários criem arquétipos personalizados para seus projetos,
  * mantendo compatibilidade com arquétipos oficiais e oferecendo sugestões
@@ -16,23 +16,23 @@ import { ARQUETIPOS } from '@analistas/estrategistas/arquetipos-defs.js';
 // NOTA: parseFileAST ainda não foi implementado no módulo de parsing
 // import { parseFileAST } from '@core/parsing/parser.js';
 import { log } from '@core/messages/index.js';
-import { SENSEI_ARQUIVOS } from '@core/registry/paths.js';
+import { PROMETHEUS_ARQUIVOS } from '@core/registry/paths.js';
 import { lerEstado, salvarEstado } from '@shared/persistence/persistencia.js';
 
 import type { ArquetipoEstruturaDef, ArquetipoPersonalizado } from '@';
 
 // Nome do arquivo legado (para compatibilidade)
-const ARQUETIPO_PERSONALIZADO_FILENAME = 'sensei.repo.arquetipo.json';
+const ARQUETIPO_PERSONALIZADO_FILENAME = 'prometheus.repo.arquetipo.json';
 
 /**
  * Carrega o arquétipo personalizado do projeto atual
- * Tenta primeiro o novo caminho (.sensei/estrutura.arquetipo.json),
- * depois o legado (raiz/sensei.repo.arquetipo.json)
+ * Tenta primeiro o novo caminho (.prometheus/estrutura.arquetipo.json),
+ * depois o legado (raiz/prometheus.repo.arquetipo.json)
  */
 
 export async function carregarArquetipoPersonalizado(baseDir: string = process.cwd()): Promise<ArquetipoPersonalizado | null> {
   // Tentar novo caminho primeiro
-  const novoCaminho = SENSEI_ARQUIVOS.ESTRUTURA_ARQUETIPO;
+  const novoCaminho = PROMETHEUS_ARQUIVOS.ESTRUTURA_ARQUETIPO;
   const caminhoLegado = path.join(baseDir, ARQUETIPO_PERSONALIZADO_FILENAME);
   try {
     // Tenta novo caminho
@@ -64,7 +64,7 @@ export async function carregarArquetipoPersonalizado(baseDir: string = process.c
 }
 /**
  * Salva o arquétipo personalizado do projeto atual
- * Usa o novo caminho (.sensei/estrutura.arquetipo.json)
+ * Usa o novo caminho (.prometheus/estrutura.arquetipo.json)
  */
 export async function salvarArquetipoPersonalizado(arquetipo: Omit<ArquetipoPersonalizado, 'metadata'>, _baseDir: string = process.cwd()): Promise<void> {
   const arquetipoCompleto: ArquetipoPersonalizado = {
@@ -77,9 +77,9 @@ export async function salvarArquetipoPersonalizado(arquetipo: Omit<ArquetipoPers
   };
 
   // Usar novo caminho centralizado
-  const novoCaminho = SENSEI_ARQUIVOS.ESTRUTURA_ARQUETIPO;
+  const novoCaminho = PROMETHEUS_ARQUIVOS.ESTRUTURA_ARQUETIPO;
 
-  // Garantir que o diretório .sensei existe
+  // Garantir que o diretório .prometheus existe
   const senseiDir = path.dirname(novoCaminho);
   try {
     await fs.mkdir(senseiDir, {
@@ -100,7 +100,7 @@ export async function salvarArquetipoPersonalizado(arquetipo: Omit<ArquetipoPers
 export async function existeArquetipoPersonalizado(baseDir: string = process.cwd()): Promise<boolean> {
   // Verificar novo caminho primeiro
   try {
-    await fs.access(SENSEI_ARQUIVOS.ESTRUTURA_ARQUETIPO);
+    await fs.access(PROMETHEUS_ARQUIVOS.ESTRUTURA_ARQUETIPO);
     return true;
   } catch {
     // Tentar caminho legado
@@ -134,7 +134,7 @@ export function gerarSugestaoArquetipoPersonalizado(projetoDesconhecido: {
   const sugestao = `
 🌟 Projeto personalizado detectado: "${projetoDesconhecido.nome}"
 
-O Sensei identificou uma estrutura de projeto que não corresponde a arquétipos oficiais,
+O Prometheus identificou uma estrutura de projeto que não corresponde a arquétipos oficiais,
 mas você pode criar um arquétipo personalizado para receber sugestões otimizadas!
 
 📁 Estrutura detectada:
@@ -145,10 +145,10 @@ ${projetoDesconhecido.arquivosRaiz.slice(0, 5).map(file => `  • ${file}`).join
 ${projetoDesconhecido.arquivosRaiz.length > 5 ? `  • ... e mais ${projetoDesconhecido.arquivosRaiz.length - 5} arquivos` : ''}
 
 💡 Para criar seu arquétipo personalizado, execute:
-   sensei diagnosticar --criar-arquetipo
+   prometheus diagnosticar --criar-arquetipo
 
-Isso criará um arquivo 'sensei.repo.arquetipo.json' com base na estrutura atual,
-que o Sensei usará para oferecer sugestões personalizadas mantendo as melhores práticas.
+Isso criará um arquivo 'prometheus.repo.arquetipo.json' com base na estrutura atual,
+que o Prometheus usará para oferecer sugestões personalizadas mantendo as melhores práticas.
 `;
   return sugestao;
 }
