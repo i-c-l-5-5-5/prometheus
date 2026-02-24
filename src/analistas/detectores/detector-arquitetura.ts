@@ -4,7 +4,7 @@ import type { ExportNamedDeclaration, ImportDeclaration, ImportDefaultSpecifier,
 import { traverse } from '@core/config/traverse.js';
 import * as path from 'path';
 
-import type { AnaliseArquitetural, Analista, ContextoExecucao, EstatisticasArquivo, ExportInfo, ImportInfo, Ocorrencia } from '@';
+import type { AnaliseArquitetural, Analista, ContextoExecucao, EstatisticasArquivo, ExportInfo, ImportInfo, Ocorrencia, ReportEvent } from '@';
 import { criarOcorrencia } from '@';
 
 export const analistaArquitetura: Analista = {
@@ -30,16 +30,16 @@ export const analistaArquitetura: Analista = {
       } catch (erro) {
         // Em caso de falha na análise contextual, registre ocorrência e continue sem travar
         if (typeof contexto.report === 'function') {
-          contexto.report({
+          const ev: ReportEvent = {
             code: 'ARQ_ERRO',
             tipo: 'erro-analise',
             nivel: 'aviso',
             relPath,
             linha: 1,
             data: { erro },
-            origem: 'arquitetura',
-          });
-          return [];
+            origem: 'arquitetura'
+          };
+          try { contexto.report(ev); return []; } catch { }
         }
         const { DetectorArquiteturaMensagens } = await import(
           '@core/messages/analistas/detector-arquitetura-messages.js'
@@ -55,7 +55,7 @@ export const analistaArquitetura: Analista = {
 
       // Relatório principal da arquitetura
       if (typeof contexto.report === 'function') {
-        contexto.report({
+        const ev: ReportEvent = {
           code: 'ARQ_PADRAO',
           tipo: 'analise-arquitetura',
           nivel: (analiseCompleta.violacoes?.length ?? 0) > 0 ? 'aviso' : 'info',
@@ -63,10 +63,11 @@ export const analistaArquitetura: Analista = {
           linha: 1,
           data: {
             padraoIdentificado: analiseCompleta.padraoIdentificado,
-            confianca: analiseCompleta.confianca ?? 0,
+            confianca: analiseCompleta.confianca ?? 0
           },
-          origem: 'arquitetura',
-        });
+          origem: 'arquitetura'
+        };
+        try { contexto.report(ev); } catch { /* fallback handled below */ }
       } else {
         const { DetectorArquiteturaMensagens } = await import(
           '@core/messages/analistas/detector-arquitetura-messages.js'
@@ -83,15 +84,16 @@ export const analistaArquitetura: Analista = {
       // Relatório de características
       if ((analiseCompleta.caracteristicas?.length ?? 0) > 0) {
         if (typeof contexto.report === 'function') {
-          contexto.report({
+          const ev: ReportEvent = {
             code: 'ARQ_CARACTERISTICAS',
             tipo: 'caracteristicas-arquitetura',
             nivel: 'info',
             relPath,
             linha: 1,
             data: { caracteristicas: analiseCompleta.caracteristicas || [] },
-            origem: 'arquitetura',
-          });
+            origem: 'arquitetura'
+          };
+          try { contexto.report(ev); } catch { /* fallback handled below */ }
         } else {
           const { DetectorArquiteturaMensagens } = await import(
             '@core/messages/analistas/detector-arquitetura-messages.js'
@@ -109,15 +111,16 @@ export const analistaArquitetura: Analista = {
       // Relatório de violações
       for (const violacao of (analiseCompleta.violacoes ?? []).slice(0, 3)) {
         if (typeof contexto.report === 'function') {
-          contexto.report({
+          const ev: ReportEvent = {
             code: 'ARQ_VIOLACAO',
             tipo: 'violacao-arquitetura',
             nivel: 'aviso',
             relPath,
             linha: 1,
             data: { violacao },
-            origem: 'arquitetura',
-          });
+            origem: 'arquitetura'
+          };
+          try { contexto.report(ev); } catch { /* fallback handled below */ }
         } else {
           const { DetectorArquiteturaMensagens } = await import(
             '@core/messages/analistas/detector-arquitetura-messages.js'
@@ -137,7 +140,7 @@ export const analistaArquitetura: Analista = {
       if (metricas && typeof metricas === 'object' && 'acoplamento' in metricas && 'coesao' in metricas) {
         if ((metricas.acoplamento ?? 0) > 0.7 || (metricas.coesao ?? 1) < 0.3) {
           if (typeof contexto.report === 'function') {
-            contexto.report({
+            const ev: ReportEvent = {
               code: 'ARQ_METRICAS',
               tipo: 'metricas-arquitetura',
               nivel: 'aviso',
@@ -145,10 +148,11 @@ export const analistaArquitetura: Analista = {
               linha: 1,
               data: {
                 acoplamento: metricas.acoplamento ?? 0,
-                coesao: metricas.coesao ?? 0,
+                coesao: metricas.coesao ?? 0
               },
-              origem: 'arquitetura',
-            });
+              origem: 'arquitetura'
+            };
+            try { contexto.report(ev); } catch { /* fallback handled below */ }
           } else {
             const { DetectorArquiteturaMensagens } = await import(
               '@core/messages/analistas/detector-arquitetura-messages.js'
@@ -166,16 +170,16 @@ export const analistaArquitetura: Analista = {
       return ocorrencias;
     } catch (erro) {
       if (typeof contexto.report === 'function') {
-        contexto.report({
+        const ev: ReportEvent = {
           code: 'ARQ_ERRO',
           tipo: 'erro-analise',
           nivel: 'aviso',
           relPath,
           linha: 1,
           data: { erro },
-          origem: 'arquitetura',
-        });
-        return [];
+          origem: 'arquitetura'
+        };
+        try { contexto.report(ev); return []; } catch { }
       }
       const { DetectorArquiteturaMensagens } = await import(
         '@core/messages/analistas/detector-arquitetura-messages.js'

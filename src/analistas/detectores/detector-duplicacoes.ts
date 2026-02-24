@@ -5,7 +5,7 @@ import { traverse } from '@core/config/traverse.js';
 import { DetectorAgregadosMensagens } from '@core/messages/analistas/detector-agregados-messages.js';
 import { createHash } from 'crypto';
 
-import type { Analista, BlocoFuncao, ContextoExecucao, DuplicacaoEncontrada, Ocorrencia } from '@';
+import type { Analista, BlocoFuncao, ContextoExecucao, DuplicacaoEncontrada, Ocorrencia, ReportEvent } from '@';
 import { criarOcorrencia } from '@';
 
 export const analistaDuplicacoes: Analista = {
@@ -32,6 +32,27 @@ export const analistaDuplicacoes: Analista = {
       try {
         todasFuncoes = await extrairFuncoesDoContexto(contexto, relPath);
       } catch (erro) {
+        const ev = {
+          tipo: 'detector-duplicacoes-erro',
+          nivel: 'aviso' as const,
+          mensagem: DetectorAgregadosMensagens.erroAnalisarDuplicacoes(erro),
+          relPath,
+          linha: 1
+        };
+        if (contexto && typeof contexto.report === 'function') {
+          try {
+            contexto.report(ev as ReportEvent);
+            return [];
+          } catch {
+            return [criarOcorrencia({
+              tipo: 'erro_analise',
+              nivel: 'aviso',
+              mensagem: DetectorAgregadosMensagens.erroAnalisarDuplicacoes(erro),
+              relPath,
+              linha: 1
+            })];
+          }
+        }
         return [criarOcorrencia({
           tipo: 'erro_analise',
           nivel: 'aviso',
@@ -67,6 +88,27 @@ export const analistaDuplicacoes: Analista = {
       }
       return ocorrencias;
     } catch (erro) {
+      const ev = {
+        tipo: 'detector-duplicacoes-erro',
+        nivel: 'aviso' as const,
+        mensagem: DetectorAgregadosMensagens.erroAnalisarDuplicacoes(erro),
+        relPath,
+        linha: 1
+      };
+      if (contexto && typeof contexto.report === 'function') {
+        try {
+          contexto.report(ev as ReportEvent);
+          return [];
+        } catch {
+          return [criarOcorrencia({
+            tipo: 'erro_analise',
+            nivel: 'aviso',
+            mensagem: DetectorAgregadosMensagens.erroAnalisarDuplicacoes(erro),
+            relPath,
+            linha: 1
+          })];
+        }
+      }
       return [criarOcorrencia({
         tipo: 'erro_analise',
         nivel: 'aviso',

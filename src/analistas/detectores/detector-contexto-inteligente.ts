@@ -15,7 +15,7 @@ import type { ExportDeclaration, ImportDeclaration, Program } from '@babel/types
 import { config } from '@core/config/config.js';
 import { traverse } from '@core/config/traverse.js';
 
-import type { EvidenciaContexto, FileEntryWithAst, PackageJson, ResultadoDeteccaoContextual } from '@';
+import type { ContextoExecucao, EvidenciaContexto, FileEntryWithAst, PackageJson, ReportEvent,ResultadoDeteccaoContextual } from '@';
 
 // Re-exporta os tipos para compatibilidade
 export type { EvidenciaContexto, ResultadoDeteccaoContextual };
@@ -498,12 +498,30 @@ function calcularConfiancaTotal(evidencias: EvidenciaContexto[]): number {
 }
 export function detectarContextoInteligente(estruturaDetectada: string[], arquivos: FileEntryWithAst[], packageJson?: PackageJson, options?: {
   quiet?: boolean;
+  contexto?: ContextoExecucao;
 }): ResultadoDeteccaoContextual[] {
   // DEBUG: Log simples para verificar se está sendo chamado
   if (!options?.quiet && config.VERBOSE) {
-    console.log('🔍 Package.json completo:', JSON.stringify(packageJson, null, 2));
+    const mensagem = `🔍 Package.json completo:${  JSON.stringify(packageJson, null, 2)}`;
+    const ev: ReportEvent = {
+      tipo: 'detector-contexto-inteligente-debug-package',
+      nivel: 'info',
+      mensagem,
+      relPath: ''
+    };
+    if (options?.contexto && typeof options.contexto.report === 'function') {
+      try { options.contexto.report(ev); } catch { /* ignore */ }
+    } else {
+      console.debug(mensagem);
+    }
     if (packageJson?.dependencies?.vue) {
-      console.log('🔍 Package.json tem Vue:', packageJson.dependencies.vue);
+      const m2 = `🔍 Package.json tem Vue: ${packageJson.dependencies.vue}`;
+      const ev2: ReportEvent = { tipo: 'detector-contexto-inteligente-debug-vue', nivel: 'info', mensagem: m2, relPath: '' };
+      if (options?.contexto && typeof options.contexto.report === 'function') {
+        try { options.contexto.report(ev2); } catch { /* ignore */ }
+      } else {
+        console.debug(m2);
+      }
     }
   }
   const todasEvidencias: EvidenciaContexto[] = [...analisarDependencias(packageJson), ...analisarScripts(packageJson), ...analisarEstrutura(estruturaDetectada), ...analisarImportsExports(arquivos), ...analisarPadroesCodigo(arquivos)];

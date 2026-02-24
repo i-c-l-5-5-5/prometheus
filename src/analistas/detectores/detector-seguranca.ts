@@ -7,7 +7,7 @@ import { DetectorAgregadosMensagens } from '@core/messages/analistas/detector-ag
 import { detectarContextoProjeto } from '@shared/contexto-projeto.js';
 import { filtrarOcorrenciasSuprimidas } from '@shared/helpers/suppressao.js';
 
-import type { Analista, Ocorrencia, ProblemaSeguranca } from '@';
+import type { Analista,Ocorrencia, ProblemaSeguranca, ReportEvent } from '@';
 import { criarOcorrencia } from '@';
 
 // Funções helper para detecção inteligente de segredos
@@ -45,7 +45,7 @@ export const analistaSeguranca: Analista = {
   test: (relPath: string): boolean => {
     return /\.(js|jsx|ts|tsx|mjs|cjs)$/.test(relPath);
   },
-  aplicar: (src: string, relPath: string, ast: NodePath<Node> | null): Ocorrencia[] => {
+  aplicar: (src: string, relPath: string, ast: NodePath<Node> | null, _fullPath?: string, contexto?: import('@').ContextoExecucao): Ocorrencia[] => {
     if (!src) return [];
     const contextoArquivo = detectarContextoProjeto({
       arquivo: relPath,
@@ -87,6 +87,27 @@ export const analistaSeguranca: Analista = {
       // Aplicar supressões inline antes de retornar
       return filtrarOcorrenciasSuprimidas(ocorrencias, 'seguranca', src);
     } catch (erro) {
+      const ev = {
+        tipo: 'detector-seguranca-erro',
+        nivel: 'aviso' as const,
+        mensagem: DetectorAgregadosMensagens.erroAnalisarSeguranca(erro),
+        relPath,
+        linha: 1
+      };
+      if (contexto && typeof contexto.report === 'function') {
+        try {
+          contexto.report(ev as ReportEvent);
+          return [];
+        } catch {
+          return [criarOcorrencia({
+            tipo: 'ERRO_ANALISE',
+            nivel: 'aviso',
+            mensagem: DetectorAgregadosMensagens.erroAnalisarSeguranca(erro),
+            relPath,
+            linha: 1
+          })];
+        }
+      }
       return [criarOcorrencia({
         tipo: 'ERRO_ANALISE',
         nivel: 'aviso',

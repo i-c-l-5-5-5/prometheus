@@ -107,7 +107,7 @@ export async function detectarArquetipos(contexto: Pick<ContextoExecucao, 'arqui
       // Package.json não encontrado ou inválido - usar objeto vazio
       packageJsonContent = {};
     }
-    const resultadosContextuais = detectarContextoInteligente(estruturaDetectada, contexto.arquivos, packageJsonContent, options) as ResultadoContexto[];
+    const resultadosContextuais = detectarContextoInteligente(estruturaDetectada, contexto.arquivos, packageJsonContent, { ...(options || {}), contexto }) as ResultadoContexto[];
 
     // Pegar o resultado com maior confiança
     const melhorDeteccao = resultadosContextuais.reduce((melhor: ResultadoContexto, atual: ResultadoContexto) => atual.confiancaTotal > melhor.confiancaTotal ? atual : melhor, {

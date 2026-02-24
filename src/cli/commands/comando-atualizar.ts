@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import { registroAnalistas } from '@analistas/registry/registry.js';
+// Registro de analistas será carregado dinamicamente para permitir injeção de dependências
 import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
 import chalk from '@core/config/chalk-safe.js';
 import { config } from '@core/config/config.js';
@@ -39,6 +39,8 @@ export function comandoAtualizar(
       let fileEntries: FileEntryWithAst[] = [];
 
       try {
+        // Carrega registro de analistas no momento da execução
+        const { registroAnalistas } = await import('@analistas/registry/registry.js');
         const tecnicas = asTecnicas(registroAnalistas as Tecnica[]);
         const resultado = await iniciarInquisicao(baseDir, {
           incluirMetadados: false,

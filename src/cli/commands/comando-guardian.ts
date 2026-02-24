@@ -2,7 +2,7 @@
 // @sensei-disable tipo-literal-inline-complexo
 // Justificativa: tipos inline para opções de comando CLI são locais e não precisam de extração
 // Importar handler modular do Guardian (Sprint 2)
-import { registroAnalistas } from '@analistas/registry/registry.js';
+// Registro de analistas será carregado dinamicamente para permitir injeção de dependências
 import { executarGuardian as executarGuardianModular, type GuardianOptions } from '@cli/diagnostico/handlers/guardian-handler.js';
 import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
 import { config } from '@core/config/config.js';
@@ -34,6 +34,8 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
     const baseDir = process.cwd();
     let fileEntries: FileEntryWithAst[] = [];
     try {
+      // Carrega registro de analistas no momento da execução
+      const { registroAnalistas } = await import('@analistas/registry/registry.js');
       const tecnicas = asTecnicas(registroAnalistas as Tecnica[]);
       const resultadoInquisicao = await iniciarInquisicao(baseDir, {
         incluirMetadados: false

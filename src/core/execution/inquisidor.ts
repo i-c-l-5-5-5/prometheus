@@ -8,7 +8,7 @@ import { log } from '@core/messages/index.js';
 import { lerEstado } from '@shared/persistence/persistencia.js';
 import * as path from 'path';
 
-import type { CacheValor, EstadoIncArquivo, FileEntry, FileEntryWithAst, InquisicaoOptions, MetricasGlobais, OcorrenciaParseErro, ResultadoInquisicaoCompleto, SimbolosLog, Tecnica } from '@';
+import type { CacheValor, EstadoIncArquivo, FileEntry, FileEntryWithAst, InquisicaoOptions, MetricasGlobais, OcorrenciaParseErro, ReporterFn,ResultadoInquisicaoCompleto, SimbolosLog, Tecnica } from '@';
 import { ocorrenciaParseErro } from '@';
 
 import { executarInquisicao as executarExecucao, registrarUltimasMetricas } from './executor.js';
@@ -199,6 +199,14 @@ export async function iniciarInquisicao(
   baseDir: string = process.cwd(),
   options: InquisicaoOptions = {},
   tecnicas?: Tecnica[],
+  /** Opcional: repassa opções para o executor (events/reporter/fast/verbose) */
+  executorOpts?: {
+    events?: import('./executor.js').ExecutorEventEmitter;
+    reporter?: ReporterFn;
+    verbose?: boolean;
+    compact?: boolean;
+    fast?: boolean;
+  }
 ): Promise<ResultadoInquisicaoCompleto> {
   const {
     includeContent = true,
@@ -365,19 +373,24 @@ export async function iniciarInquisicao(
   let ocorrencias: Array<OcorrenciaParseErro | import('@').Ocorrencia> = [];
   if (!skipExec) {
     // Inversão de Controle: tecnicas devem ser fornecidas pelo chamador sempre que skipExec=false.
-    // Para compatibilidade retroativa, se não vierem definidas carregamos dinamicamente o registro.
+    // Forçar injeção quando execução real é necessária.
     let tecnicasEfetivas = tecnicas;
-    if (!tecnicasEfetivas) {
-      const { registroAnalistas } = await import(
-        '@analistas/registry/registry.js'
-      );
-      tecnicasEfetivas = registroAnalistas as Tecnica[];
+    if (!tecnicasEfetivas && !skipExec) {
+      throw new Error('iniciarInquisicao: tecnicas devem ser fornecidas pelo chamador quando skipExec=false');
     }
+    if (!tecnicasEfetivas) tecnicasEfetivas = [] as Tecnica[];
     const execRes = await executarExecucao(
       fileEntries,
       tecnicasEfetivas,
       baseDir,
       undefined,
+      {
+        verbose: executorOpts?.verbose ?? config.VERBOSE,
+        compact: executorOpts?.compact ?? config.COMPACT_MODE,
+        fast: executorOpts?.fast,
+        events: executorOpts?.events,
+        reporter: executorOpts?.reporter
+      }
     );
     totalArquivos = execRes.totalArquivos;
     ocorrencias = execRes.ocorrencias;

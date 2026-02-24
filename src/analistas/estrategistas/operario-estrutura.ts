@@ -9,13 +9,14 @@ import { config } from '@core/config/config.js';
 import { log, MENSAGENS_ARQUETIPOS_HANDLER } from '@core/messages/index.js';
 
 import type {
+  ContextoExecucao,
   FileEntryWithAst,
   Ocorrencia,
   OpcoesPlanejamento,
   PlanoMoverItem,
   PlanoSugestaoEstrutura,
-  ResultadoPlanejamento,
-} from '@';
+  ReportEvent,
+  ResultadoPlanejamento} from '@';
 
 // Re-exporta os tipos para compatibilidade
 export type { OpcoesPlanejamento, ResultadoPlanejamento };
@@ -25,6 +26,7 @@ export const OperarioEstrutura = {
     baseDir: string,
     fileEntriesComAst: FileEntryWithAst[],
     opcoes: OpcoesPlanejamento,
+    contexto?: ContextoExecucao,
   ): Promise<ResultadoPlanejamento> {
     // 1) Tenta arquétipos, a menos que forçado estrategista.
     //    Quando preset='sensei', evitamos arquétipos em runtime normal,
@@ -55,7 +57,17 @@ export const OperarioEstrutura = {
           return { plano: planoArq, origem: 'arquetipos' };
         }
       } catch (e) {
-        log.aviso(MENSAGENS_ARQUETIPOS_HANDLER.falha);
+        const ev: ReportEvent = {
+            tipo: 'operario-estrutura-arquetipos-falha',
+            nivel: 'aviso',
+            mensagem: MENSAGENS_ARQUETIPOS_HANDLER.falha,
+            relPath: ''
+          };
+          if (contexto && typeof contexto.report === 'function') {
+            try { contexto.report(ev); } catch { log.aviso(MENSAGENS_ARQUETIPOS_HANDLER.falha); }
+        } else {
+          log.aviso(MENSAGENS_ARQUETIPOS_HANDLER.falha);
+        }
         if (config.DEV_MODE) console.error(e);
       }
     }
@@ -86,13 +98,33 @@ export const OperarioEstrutura = {
           return { plano: planoAlt, origem: 'estrategista' };
         }
       } catch (e) {
-        log.aviso(MENSAGENS_ARQUETIPOS_HANDLER.falhaEstrategista);
+        const ev: ReportEvent = {
+          tipo: 'operario-estrutura-estrategista-falha',
+          nivel: 'aviso',
+          mensagem: MENSAGENS_ARQUETIPOS_HANDLER.falhaEstrategista,
+          relPath: ''
+        };
+        if (contexto && typeof contexto.report === 'function') {
+          try { contexto.report(ev); } catch { log.aviso(MENSAGENS_ARQUETIPOS_HANDLER.falhaEstrategista); }
+        } else {
+          log.aviso(MENSAGENS_ARQUETIPOS_HANDLER.falhaEstrategista);
+        }
         if (config.DEV_MODE) console.error(e);
       }
 
       return { plano: undefined, origem: 'nenhum' };
     } catch (e) {
-      log.aviso(MENSAGENS_ARQUETIPOS_HANDLER.falhaGeral);
+      const ev: ReportEvent = {
+        tipo: 'operario-estrutura-falha-geral',
+        nivel: 'aviso',
+        mensagem: MENSAGENS_ARQUETIPOS_HANDLER.falhaGeral,
+        relPath: ''
+      };
+      if (contexto && typeof contexto.report === 'function') {
+        try { contexto.report(ev); } catch { log.aviso(MENSAGENS_ARQUETIPOS_HANDLER.falhaGeral); }
+      } else {
+        log.aviso(MENSAGENS_ARQUETIPOS_HANDLER.falhaGeral);
+      }
       if (config.DEV_MODE) console.error(e);
       return { plano: undefined, origem: 'nenhum' };
     }

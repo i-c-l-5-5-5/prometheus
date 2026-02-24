@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import { removerArquivosOrfaos } from '@analistas/corrections/poda.js';
-import { registroAnalistas } from '@analistas/registry/registry.js';
+// Registro de analistas será carregado dinamicamente para permitir injeção de dependências
 import { exportarRelatoriosPoda } from '@cli/handlers/poda-exporter.js';
 import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
 import { expandIncludePatterns, processPatternList } from '@cli/helpers/pattern-helpers.js';
@@ -47,6 +47,8 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
       // 🔥 SIMPLIFICADO: sem sync de padrões obsoletos
       // CLI flags dominam globalExcludeGlob automaticamente
 
+      // Carrega registro de analistas na camada CLI (injeção de dependências)
+      const { registroAnalistas } = await import('@analistas/registry/registry.js');
       const tecnicas = asTecnicas(registroAnalistas as Tecnica[]);
       const {
         fileEntries

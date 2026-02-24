@@ -10,7 +10,7 @@ import { WorkerPool } from '@core/workers/worker-pool.js';
 import { lerEstado, salvarEstado } from '@shared/persistence/persistencia.js';
 import XXH from 'xxhashjs';
 
-import type { ContextoExecucao, EstadoIncremental, FileEntryWithAst, GuardianResult, MetricaAnalista, MetricaExecucao, MetricasGlobais, Ocorrencia, ResultadoInquisicao, Tecnica } from '@';
+import type { ContextoExecucao, EstadoIncremental, FileEntryWithAst, GuardianResult, MetricaAnalista, MetricaExecucao, MetricasGlobais, Ocorrencia, ReporterFn, ReportEvent,ResultadoInquisicao, Tecnica } from '@';
 import { ocorrenciaErroAnalista } from '@';
 // Fallback para infoDestaque quando mock de log não implementa
 const __infoD = (msg: string) => {
@@ -32,6 +32,8 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
   fast?: boolean;
   /** Opcional: emissor de eventos para file:processed e analysis:complete */
   events?: ExecutorEventEmitter;
+  /** Opcional: reporter customizado (injetável) */
+  reporter?: ReporterFn;
 }): Promise<ResultadoInquisicao> {
   const ocorrencias: Ocorrencia[] = [];
   const metricasAnalistas: MetricaAnalista[] = [];
@@ -45,12 +47,12 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
       guardian: guardianResultado
     }
   };
-  const reporter = createDefaultReporter();
+  const reporter: ReporterFn = (opts?.reporter as ReporterFn) ?? createDefaultReporter();
   const inicioExecucao = performance.now();
 
   // Narrowing helper: detecta se um objeto se parece com NodePath do babel
   function isNodePath(x // Type guard intencional: aceita entrada arbitrária para validação estrutural
-  : unknown): x is import('@babel/traverse').NodePath<import('@babel/types').Node> {
+    : unknown): x is import('@babel/traverse').NodePath<import('@babel/types').Node> {
     if (typeof x !== 'object' || x === null) return false;
     const maybe = x as Record<string, unknown>;
     if (!('node' in maybe)) return false;
@@ -241,7 +243,8 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
     ...contextoGlobalBase,
     report: (event) => {
       try {
-        ocorrencias.push(reporter(event));
+        const oc = reporter(event as ReportEvent);
+        if (oc) ocorrencias.push(oc);
       } catch (e) {
         // Reporter nunca deve quebrar a análise; se falhar, emite ocorrência genérica.
         ocorrencias.push(ocorrenciaErroAnalista({

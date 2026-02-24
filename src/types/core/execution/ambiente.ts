@@ -2,7 +2,7 @@
 
 import type { Dirent } from 'node:fs';
 
-import type { FileEntryWithAst } from '@';
+import type { FileEntryWithAst, Ocorrencia } from '@';
 
 import type { GuardianResult } from '../../guardian/resultado.js';
 
@@ -29,7 +29,7 @@ export interface ReportEvent {
   origem?: string;
 }
 
-export type ReporterFn = (event: ReportEvent) => void;
+export type ReporterFn = (event: ReportEvent) => Ocorrencia | void;
 
 export interface ContextoExecucao {
   baseDir: string;

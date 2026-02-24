@@ -2,7 +2,7 @@
 // @sensei-disable tipo-literal-inline-complexo
 // Justificativa: tipos inline para opções de comando CLI são locais e não precisam de extração
 import { OperarioEstrutura } from '@analistas/estrategistas/operario-estrutura.js';
-import { registroAnalistas as tecnicas } from '@analistas/registry/registry.js';
+// Registro de analistas será carregado dinamicamente para permitir injeção de dependências
 import { exportarRelatoriosReestruturacao } from '@cli/handlers/reestruturacao-exporter.js';
 import { exibirMolduraConflitos, exibirMolduraPlano } from '@cli/helpers/exibir-moldura.js';
 import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
@@ -16,7 +16,7 @@ import { Command } from 'commander';
 import ora from 'ora';
 
 import type { FileEntry, FileEntryWithAst, Ocorrencia, ResultadoInquisicao } from '@';
-import { extrairMensagemErro } from '@';
+import { asTecnicas, extrairMensagemErro } from '@';
 
 /**
  * Comando para reestruturar o projeto
@@ -137,28 +137,31 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
         let analise;
         try {
           const { iniciarInquisicao } = await import('@core/execution/inquisidor.js');
-if (typeof iniciarInquisicao === 'function') {
-  analise = await iniciarInquisicao(baseDir, { skipExec: false }, tecnicas);
+          // Carrega registro de analistas dinamicamente e prepara tecnicas
+          const { registroAnalistas } = await import('@analistas/registry/registry.js');
+          const tecnicasDyn = asTecnicas(registroAnalistas as (import('@').Analista | import('@').Tecnica)[] as import('@').Tecnica[]);
+          if (typeof iniciarInquisicao === 'function') {
+            analise = await iniciarInquisicao(baseDir, { skipExec: false }, tecnicasDyn);
 
-  if (analise && analise.fileEntries) {
-    // Se o resultado tiver fileEntries, é um ResultadoInquisicao completo
-    analiseParaCorrecao = analise as ResultadoInquisicao;
-  } else if (analise && 'ocorrencias' in analise) {
-    // Se tiver apenas ocorrencias, é um resultado parcial (possivelmente de mock) - converte para formato completo
-    analiseParaCorrecao = await executarInquisicao(fileEntriesComAst, tecnicas, baseDir, undefined, {
-      verbose: false,
-      compact: true
-    });
-  } else {
-    analiseParaCorrecao = analise as ResultadoInquisicao;
-  }
-} else {
-  // Se iniciarInquisicao não existir, executa inquisicao diretamente (fallback para testes sem mock)
-  analiseParaCorrecao = await executarInquisicao(fileEntriesComAst, tecnicas, baseDir, undefined, {
-    verbose: false,
-    compact: true
-  });
-}
+            if (analise && analise.fileEntries) {
+              // Se o resultado tiver fileEntries, é um ResultadoInquisicao completo
+              analiseParaCorrecao = analise as ResultadoInquisicao;
+            } else if (analise && 'ocorrencias' in analise) {
+              // Se tiver apenas ocorrencias, é um resultado parcial (possivelmente de mock) - converte para formato completo
+              analiseParaCorrecao = await executarInquisicao(fileEntriesComAst, tecnicasDyn, baseDir, undefined, {
+                verbose: false,
+                compact: true
+              });
+            } else {
+              analiseParaCorrecao = analise as ResultadoInquisicao;
+            }
+          } else {
+            // Se iniciarInquisicao não existir, executa inquisicao diretamente (fallback para testes sem mock)
+            analiseParaCorrecao = await executarInquisicao(fileEntriesComAst, tecnicasDyn, baseDir, undefined, {
+              verbose: false,
+              compact: true
+            });
+          }
         } catch (err) {
           // Em testes, se o mock falhar, continue com dados vazios
           if (process.env.VITEST) {

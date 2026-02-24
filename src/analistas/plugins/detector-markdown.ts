@@ -18,7 +18,7 @@ import { promises as fs } from 'node:fs';
 import { config } from '@core/config/config.js';
 import { log } from '@core/messages/index.js';
 
-import type { Ocorrencia } from '@';
+import type { ContextoExecucao, Ocorrencia, ReportEvent } from '@';
 
 import type { MarkdownAnaliseArquivo, MarkdownDetectorOptions, MarkdownLicensePatterns, MarkdownProblema, MarkdownWhitelistConfig } from '../../types/analistas/markdown.js';
 
@@ -283,9 +283,23 @@ export const detectorMarkdown = {
   test: (relPath: string): boolean => {
     return relPath.toLowerCase().endsWith('.md');
   },
-  aplicar: async (src: string, relPath: string, _ast: unknown, fullCaminho?: string): Promise<Ocorrencia[]> => {
+  aplicar: async (src: string, relPath: string, _ast: unknown, fullCaminho?: string, contexto?: ContextoExecucao): Promise<Ocorrencia[]> => {
     if (!fullCaminho) {
-      log.aviso(`detector-markdown: fullPath não fornecido para ${relPath}`);
+      const ev = {
+        tipo: 'detector-markdown-missing-path',
+        nivel: 'aviso' as const,
+        mensagem: `detector-markdown: fullPath não fornecido para ${relPath}`,
+        relPath
+      };
+      if (contexto && typeof contexto.report === 'function') {
+        try {
+          contexto.report(ev as unknown as ReportEvent);
+        } catch {
+          log.aviso(ev.mensagem);
+        }
+      } else if (typeof (log as unknown as { aviso?: Function })?.aviso === 'function') {
+        (log as unknown as { aviso?: Function }).aviso?.(ev.mensagem);
+      }
       return [];
     }
     const cfg = (config as unknown as {
@@ -310,7 +324,21 @@ export const detectorMarkdown = {
       const analise = await analisarArquivoMarkdown(fullCaminho, relPath, options);
       return converterParaOcorrencias(analise);
     } catch (error) {
-      log.erro(`Erro ao analisar Markdown ${relPath}: ${(error as Error).message}`);
+      const ev = {
+        tipo: 'detector-markdown-erro',
+        nivel: 'erro' as const,
+        mensagem: `Erro ao analisar Markdown ${relPath}: ${(error as Error).message}`,
+        relPath
+      };
+      if (contexto && typeof contexto.report === 'function') {
+        try {
+          contexto.report(ev as unknown as ReportEvent);
+        } catch {
+          (log as unknown as { erro?: Function }).erro?.(ev.mensagem);
+        }
+      } else {
+        (log as unknown as { erro?: Function }).erro?.(ev.mensagem);
+      }
       return [];
     }
   }

@@ -71,11 +71,10 @@ export function comandoFormatar(
     )
     .action(async function (this: Command, opts: FormatarCommandOpts) {
       try {
-        await aplicarFlagsGlobais(
-          this.parent && typeof this.parent.opts === 'function'
-            ? this.parent.opts()
-            : {},
-        );
+        const parentOpts = this.parent && typeof this.parent.opts === 'function'
+          ? await Promise.resolve(this.parent.opts())
+          : {};
+        await aplicarFlagsGlobais(parentOpts);
         const write = Boolean(opts.write);
         const check = write ? false : Boolean(opts.check ?? true);
 

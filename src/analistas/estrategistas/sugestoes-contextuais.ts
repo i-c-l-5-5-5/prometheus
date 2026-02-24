@@ -16,7 +16,7 @@ import type { Node } from '@babel/types';
 import { log } from '@core/messages/index.js';
 import { SugestoesContextuaisMensagens } from '@core/messages/ui/sugestoes-contextuais-messages.js';
 
-import type { Analista, ContextoExecucao, Ocorrencia, PackageJson } from '@';
+import type { Analista, ContextoExecucao, Ocorrencia, PackageJson, ReportEvent } from '@';
 
 export const analistaSugestoesContextuais: Analista = {
   nome: 'sugestoes-contextuais',
@@ -26,8 +26,8 @@ export const analistaSugestoesContextuais: Analista = {
   // Analisa contexto global do projeto
 
   async aplicar(_src: string, _relPath: string, _ast: NodePath<Node> | null,
-  // AST node path
-  _fullPath?: string, contexto?: ContextoExecucao): Promise<Ocorrencia[]> {
+    // AST node path
+    _fullPath?: string, contexto?: ContextoExecucao): Promise<Ocorrencia[]> {
     const ocorrencias: Ocorrencia[] = [];
     if (!contexto) {
       return ocorrencias;
@@ -158,14 +158,29 @@ export const analistaSugestoesContextuais: Analista = {
         });
       }
     } catch (error) {
-      log.aviso(SugestoesContextuaisMensagens.erroAnaliseContextual(error instanceof Error ? error.message : String(error)));
-      ocorrencias.push({
-        tipo: 'erro_analise',
+      const mensagem = SugestoesContextuaisMensagens.erroAnaliseContextual(error instanceof Error ? error.message : String(error));
+      const ev: ReportEvent = {
+        tipo: 'sugestoes-contextuais-erro',
         nivel: 'aviso',
-        mensagem: SugestoesContextuaisMensagens.erroDuranteAnalise,
-        relPath: '',
-        linha: 0
-      });
+        mensagem,
+        relPath: ''
+      };
+      if (contexto && typeof contexto.report === 'function') {
+        try {
+          contexto.report(ev);
+        } catch {
+          log.aviso(mensagem);
+        }
+      } else {
+        log.aviso(mensagem);
+        ocorrencias.push({
+          tipo: 'erro_analise',
+          nivel: 'aviso',
+          mensagem: SugestoesContextuaisMensagens.erroDuranteAnalise,
+          relPath: '',
+          linha: 0
+        });
+      }
     }
     return ocorrencias;
   }
