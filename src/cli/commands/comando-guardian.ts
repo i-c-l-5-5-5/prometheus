@@ -16,9 +16,16 @@ import type { FileEntry, FileEntryWithAst, Tecnica } from '@';
 import { asTecnicas, extrairMensagemErro, IntegridadeStatus } from '@';
 
 export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void): Command {
-  return new Command('guardian').description('Gerencia e verifica a integridade do ambiente do Prometheus.')
-  // Alinhar com comportamento tolerante usado em outros comandos/testes
-  .allowUnknownOption(true).allowExcessArguments(true).option('-a, --accept-baseline', 'Aceita o baseline atual como o novo baseline de integridade').option('-d, --diff', 'Mostra as diferenças entre o estado atual e o baseline').option('--full-scan', 'Executa verificação sem aplicar GUARDIAN_IGNORE_PATTERNS (não persistir baseline)').option('--json', 'Saída em JSON estruturado (para CI/integracoes)').action(async function (this: Command, opts: {
+  return new Command('guardian')
+    .description(CliComandoGuardianMensagens.descricao)
+    // Alinhar com comportamento tolerante usado em outros comandos/testes
+    .allowUnknownOption(true)
+    .allowExcessArguments(true)
+    .option('-a, --accept-baseline', CliComandoGuardianMensagens.opcoes.acceptBaseline)
+    .option('-d, --diff', CliComandoGuardianMensagens.opcoes.diff)
+    .option('--full-scan', CliComandoGuardianMensagens.opcoes.fullScan)
+    .option('--json', CliComandoGuardianMensagens.opcoes.json)
+    .action(async function (this: Command, opts: {
     acceptBaseline?: boolean;
     diff?: boolean;
     fullScan?: boolean;
@@ -27,7 +34,7 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
     try {
       await aplicarFlagsGlobais(this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {});
     } catch (err) {
-      log.erro(`Falha ao aplicar flags: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoGuardianMensagens.erroFlags(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
       return;
     }
@@ -121,16 +128,16 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
               if (opts.json) console.log(JSON.stringify({
                 status: 'ok',
                 cacheDiffHits: (globalThis as unknown as {
-                  __SENSEI_DIFF_CACHE_HITS__?: number;
-                }).__SENSEI_DIFF_CACHE_HITS__ || 0
+                  __PROMETHEUS_DIFF_CACHE_HITS__?: number;
+                }).__PROMETHEUS_DIFF_CACHE_HITS__ || 0
               }));else logGuardian.integridadeOk();
               break;
             case IntegridadeStatus.Criado:
               if (opts.json) console.log(JSON.stringify({
                 status: 'baseline-criado',
                 cacheDiffHits: (globalThis as unknown as {
-                  __SENSEI_DIFF_CACHE_HITS__?: number;
-                }).__SENSEI_DIFF_CACHE_HITS__ || 0
+                  __PROMETHEUS_DIFF_CACHE_HITS__?: number;
+                }).__PROMETHEUS_DIFF_CACHE_HITS__ || 0
               }));else logGuardian.baselineCriadoConsole();
               log.aviso(CliComandoGuardianMensagens.baselineCriadoComoAceitar);
               break;
@@ -138,8 +145,8 @@ export function comandoGuardian(aplicarFlagsGlobais: (opts: Record<string, unkno
               if (opts.json) console.log(JSON.stringify({
                 status: 'baseline-aceito',
                 cacheDiffHits: (globalThis as unknown as {
-                  __SENSEI_DIFF_CACHE_HITS__?: number;
-                }).__SENSEI_DIFF_CACHE_HITS__ || 0
+                  __PROMETHEUS_DIFF_CACHE_HITS__?: number;
+                }).__PROMETHEUS_DIFF_CACHE_HITS__ || 0
               }));else logGuardian.baselineAtualizado();
               break;
             case IntegridadeStatus.AlteracoesDetectadas:

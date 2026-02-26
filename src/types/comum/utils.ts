@@ -29,7 +29,7 @@ export interface Estatisticas {
   withs: Contador;
 }
 
-export type ComandoSensei =
+export type ComandoPrometheus =
   | 'diagnosticar'
   | 'guardian'
   | 'podar'

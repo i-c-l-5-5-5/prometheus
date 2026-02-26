@@ -120,6 +120,18 @@ export const analistaCodigoFragil: Analista = {
               contexto: `Função com ${numParams} parâmetros (máx: ${maxParametros})`
             });
           }
+
+          // Complexidade Cognitiva (AST)
+          const comp = calcularComplexidadeCognitivaAST(path);
+          if (comp > LIMITES.COMPLEXIDADE_COGNITIVA) {
+            fragilidades.push({
+              tipo: 'cognitive-complexity',
+              linha: node.loc?.start.line || 0,
+              coluna: node.loc?.start.column || 0,
+              severidade: comp > LIMITES.COMPLEXIDADE_COGNITIVA * 2 ? 'alta' : 'media',
+              contexto: `Complexidade cognitiva elevada: ${comp} (limite: ${LIMITES.COMPLEXIDADE_COGNITIVA})`
+            });
+          }
         },
         ArrowFunctionExpression(path: NodePath<ArrowFunctionExpression>) {
           const node = path.node;
@@ -133,7 +145,19 @@ export const analistaCodigoFragil: Analista = {
                 linha: inicio,
                 coluna: node.loc?.start.column || 0,
                 severidade: numLinhas > Math.max(maxLinhasFuncao + 20, Math.floor(maxLinhasFuncao * 1.7)) ? 'alta' : 'media',
-                contexto: `Arrow function com ${numLinhas} linhas (máx: ${maxLinhasFuncao})`
+                contexto: `Arrow function with ${numLinhas} lines (max: ${maxLinhasFuncao})`
+              });
+            }
+
+            // Complexidade Cognitiva
+            const comp = calcularComplexidadeCognitivaAST(path);
+            if (comp > LIMITES.COMPLEXIDADE_COGNITIVA) {
+              fragilidades.push({
+                tipo: 'cognitive-complexity',
+                linha: inicio,
+                coluna: node.loc?.start.column || 0,
+                severidade: comp > LIMITES.COMPLEXIDADE_COGNITIVA * 2 ? 'alta' : 'media',
+                contexto: `Complexidade cognitiva elevada (arrow): ${comp} (limite: ${LIMITES.COMPLEXIDADE_COGNITIVA})`
               });
             }
           }
@@ -150,7 +174,19 @@ export const analistaCodigoFragil: Analista = {
                 linha: inicio,
                 coluna: node.loc?.start.column || 0,
                 severidade: numLinhas > Math.max(maxLinhasFuncao + 20, Math.floor(maxLinhasFuncao * 1.7)) ? 'alta' : 'media',
-                contexto: `Function expression com ${numLinhas} linhas (máx: ${maxLinhasFuncao})`
+                contexto: `Function expression with ${numLinhas} lines (max: ${maxLinhasFuncao})`
+              });
+            }
+
+            // Complexidade Cognitiva
+            const comp = calcularComplexidadeCognitivaAST(path);
+            if (comp > LIMITES.COMPLEXIDADE_COGNITIVA) {
+              fragilidades.push({
+                tipo: 'cognitive-complexity',
+                linha: inicio,
+                coluna: node.loc?.start.column || 0,
+                severidade: comp > LIMITES.COMPLEXIDADE_COGNITIVA * 2 ? 'alta' : 'media',
+                contexto: `Complexidade cognitiva elevada: ${comp} (limite: ${LIMITES.COMPLEXIDADE_COGNITIVA})`
               });
             }
           }
@@ -194,6 +230,18 @@ export const analistaCodigoFragil: Analista = {
               coluna: node.loc?.start.column || 0,
               severidade: numParams > LIMITES.MAX_PARAMETROS_CRITICO ? 'alta' : 'media',
               contexto: `Método com ${numParams} parâmetros`
+            });
+          }
+
+          // Complexidade Cognitiva
+          const comp = calcularComplexidadeCognitivaAST(path);
+          if (comp > LIMITES.COMPLEXIDADE_COGNITIVA) {
+            fragilidades.push({
+              tipo: 'cognitive-complexity',
+              linha: node.loc?.start.line || 0,
+              coluna: node.loc?.start.column || 0,
+              severidade: comp > LIMITES.COMPLEXIDADE_COGNITIVA * 2 ? 'alta' : 'media',
+              contexto: `Complexidade cognitiva elevada (método): ${comp} (limite: ${LIMITES.COMPLEXIDADE_COGNITIVA})`
             });
           }
         }
@@ -355,80 +403,42 @@ function detectarProblemasAvancados(src: string, fragilidades: Fragilidade[]): v
     }
   }
 
-  // Detectar complexidade cognitiva (mais avançado que funções longas)
-  detectarComplexidadeCognitiva(src, fragilidades);
+  // No longer needed: regex detection removed in favor of AST
 }
 
 /**
  * Detecta complexidade cognitiva alta baseada em estruturas de controle (mais avançado que analista de funções longas)
  */
-function detectarComplexidadeCognitiva(src: string, fragilidades: Fragilidade[]): void {
-  const lines = src.split('\n');
-  let complexityScore = 0;
-  let currentFunction = '';
-  let functionInicioLine = 0;
-  let nestingNivel = 0;
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmedLine = line.trim();
+function calcularComplexidadeCognitivaAST(path: NodePath): number {
+  let score = 0;
+  let nesting = 0;
 
-    // Início de função
-    if (/^(function|const\s+\w+\s*=|let\s+\w+\s*=|var\s+\w+\s*=).*=>|^function\s+\w+|^async\s+function/.test(trimmedLine)) {
-      if (complexityScore > LIMITES.COMPLEXIDADE_COGNITIVA) {
-        // Threshold mais alto que funções longas
-        fragilidades.push({
-          tipo: 'cognitive-complexity',
-          linha: functionInicioLine,
-          coluna: 0,
-          severidade: 'alta',
-          contexto: `Função '${currentFunction}' com complexidade cognitiva crítica (${complexityScore})`
-        });
+  const incrementTypes = [
+    'IfStatement', 'WhileStatement', 'DoWhileStatement',
+    'ForStatement', 'ForInStatement', 'ForOfStatement',
+    'SwitchStatement', 'CatchClause', 'ConditionalExpression'
+  ];
+
+  path.traverse({
+    enter(p) {
+      if (incrementTypes.includes(p.node.type)) {
+        score += 1 + nesting;
+        nesting++;
       }
-      complexityScore = 1;
-      currentFunction = `${trimmedLine.substring(0, 30)}...`;
-      functionInicioLine = i + 1;
-      nestingNivel = 0;
+      if (p.node.type === 'LogicalExpression' && (p.node.operator === '&&' || p.node.operator === '||')) {
+        score += 1;
+      }
+    },
+    exit(p) {
+      if (incrementTypes.includes(p.node.type)) {
+        nesting--;
+      }
     }
+  });
 
-    // Detectar nível de aninhamento
-    const openBraces = (line.match(/\{/g) || []).length;
-    const closeBraces = (line.match(/\}/g) || []).length;
-    nestingNivel += openBraces - closeBraces;
-
-    // Incrementar complexidade para estruturas de controle com peso por aninhamento
-    const controlStructures = /(if|else if|while|for|switch|case|catch|&&|\|\||\?|:)/.test(trimmedLine);
-    if (controlStructures) {
-      complexityScore += Math.max(1, nestingNivel); // Peso maior para aninhamento profundo
-    }
-
-    // Callbacks e async aumentam complexidade
-    if (/\.then|\.catch|callback|setTimeout|setInterval|async\s*\(/.test(trimmedLine)) {
-      complexityScore += 2;
-    }
-
-    // Regex complexa e condições ternárias aninhadas
-    if (/\?\s*.*\?\s*.*:/.test(trimmedLine)) {
-      // Ternário aninhado
-      complexityScore += 3;
-    }
-
-    // Try-catch aumenta complexidade
-    if (/try\s*\{|catch\s*\(/.test(trimmedLine)) {
-      complexityScore += 2;
-    }
-  }
-
-  // Verificar última função
-  if (complexityScore > LIMITES.COMPLEXIDADE_COGNITIVA) {
-    fragilidades.push({
-      tipo: 'cognitive-complexity',
-      linha: functionInicioLine,
-      coluna: 0,
-      severidade: 'alta',
-      contexto: `Função '${currentFunction}' com complexidade cognitiva crítica (${complexityScore})`
-    });
-  }
+  return score;
 }
+
 function detectarNestedCallbacks(ast: NodePath<Node>, fragilidades: Fragilidade[], limite: number): void {
   const lim = Number.isFinite(limite) && limite >= 0 ? limite : 2;
   traverse(ast.node, {

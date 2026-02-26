@@ -7,9 +7,10 @@ import { ExcecoesMensagens } from '@core/messages/core/excecoes-messages.js';
 import { logVarredor } from '@core/messages/log/log-helper.js';
 import { lerArquivoTexto, lerEstado } from '@shared/persistence/persistencia.js';
 import micromatch from 'micromatch';
+import pLimit from 'p-limit';
 import path from 'path';
 
-import type { FileEntry, FileMap, ScanOptions } from '@';
+import type { FileMap, ScanOptions } from '@';
 
 export type { ScanOptions };
 export async function scanRepository(baseDir: string, options: ScanOptions = {}): Promise<FileMap> {
@@ -143,155 +144,122 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
     for (const p of includePadroesNorm || []) if (matchesPadrao(relPath, p)) return true;
     return false;
   }
-  async function scan(dir: string): Promise<void> {
-    let entries: Dirent[];
-    try {
-      entries = await fs.readdir(dir, {
-        withFileTypes: true
-      });
-      entries.sort((a, b) => a.name.localeCompare(b.name));
-    } catch (err) {
-      onProgress(JSON.stringify({
-        tipo: 'erro',
-        acao: 'acessar',
-        caminho: dir,
-        mensagem: typeof err === 'object' && err && 'message' in err ? (err as {
-          message: string;
-        }).message : String(err)
-      }));
-      return;
-    }
+    // Concurrency limit for scanning (10 seems like a safe default to avoid EMFILE)
+    const limit = pLimit(10);
 
-    // Logar apenas diretórios sendo examinados
-    onProgress(JSON.stringify({
-      tipo: 'diretorio',
-      acao: 'examinar',
-      caminho: dir
-    }));
-    for (const entry of entries) {
-      const fullCaminho = path.join(dir, entry.name);
-      const relPathRaw = path.relative(baseDir, fullCaminho);
-      // Normaliza para separador POSIX para que micromatch funcione de forma consistente no Windows
-      const relPath = toPosix(relPathRaw);
-
-      // Regra fixa do Prometheus: não analisar testes (deixa para o runner, ex.: Vitest)
-      const isTestLike = (p: string): boolean => {
-        const rp = toPosix(p);
-        if (/(^|\/)__(tests|mocks)__(\/|$)/.test(rp)) return true;
-        if (/(^|\/)(tests?|test)(\/|$)/.test(rp)) return true;
-        if (/\.(test|spec)\.[jt]sx?$/.test(rp)) return true;
-        return false;
-      };
-      if (isTestLike(relPath)) {
-        continue;
+    async function scan(dir: string): Promise<void> {
+      let entries: Dirent[];
+      try {
+        entries = await fs.readdir(dir, {
+          withFileTypes: true
+        });
+        entries.sort((a, b) => a.name.localeCompare(b.name));
+      } catch (err) {
+        onProgress(JSON.stringify({
+          tipo: 'erro',
+          acao: 'acessar',
+          caminho: dir,
+          mensagem: typeof err === 'object' && err && 'message' in err ? (err as {
+            message: string;
+          }).message : String(err)
+        }));
+        return;
       }
-      /* -------------------------- - -------------------------- */
-      // Filtros de inclusão/exclusão aplicados corretamente: diretórios x arquivos
-      if (entry.isDirectory() && !entry.isSymbolicLink()) {
-        // Diretórios: aplica excludes e ignores padrão (ignores somente quando não há include),
-        // além de guarda específica para node_modules.
-        // Aplica exclusões APENAS quando não há includes ativos
-        if (!hasIncluir && micromatch.isMatch(relPath, excludePadroesNorm)) {
-          continue; // diretório excluído explicitamente (somente quando não há include ativo)
-        }
-        if (!hasIncluir && micromatch.isMatch(relPath, ignorePadroesNorm)) {
-          continue; // ignora diretórios padrão quando não há include
-        }
-        if (/(^|\/)node_modules(\/|$)/.test(relPath) && !includeNodeModulesExplicit) {
-          continue; // proteção: não descer em node_modules salvo inclusão explícita
-        }
-        await scan(fullCaminho);
-      } else {
-        // Arquivos: aplica include (quando presente), excludes/ignores e filtro customizado
-        if (hasIncluir && !matchIncluir(relPath)) {
-          continue; // arquivo não incluso explicitamente
-        }
-        // Aplica exclusões APENAS quando não há includes ativos ou quando o arquivo não passa no include
-        if (!hasIncluir && micromatch.isMatch(relPath, excludePadroesNorm)) {
-          continue; // arquivo excluído (somente quando não há include ativo)
-        }
-        if (!hasIncluir && micromatch.isMatch(relPath, ignorePadroesNorm)) {
-          continue; // ignore padrão quando não há include
-        }
-        // Filtro customizado (sempre aplica)
-        if (!filter(relPath, entry)) {
-          continue; // filtro customizado
-        }
-        try {
-          // Tenta obter stat; se rejeitar, registra erro e não inclui arquivo
-          let stat: unknown = statCache.get(fullCaminho);
-          if (!stat) {
+
+      // Logar apenas diretórios sendo examinados
+      onProgress(JSON.stringify({
+        tipo: 'diretorio',
+        acao: 'examinar',
+        caminho: dir
+      }));
+
+      const fileTasks: Promise<void>[] = [];
+      const dirTasks: Promise<void>[] = [];
+
+      for (const entry of entries) {
+        const fullCaminho = path.join(dir, entry.name);
+        const relPathRaw = path.relative(baseDir, fullCaminho);
+        const relPath = toPosix(relPathRaw);
+
+        // Regra fixa do Prometheus: não analisar testes
+        const isTestLike = (p: string): boolean => {
+          const rp = toPosix(p);
+          if (/(^|\/)__(tests|mocks)__(\/|$)/.test(rp)) return true;
+          if (/(^|\/)(tests?|test)(\/|$)/.test(rp)) return true;
+          if (/\.(test|spec)\.[jt]sx?$/.test(rp)) return true;
+          return false;
+        };
+        if (isTestLike(relPath)) continue;
+
+        if (entry.isDirectory() && !entry.isSymbolicLink()) {
+          if (!hasIncluir && micromatch.isMatch(relPath, excludePadroesNorm)) continue;
+          if (!hasIncluir && micromatch.isMatch(relPath, ignorePadroesNorm)) continue;
+          if (/(^|\/)node_modules(\/|$)/.test(relPath) && !includeNodeModulesExplicit) continue;
+          dirTasks.push(scan(fullCaminho));
+        } else {
+          if (hasIncluir && !matchIncluir(relPath)) continue;
+          if (!hasIncluir && (micromatch.isMatch(relPath, excludePadroesNorm) || micromatch.isMatch(relPath, ignorePadroesNorm))) continue;
+          if (!filter(relPath, entry)) continue;
+
+          fileTasks.push(limit(async () => {
             try {
-              stat = await fs.stat(fullCaminho);
-              statCache.set(fullCaminho, stat as Stats);
-            } catch (e) {
-              onProgress(JSON.stringify({
-                tipo: 'erro',
-                acao: 'ler',
-                caminho: relPath,
-                mensagem: typeof e === 'object' && e && 'message' in e ? (e as {
-                  message: string;
-                }).message : String(e)
-              }));
-              continue;
-            }
-          }
-          if (stat == null) {
-            throw new Error(ExcecoesMensagens.statIndefinidoPara(fullCaminho));
-          }
-          let mtimeMs = 0;
-          if (typeof stat === 'object' && stat && 'mtimeMs' in (stat as Stats)) {
-            const mm = (stat as Stats).mtimeMs;
-            if (typeof mm === 'number') mtimeMs = mm;
-          }
-          let content: string | null = null;
-          if (efetivoIncluirConteudo) {
-            const emTeste = !!process.env.VITEST;
-            try {
-              if (emTeste) {
-                // Mantém compat com testes que mockam lerEstado
-                content = await lerEstado<string>(fullCaminho);
-              } else {
-                content = await lerArquivoTexto(fullCaminho);
+              let stat: unknown = statCache.get(fullCaminho);
+              if (!stat) {
+                try {
+                  stat = await fs.stat(fullCaminho);
+                  statCache.set(fullCaminho, stat as Stats);
+                } catch (e) {
+                  onProgress(JSON.stringify({
+                    tipo: 'erro', acao: 'ler', caminho: relPath,
+                    mensagem: typeof e === 'object' && e && 'message' in e ? (e as { message: string }).message : String(e)
+                  }));
+                  return;
+                }
               }
-            } catch (e) {
-              // Em caso de erro de leitura, registra via onProgress e segue
+              if (stat == null) throw new Error(ExcecoesMensagens.statIndefinidoPara(fullCaminho));
+
+              let mtimeMs = 0;
+              if (typeof stat === 'object' && stat && 'mtimeMs' in (stat as Stats)) {
+                const mm = (stat as Stats).mtimeMs;
+                if (typeof mm === 'number') mtimeMs = mm;
+              }
+
+              let content: string | null = null;
+              if (efetivoIncluirConteudo) {
+                try {
+                  if (!!process.env.VITEST) {
+                    content = await lerEstado<string>(fullCaminho);
+                  } else {
+                    content = await lerArquivoTexto(fullCaminho);
+                  }
+                } catch (e) {
+                  onProgress(JSON.stringify({
+                    tipo: 'erro', acao: 'ler', caminho: relPath,
+                    mensagem: typeof e === 'object' && e && 'message' in e ? (e as { message: string }).message : String(e)
+                  }));
+                  content = null;
+                }
+              }
+
+              fileMap[relPath] = {
+                fullCaminho,
+                relPath,
+                content,
+                ultimaModificacao: mtimeMs
+              };
+              logVarredor.arquivoLido(relPath);
+            } catch (err) {
               onProgress(JSON.stringify({
-                tipo: 'erro',
-                acao: 'ler',
-                caminho: relPath,
-                mensagem: typeof e === 'object' && e && 'message' in e ? (e as {
-                  message: string;
-                }).message : String(e)
+                tipo: 'erro', acao: 'ler', caminho: relPath,
+                mensagem: typeof err === 'object' && err && 'message' in err ? (err as { message: string }).message : String(err)
               }));
-              content = null;
             }
-          }
-          const entryObj: FileEntry = {
-            fullCaminho,
-            relPath,
-            content,
-            ultimaModificacao: mtimeMs
-          };
-          fileMap[relPath] = entryObj;
-          // Logar cada arquivo individualmente para compatibilidade com testes
-          // Evita ruído quando relatórios silenciosos estão ativos (modo --json)
-          if (!config.REPORT_SILENCE_LOGS) {
-            onProgress(`✅ Arquivo lido: ${relPath}`);
-          }
-        } catch (err) {
-          onProgress(JSON.stringify({
-            tipo: 'erro',
-            acao: 'ler',
-            caminho: relPath,
-            mensagem: typeof err === 'object' && err && 'message' in err ? (err as {
-              message: string;
-            }).message : String(err)
           }));
         }
       }
+
+      await Promise.all([...dirTasks, ...fileTasks]);
     }
-  }
 
   // Pontos de partida da varredura
   let startDirs = hasIncluir ? calcularIncludeRoots(config.CLI_INCLUDE_PATTERNS as string[] | undefined, (config as unknown as {
@@ -406,9 +374,7 @@ export async function scanRepository(baseDir: string, options: ScanOptions = {})
             content,
             ultimaModificacao: (st && 'mtimeMs' in st ? (st as Stats).mtimeMs : Date.now()) || Date.now()
           };
-          if (!config.REPORT_SILENCE_LOGS) {
-            onProgress(`✅ Arquivo lido: ${relPath}`);
-          }
+          logVarredor.arquivoLido(relPath);
         }
       } catch (e) {
         onProgress(JSON.stringify({

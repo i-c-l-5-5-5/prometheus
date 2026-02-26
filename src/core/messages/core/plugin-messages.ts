@@ -1,19 +1,9 @@
 // SPDX-License-Identifier: MIT
-/**
- * Mensagens dos Analistas de Plugins
- *
- * Centraliza todas as mensagens dos plugins:
- * - React
- * - React Hooks
- * - Tailwind
- * - CSS
- * - HTML
- * - Python
- */
+import { createI18nMessages } from '@shared/helpers/i18n.js';
 
   /* -------------------------- MENSAGENS REACT -------------------------- */
 
-export const ReactMensagens = {
+export const ReactMensagens = createI18nMessages({
   linkTargetBlank: 'Link com target="_blank" sem rel="noreferrer"/"noopener".',
   dangerouslySetInnerHTML: 'Uso de dangerouslySetInnerHTML encontrado; valide a necessidade.',
   imgWithoutAlt: 'Imagem sem atributo alt (acessibilidade).',
@@ -23,30 +13,51 @@ export const ReactMensagens = {
   listItemNoKey: 'Item em lista (map) sem atributo key.',
   indexAsKey: 'Uso de índice como key (pode causar problemas de reordenação).',
   inlineHandlerJsx: 'Handler inline detectado em JSX; prefira funções estáveis (useCallback) ou extrair fora do render.'
-} as const;
+}, {
+  linkTargetBlank: 'Link with target="_blank" without rel="noreferrer"/"noopener".',
+  dangerouslySetInnerHTML: 'Use of dangerouslySetInnerHTML found; validate the need.',
+  imgWithoutAlt: 'Image without alt attribute (accessibility).',
+  httpFetch: 'HTTP call without TLS detected; prefer HTTPS.',
+  hardcodedCredential: 'Possible hardcoded credential; use environment variables.',
+  locationHrefRedirect: 'Direct assignment to location.href; validate source to avoid open redirect.',
+  listItemNoKey: 'List item (map) without key attribute.',
+  indexAsKey: 'Use of index as key (can cause reordering issues).',
+  inlineHandlerJsx: 'Inline handler detected in JSX; prefer stable functions (useCallback) or extract outside render.'
+});
 
   /* -------------------------- MENSAGENS REACT HOOKS -------------------------- */
 
-export const ReactHooksMensagens = {
+export const ReactHooksMensagens = createI18nMessages({
   useEffectNoDeps: 'useEffect sem array de dependências (avalie deps para evitar loops).',
   memoCallbackNoDeps: 'Hook sem array de dependências (useMemo/useCallback).',
   hookInConditional: 'Hook declarado dentro de condicional (quebra Rules of Hooks).'
-} as const;
+}, {
+  useEffectNoDeps: 'useEffect without dependency array (evaluate deps to avoid loops).',
+  memoCallbackNoDeps: 'Hook without dependency array (useMemo/useCallback).',
+  hookInConditional: 'Hook declared inside conditional (breaks Rules of Hooks).'
+});
 
   /* -------------------------- MENSAGENS TAILWIND -------------------------- */
 
-export const TailwindMensagens = {
+export const TailwindMensagens = createI18nMessages({
   conflictingClasses: (key: string, tokens: string[]) => `Possível conflito ${key} (${tokens.slice(0, 4).join(', ')}). Verifique duplicidades.`,
   repeatedClass: (token: string) => `Classe repetida detectada (${token}). Considere remover redundância.`,
   importantUsage: (token: string) => `Uso de ! (important) detectado em (${token}). Prefira classes utilitárias ou reforço de escopo ao invés de important.`,
   variantConflict: (prop: string, variants: string[]) => `Possível conflito de variantes para ${prop} (variantes: ${variants.slice(0, 6).join(', ')}). Verifique ordem/escopo.`,
   dangerousArbitraryValue: (token: string) => `Valor arbitrário com url potencialmente perigosa (${token}). Evite javascript:/data:text/html.`,
   arbitraryValue: (token: string) => `Classe com valor arbitrário (${token}). Confirme se está alinhada ao design.`
-} as const;
+}, {
+  conflictingClasses: (key: string, tokens: string[]) => `Possible conflict in ${key} (${tokens.slice(0, 4).join(', ')}). Check for duplicates.`,
+  repeatedClass: (token: string) => `Repeated class detected (${token}). Consider removing redundancy.`,
+  importantUsage: (token: string) => `Use of ! (important) detected in (${token}). Prefer utility classes or scope reinforcement instead of important.`,
+  variantConflict: (prop: string, variants: string[]) => `Possible variant conflict for ${prop} (variants: ${variants.slice(0, 6).join(', ')}). Check order/scope.`,
+  dangerousArbitraryValue: (token: string) => `Arbitrary value with potentially dangerous url (${token}). Avoid javascript:/data:text/html.`,
+  arbitraryValue: (token: string) => `Class with arbitrary value (${token}). Confirm if it aligns with the design.`
+});
 
   /* -------------------------- MENSAGENS CSS -------------------------- */
 
-export const CssMensagens = {
+export const CssMensagens = createI18nMessages({
   duplicatePropertySame: (prop: string) => `Propriedade duplicada com valor idêntico (${prop}): erro detectado.`,
   duplicatePropertyDifferent: (prop: string, prev: string, curr: string) => `Propriedade duplicada (${prop}) com valores diferentes. Possível erro: "${prev}" vs "${curr}".`,
   importantUsage: 'Uso de !important detectado; prefira especificidade adequada.',
@@ -59,49 +70,80 @@ export const CssMensagens = {
   emptyRule: 'Regra CSS vazia detectada. Remova regras sem declarações.',
   vendorPrefixDeprecated: (prop: string) => `Prefixo vendor deprecated (${prop}). Use propriedades padrão quando suportadas.`,
   cssHackDetected: (hack: string) => `Hack CSS detectado (${hack}). Considere abordagens modernas ou feature queries.`
-} as const;
+}, {
+  duplicatePropertySame: (prop: string) => `Duplicate property with identical value (${prop}): error detected.`,
+  duplicatePropertyDifferent: (prop: string, prev: string, curr: string) => `Duplicate property (${prop}) with different values. Possible error: "${prev}" vs "${curr}".`,
+  importantUsage: 'Use of !important detected; prefer appropriate specificity.',
+  httpImport: 'Import via HTTP detected; prefer HTTPS or local bundling.',
+  httpUrl: 'External resource via HTTP in url(); prefer HTTPS.',
+  unifySelectors: (selectors: string[], propsCount: number) => `Identical CSS rules (${propsCount} properties) in selectors (${selectors.slice(0, 6).join(', ')}). Consider unifying/centralizing in a utility class or shared selector.`,
+  idSelectorPreferClass: (selector: string) => `Selector by id (${selector}) detected. For reuse and consistency, prefer classes when possible.`,
+  invalidProperty: (prop: string) => `Invalid or unknown CSS property (${prop}). Check spelling or browser support.`,
+  malformedSelector: (selector: string) => `Malformed or invalid CSS selector (${selector}). May cause rendering issues.`,
+  emptyRule: 'Empty CSS rule detected. Remove rules without declarations.',
+  vendorPrefixDeprecated: (prop: string) => `Deprecated vendor prefix (${prop}). Use standard properties when supported.`,
+  cssHackDetected: (hack: string) => `CSS hack detected (${hack}). Consider modern approaches or feature queries.`
+});
 
   /* -------------------------- MENSAGENS HTML -------------------------- */
 
-export const HtmlMensagens = {
-  // Estrutura
+export const HtmlMensagens = createI18nMessages({
   doctype: 'Documento sem <!DOCTYPE html> declarado.',
   htmlLang: 'Elemento <html> sem atributo lang (acessibilidade).',
   metaCharset: 'Falta <meta charset="utf-8"> no documento.',
   viewport: 'Falta meta viewport para responsividade.',
   title: 'Documento sem <title> definido.',
-  // Links
   linkTargetBlank: 'Link com target="_blank" sem rel="noreferrer"/"noopener".',
   linkNoHref: 'Link sem href válido ou sem handler (UX). Use <button> ou role="button".',
-  // Imagens
   imgWithoutAlt: 'Imagem sem atributo alt ou acessibilidade (WCAG 2.1).',
   imgWithoutLoading: 'Imagem sem atributo loading (performance). Considere loading="lazy".',
   imgWithoutDimensions: 'Imagem sem width/height (layout shift). Defina dimensões para evitar CLS.',
-  // Formulários
   formWithoutMethod: 'Formulário sem method especificado (GET/POST).',
   formWithoutAction: 'Formulário sem action ou data-attribute para processamento.',
-  inputWithoutLabel: 'Input sem name, id ou aria-label (acessibilidade/usabilidade).',
+  inputWithoutLabel: 'Input sem name, id or aria-label (acessibilidade/usabilidade).',
   passwordWithoutAutocomplete: 'Campo password sem autocomplete especificado (segurança).',
   inputWithoutType: 'Input sem type especificado (assume text, mas seja explícito).',
-  // Handlers
   inlineHandler: 'Handler inline detectado (on*). Prefira listeners externos ou data-attributes com JS.',
-  // Scripts/Styles
   inlineScript: 'Script inline detectado. Prefira arquivos externos para melhor cache e CSP.',
   inlineStyle: 'Style inline detectado. Prefira arquivos CSS externos para melhor cache.',
   scriptWithoutDefer: 'Script sem defer/async. Pode bloquear renderização; considere defer.',
-  // Acessibilidade
   headingSkipped: (current: number, expected: number) => `Cabeçalho pulado: h${current} sem h${expected} precedente (estrutura semântica).`,
   buttonWithoutText: 'Botão sem texto ou aria-label (acessibilidade).',
   tableWithoutCaption: 'Tabela sem <caption> ou aria-label (acessibilidade).',
   iframeWithoutTitle: 'Iframe sem title (acessibilidade).',
-  // Performance
   largeInlineScript: 'Script inline muito grande. Mova para arquivo externo.',
   multipleH1: 'Múltiplos <h1> detectados. Use apenas um por página para SEO/acessibilidade.'
-} as const;
+}, {
+  doctype: 'Document without declared <!DOCTYPE html>.',
+  htmlLang: '<html> element without lang attribute (accessibility).',
+  metaCharset: 'Missing <meta charset="utf-8"> in document.',
+  viewport: 'Missing viewport meta for responsiveness.',
+  title: 'Document without defined <title>.',
+  linkTargetBlank: 'Link with target="_blank" without rel="noreferrer"/"noopener".',
+  linkNoHref: 'Link without valid href or without handler (UX). Use <button> or role="button".',
+  imgWithoutAlt: 'Image without alt attribute or accessibility (WCAG 2.1).',
+  imgWithoutLoading: 'Image without loading attribute (performance). Consider loading="lazy".',
+  imgWithoutDimensions: 'Image without width/height (layout shift). Define dimensions to avoid CLS.',
+  formWithoutMethod: 'Form without specified method (GET/POST).',
+  formWithoutAction: 'Form without action or data-attribute for processing.',
+  inputWithoutLabel: 'Input without name, id or aria-label (accessibility/usability).',
+  passwordWithoutAutocomplete: 'Password field without specified autocomplete (security).',
+  inputWithoutType: 'Input without specified type (assumes text, but be explicit).',
+  inlineHandler: 'Inline handler detected (on*). Prefer external listeners or data-attributes with JS.',
+  inlineScript: 'Inline script detected. Prefer external files for better cache and CSP.',
+  inlineStyle: 'Inline style detected. Prefer external CSS files for better cache.',
+  scriptWithoutDefer: 'Script without defer/async. May block rendering; consider defer.',
+  headingSkipped: (current: number, expected: number) => `Skipped heading: h${current} without preceding h${expected} (semantic structure).`,
+  buttonWithoutText: 'Button without text or aria-label (accessibility).',
+  tableWithoutCaption: 'Table without <caption> or aria-label (accessibility).',
+  iframeWithoutTitle: 'Iframe without title (accessibility).',
+  largeInlineScript: 'Very large inline script. Move to external file.',
+  multipleH1: 'Multiple <h1> detected. Use only one per page for SEO/accessibility.'
+});
 
   /* -------------------------- MENSAGENS XML -------------------------- */
 
-export const XmlMensagens = {
+export const XmlMensagens = createI18nMessages({
   xmlPrologAusente: 'XML sem declaração <?xml ...?> (opcional, mas melhora compatibilidade).',
   doctypeDetectado: 'XML contém <!DOCTYPE>. Atenção a vetores de XXE (entidades externas).',
   doctypeExternoDetectado: 'XML contém DOCTYPE com identificador externo (SYSTEM/PUBLIC). Risco elevado de XXE se parser não for seguro.',
@@ -114,43 +156,76 @@ export const XmlMensagens = {
   encodingMismatch: (declared: string, detected: string) => `Encoding declarado (${declared}) não corresponde ao detectado (${detected}).`,
   largeEntityExpansion: 'Possível entidade com expansão muito grande. Risco de Billion Laughs attack.',
   cdataInAttribute: 'CDATA detectado em valor de atributo (inválido em XML).'
-} as const;
+}, {
+  xmlPrologAusente: 'XML without <?xml ...?> declaration (optional, but improves compatibility).',
+  doctypeDetectado: 'XML contains <!DOCTYPE>. Watch out for XXE (External Entity) vectors.',
+  doctypeExternoDetectado: 'XML contains DOCTYPE with external identifier (SYSTEM/PUBLIC). High risk of XXE if parser is not secure.',
+  entidadeDetectada: 'XML contains <!ENTITY>. Check for expansion/XXE risks.',
+  entidadeExternaDetectada: 'XML contains external entity (SYSTEM/PUBLIC). High risk of XXE if parser is not secure.',
+  entidadeParametroDetectada: 'XML contains parameter entity (<!ENTITY % ...>). Can be used for XXE/DTD injection; review carefully.',
+  xincludeDetectado: 'XML contains XInclude (<xi:include>). Can load external resources; validate source and parser.',
+  namespaceUndeclared: (prefix: string) => `Namespace prefix "${prefix}" used without xmlns:${prefix} declaration.`,
+  invalidXmlStructure: 'Invalid XML structure detected (unclosed or malnested tags).',
+  encodingMismatch: (declared: string, detected: string) => `Declared encoding (${declared}) does not match detected (${detected}).`,
+  largeEntityExpansion: 'Possible entity with very large expansion. Risk of Billion Laughs attack.',
+  cdataInAttribute: 'CDATA detected in attribute value (invalid in XML).'
+});
 
   /* -------------------------- MENSAGENS FORMATADOR (MIN) -------------------------- */
 
-export const FormatadorMensagens = {
+export const FormatadorMensagens = createI18nMessages({
   naoFormatado: (parser: string, detalhes?: string) => {
     const base = `Arquivo parece não estar formatado (parser: ${parser}). Considere normalizar com o formatador do Prometheus.`;
     if (!detalhes) return base;
     return `${base} (${detalhes})`;
   },
   parseErro: (parser: string, err: string) => `Falha ao validar formatação interna (parser: ${parser}): ${err}`
-} as const;
+}, {
+  naoFormatado: (parser: string, detalhes?: string) => {
+    const base = `File seems not to be formatted (parser: ${parser}). Consider normalizing with Prometheus formatter.`;
+    if (!detalhes) return base;
+    return `${base} (${detalhes})`;
+  },
+  parseErro: (parser: string, err: string) => `Failed to validate internal formatting (parser: ${parser}): ${err}`
+});
 
   /* -------------------------- MENSAGENS SVG (OTIMIZAÇÃO) -------------------------- */
 
-export const SvgMensagens = {
+export const SvgMensagens = createI18nMessages({
   naoPareceSvg: 'Arquivo .svg não contém uma tag <svg> válida.',
   semViewBox: 'SVG sem viewBox detectado (pode prejudicar responsividade).',
   scriptInline: 'SVG contém <script>. Risco de segurança: evite SVGs com script embutido.',
   eventoInline: 'SVG contém handlers inline (on*). Evite eventos inline em assets.',
   javascriptUrl: 'SVG contém javascript: em URL/href. Risco de segurança.',
   podeOtimizar: (originalBytes: number, optimizedBytes: number, mudancas: string[]) => `SVG pode ser otimizado (${originalBytes}B → ${optimizedBytes}B). Mudanças: ${mudancas.join(', ')}.`
-} as const;
+}, {
+  naoPareceSvg: '.svg file does not contain a valid <svg> tag.',
+  semViewBox: 'SVG without viewBox detected (may hinder responsiveness).',
+  scriptInline: 'SVG contains <script>. Security risk: avoid SVGs with embedded script.',
+  eventoInline: 'SVG contains inline handlers (on*). Avoid inline events in assets.',
+  javascriptUrl: 'SVG contains javascript: in URL/href. Security risk.',
+  podeOtimizar: (originalBytes: number, optimizedBytes: number, mudancas: string[]) => `SVG can be optimized (${originalBytes}B → ${optimizedBytes}B). Changes: ${mudancas.join(', ')}.`
+});
 
   /* -------------------------- MENSAGENS CSS-IN-JS -------------------------- */
 
-export const CssInJsMensagens = {
+export const CssInJsMensagens = createI18nMessages({
   detectedStyledComponents: 'Padrões de styled-components detectados (CSS-in-JS).',
   detectedStyledJsx: 'Padrões de styled-jsx detectados (CSS-in-JS em React).',
   globalStyles: (fonte: 'styled-components' | 'styled-jsx') => `Estilos globais detectados (${fonte}). Prefira escopo local quando possível.`,
   importantUsage: 'Uso de !important em CSS-in-JS detectado; prefira especificidade adequada.',
   httpUrl: 'Recurso externo via HTTP em url(); prefira HTTPS.'
-} as const;
+}, {
+  detectedStyledComponents: 'styled-components patterns detected (CSS-in-JS).',
+  detectedStyledJsx: 'styled-jsx patterns detected (CSS-in-JS in React).',
+  globalStyles: (fonte: 'styled-components' | 'styled-jsx') => `Global styles detected (${fonte}). Prefer local scope when possible.`,
+  importantUsage: 'Use of !important in CSS-in-JS detected; prefer appropriate specificity.',
+  httpUrl: 'External resource via HTTP in url(); prefer HTTPS.'
+});
 
   /* -------------------------- MENSAGENS PYTHON -------------------------- */
 
-export const PythonMensagens = {
+export const PythonMensagens = createI18nMessages({
   // Imports & Dependencies
   missingTypeHints: 'Função sem type hints detectada; adicione type hints para melhor legibilidade.',
   hardcodedString: (string: string) => `String hardcoded detectada (${string.slice(0, 30)}...); considere usar constantes.`,
@@ -172,16 +247,39 @@ export const PythonMensagens = {
   // Performance
   listComprehensionOpportunity: 'Loop que poderia ser list comprehension detectado.',
   loopingOverDict: 'Iteração sobre dict sem .items(); considere usar .items().'
-} as const;
+}, {
+  missingTypeHints: 'Function without type hints detected; add type hints for better readability.',
+  hardcodedString: (string: string) => `Hardcoded string detected (${string.slice(0, 30)}...); consider using constants.`,
+  httpWithoutVerify: 'HTTP request without verify=True detected; validate SSL certificates.',
+  sqlInjection: 'Possible SQL injection detected; use prepared statements.',
+  broadExcept: 'Generic exception (except:) detected; be specific.',
+  bareRaise: 'raise without context detected; always pass the exception to maintain stack trace.',
+  passInExcept: 'pass in except block; implement appropriate error handling.',
+  printInsteadOfLog: 'print() detected; prefer logging module for production.',
+  evalUsage: 'eval() detected; avoid using eval - security vulnerability.',
+  execUsage: 'exec() detected; avoid using exec - security vulnerability.',
+  subprocessShellTrue: 'subprocess with shell=True detected; risk of command injection. Prefer list of args and shell=False.',
+  pickleUsage: 'pickle load(s) detected; never deserialize untrusted data (RCE). Prefer secure formats (JSON).',
+  yamlUnsafeLoad: 'yaml.load without secure Loader detected; prefer yaml.safe_load (prevents execution).',
+  globalKeyword: 'Use of global keyword detected; prefer passing as parameter.',
+  mutableDefault: 'Argument with mutable default value (list/dict) detected; use None as default.',
+  listComprehensionOpportunity: 'Loop that could be a list comprehension detected.',
+  loopingOverDict: 'Iteration over dict without .items(); consider using .items().'
+});
 
   /* -------------------------- Nivéis de Severidade -------------------------- */
 
-export const SeverityNiveis = {
+export const SeverityNiveis = createI18nMessages({
   error: 'erro',
   warning: 'aviso',
   info: 'info',
   suggestion: 'sugestao'
-} as const;
+}, {
+  error: 'error',
+  warning: 'warning',
+  info: 'info',
+  suggestion: 'suggestion'
+});
 
   /* -------------------------- Categorias/Tipos de Analistas -------------------------- */
 

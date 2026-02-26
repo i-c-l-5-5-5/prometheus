@@ -1,4 +1,5 @@
 {
+  "LANGUAGE": "pt-BR",
   "INCLUDE_EXCLUDE_RULES": {
     "globalExcludeGlob": [
       "node_modules/**",

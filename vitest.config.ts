@@ -1,7 +1,9 @@
-import { defineConfig } from 'vitest/config';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { defineConfig } from 'vitest/config';
+
 import type { VitestAlias } from './src/types/shared/vitest-alias.js';
 
 // Helpers extraídos para reduzir complexidade cognitiva da função principal
@@ -147,7 +149,7 @@ function resolveSrcPattern(rootAbs: string, source: string) {
   return null;
 }
 
-function createTransformPlugin(rootAbs: string) {
+function _createTransformPlugin(_rootAbs: string) {
   // Deprecated: kept for backward compat but split into two focused plugins below
   return {
     name: 'prometheus-transform-tests-js-to-ts',
@@ -156,7 +158,7 @@ function createTransformPlugin(rootAbs: string) {
   };
 }
 
-function createTransformImportsPlugin(rootAbs: string) {
+function createTransformImportsPlugin(_rootAbs: string) {
   return {
     name: 'prometheus-transform-imports-js-to-ts',
     enforce: 'pre' as const,
@@ -199,7 +201,7 @@ function createTransformImportsPlugin(rootAbs: string) {
   };
 }
 
-function createTransformMocksPlugin(rootAbs: string) {
+function createTransformMocksPlugin(_rootAbs: string) {
   return {
     name: 'prometheus-transform-mocks-js-to-ts',
     enforce: 'pre' as const,

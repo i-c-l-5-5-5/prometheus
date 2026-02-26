@@ -15,6 +15,7 @@ const ZELADOR_ABANDONED = path.join(PROMETHEUS_ESTADO, 'abandonados');
 export const configPadrao = {
   VERBOSE: false,
   LOG_LEVEL: 'info' as 'erro' | 'aviso' | 'info' | 'debug',
+  LANGUAGE: 'pt-BR' as 'pt-BR' | 'en',
   // 🌱 Flags gerais
   DEV_MODE: process.env.NODE_ENV === 'development' || process.env.PROMETHEUS_DEV === 'true',
   AUTOANALISE_CONCURRENCY: 5,

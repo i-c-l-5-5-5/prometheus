@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-// SENSEI: Revisar ocorrências 'unhandled-async' (1). Ver relatorio:
+// PROMETHEUS: Revisar ocorrências 'unhandled-async' (1). Ver relatorio:
 // relatorios/prometheus-relatorio-summary-2026-02-24T22-21-50-731Z.json
 
 

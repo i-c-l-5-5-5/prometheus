@@ -102,36 +102,37 @@ async function gerarRelatorioMarkdown(caminho: string, options: FixTypesExportOp
   const mediaConfianca = total > 0 ? Math.round(stats.totalConfianca / total) : 0;
   const lines: string[] = [];
 
+  const msg = CliExportersMensagens.fixTypes.markdown;
   // Cabeçalho
-  lines.push('# Relatório de Análise de Tipos Inseguros');
+  lines.push(msg.titulo);
   lines.push('');
-  lines.push(`**Gerado em:** ${new Date().toISOString()}`);
-  lines.push(`**Comando:** \`prometheus fix-types\``);
-  lines.push(`**Confiança Mínima:** ${minConfidence}%`);
+  lines.push(msg.geradoEm(new Date().toISOString()));
+  lines.push(msg.comando);
+  lines.push(msg.confiancaMin(minConfidence));
   lines.push('');
 
   // Resumo Executivo
-  lines.push('## 📊 Resumo Executivo');
+  lines.push(msg.resumoExecutivo);
   lines.push('');
-  lines.push(`- **Total de Casos:** ${total}`);
-  lines.push(`- **Confiança Média:** ${mediaConfianca}%`);
+  lines.push(msg.totalCasos(total));
+  lines.push(msg.confiancaMedia(mediaConfianca));
   lines.push('');
-  lines.push('### Distribuição por Categoria');
+  lines.push(msg.distribuicaoTitulo);
   lines.push('');
-  lines.push('| Categoria | Total | Percentual | Descrição |');
-  lines.push('|-----------|-------|------------|-----------|');
-  lines.push(`| [SUCESSO] LEGÍTIMO | ${stats.legitimo} | ${total > 0 ? Math.round(stats.legitimo / total * 100) : 0}% | Uso correto - nenhuma ação necessária |`);
-  lines.push(`| [AVISO] MELHORÁVEL | ${stats.melhoravel} | ${total > 0 ? Math.round(stats.melhoravel / total * 100) : 0}% | Pode ser mais específico - revisão manual recomendada |`);
-  lines.push(`| [ERRO] CORRIGIR | ${stats.corrigir} | ${total > 0 ? Math.round(stats.corrigir / total * 100) : 0}% | Deve ser substituído - correção necessária |`);
+  lines.push(msg.distribuicaoTabelaHeader);
+  lines.push(msg.distribuicaoTabelaDivider);
+  lines.push(msg.distribuicaoLegitimo(stats.legitimo, total > 0 ? Math.round(stats.legitimo / total * 100) : 0));
+  lines.push(msg.distribuicaoMelhoravel(stats.melhoravel, total > 0 ? Math.round(stats.melhoravel / total * 100) : 0));
+  lines.push(msg.distribuicaoCorrigir(stats.corrigir, total > 0 ? Math.round(stats.corrigir / total * 100) : 0));
   lines.push('');
 
   // Casos de Alta Prioridade
   const altaPrioridade = casos.filter(c => c.categoria === 'corrigir' && c.confianca >= 85);
   if (altaPrioridade.length > 0) {
-    lines.push('## [ERRO] Correções de Alta Prioridade (≥85% confiança)');
+    lines.push(msg.altaPrioridadeTitulo);
     lines.push('');
     altaPrioridade.forEach((caso, idx) => {
-      lines.push(`### ${idx + 1}. ${caso.arquivo}:${caso.linha || '?'} (${caso.confianca}%)`);
+      lines.push(msg.altaPrioridadeItem(idx + 1, caso.arquivo, caso.linha || '?', caso.confianca));
       lines.push('');
       lines.push(`**Motivo:** ${caso.motivo}`);
       if (caso.sugestao) {
@@ -150,12 +151,12 @@ async function gerarRelatorioMarkdown(caminho: string, options: FixTypesExportOp
   // Casos Incertos
   const casosIncertos = casos.filter(c => c.confianca < 70 && c.variantes && c.variantes.length > 0);
   if (casosIncertos.length > 0) {
-    lines.push('## [AVISO] Casos com Análise Incerta (<70% confiança)');
+    lines.push(msg.incertosTitulo);
     lines.push('');
-    lines.push('*Estes casos requerem revisão manual cuidadosa - múltiplas possibilidades detectadas*');
+    lines.push(msg.incertosIntro);
     lines.push('');
     casosIncertos.forEach((caso, idx) => {
-      lines.push(`### ${idx + 1}. ${caso.arquivo}:${caso.linha || '?'} (${caso.confianca}%)`);
+      lines.push(msg.incertosItem(idx + 1, caso.arquivo, caso.linha || '?', caso.confianca));
       lines.push('');
       lines.push(`**Motivo:** ${caso.motivo}`);
       if (caso.sugestao) {
@@ -179,17 +180,17 @@ async function gerarRelatorioMarkdown(caminho: string, options: FixTypesExportOp
   }
 
   // Lista Completa por Categoria
-  lines.push('## [INFO] Lista Completa de Casos');
+  lines.push(msg.listaCompletaTitulo);
   lines.push('');
   for (const categoria of ['legitimo', 'melhoravel', 'corrigir'] as const) {
     const casosPorCategoria = casos.filter(c => c.categoria === categoria);
     if (casosPorCategoria.length === 0) continue;
     const prefixo = categoria === 'legitimo' ? '[SUCESSO]' : categoria === 'melhoravel' ? '[AVISO]' : '[ERRO]';
     const titulo = categoria.toUpperCase();
-    lines.push(`### ${prefixo} ${titulo} (${casosPorCategoria.length} casos)`);
+    lines.push(msg.listaCompletaCategoria(prefixo, titulo, casosPorCategoria.length));
     lines.push('');
     casosPorCategoria.forEach(caso => {
-      lines.push(`- **${caso.arquivo}:${caso.linha || '?'}** (${caso.confianca}%)`);
+      lines.push(msg.listaCompletaItem(caso.arquivo, caso.linha || '?', caso.confianca));
       lines.push(`  - ${caso.motivo}`);
       if (caso.sugestao) {
         lines.push(`  - [INFO] ${caso.sugestao}`);

@@ -1,13 +1,13 @@
 # 📚 Guia Completo de Comandos do Prometheus
 
 > Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
-> Última atualização: 15 de janeiro de 2026
+> Última atualização: 25 de fevereiro de 2026
 
 ## 🎯 Visão Geral
 
 O Prometheus oferece diversos comandos para análise, diagnóstico e manutenção de projetos. Este guia detalha cada comando, suas opções e casos de uso.
 
-**Requisitos:** Node.js >=25.0.0
+**Requisitos:** Node.js >=24.12.0
 
 ## 📋 Índice de Comandos
 
@@ -770,5 +770,5 @@ prometheus diagnosticar --include "src/**" --exclude "**/*.test.*"
 
 ---
 
-**Última atualização:** 15 de janeiro de 2026
-**Versão:** 0.3.0
+**Última atualização:** 25 de fevereiro de 2026
+**Versão:** 0.4.0

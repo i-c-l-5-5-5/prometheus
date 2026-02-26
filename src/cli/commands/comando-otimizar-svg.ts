@@ -6,11 +6,9 @@ import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
 import { processPatternList } from '@cli/helpers/pattern-helpers.js';
 import chalk from '@core/config/chalk-safe.js';
 import { scanRepository } from '@core/execution/scanner.js';
+import { CliComandoOtimizarSvgMensagens } from '@core/messages/cli/cli-comando-otimizar-svg-messages.js';
 import { log } from '@core/messages/index.js';
-import {
-  otimizarSvgLikeSvgo,
-  shouldSugerirOtimizacaoSvg,
-} from '@shared/impar/svgs.js';
+import { otimizarSvgLikeSvgo, shouldSugerirOtimizacaoSvg } from '@shared/impar/svgs.js';
 import { salvarEstado } from '@shared/persistence/persistencia.js';
 import { Command } from 'commander';
 import micromatch from 'micromatch';
@@ -30,37 +28,27 @@ export function comandoOtimizarSvg(
   aplicarFlagsGlobais: (opts: Record<string, unknown>) => void,
 ): Command {
   return new Command('otimizar-svg')
-    .description(
-      'Otimiza SVGs do projeto usando o otimizador interno (svgo-like).',
-    )
-    .option('--dir <caminho>', 'Diretório base (default: CWD)')
-    .option('--write', 'Aplica otimizações no filesystem', false)
-    .option('--dry', 'Executa em modo somente leitura (default)', true)
-    .option(
-      '--include <padrao>',
-      'Glob pattern a INCLUIR (pode repetir ou separar por vírgula/espaço)',
-      (val: string, prev: string[]) => {
-        prev.push(val);
-        return prev;
-      },
-      [] as string[],
-    )
-    .option(
-      '--exclude <padrao>',
-      'Glob pattern a EXCLUIR adicionalmente (pode repetir ou separar por vírgula/espaço)',
-      (val: string, prev: string[]) => {
-        prev.push(val);
-        return prev;
-      },
-      [] as string[],
-    )
+    .description(CliComandoOtimizarSvgMensagens.descricao)
+    .option('--dir <caminho>', CliComandoOtimizarSvgMensagens.opcoes.dir)
+    .option('--write', CliComandoOtimizarSvgMensagens.opcoes.write, false)
+    .option('--dry', CliComandoOtimizarSvgMensagens.opcoes.dry, true)
+    .option('--include <padrao>', CliComandoOtimizarSvgMensagens.opcoes.include, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
+    .option('--exclude <padrao>', CliComandoOtimizarSvgMensagens.opcoes.exclude, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
     .action(async function (this: Command, opts: OtimizarSvgOptions) {
       try {
-        await aplicarFlagsGlobais(
-          this.parent && typeof this.parent.opts === 'function'
-            ? this.parent.opts()
-            : {},
-        );
+        try {
+          await aplicarFlagsGlobais(this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {});
+        } catch (err) {
+          log.erro(CliComandoOtimizarSvgMensagens.erros.falhaFlags(err instanceof Error ? err.message : String(err)));
+          sair(ExitCode.Failure);
+          return;
+        }
 
         const write = Boolean(opts.write);
         const dry = write ? false : Boolean(opts.dry ?? true);
@@ -69,7 +57,7 @@ export function comandoOtimizarSvg(
         const includeList = processPatternList(opts.include);
         const excludeList = processPatternList(opts.exclude);
 
-        log.info(chalk.bold('OTIMIZAR SVG'));
+        log.info(chalk.bold(CliComandoOtimizarSvgMensagens.status.titulo));
 
         const files = await scanRepository(baseDir, {
           includeContent: true,
@@ -114,39 +102,29 @@ export function comandoOtimizarSvg(
             const abs = path.resolve(baseDir, relPath);
             await salvarEstado(abs, opt.data);
             optimized++;
-            log.info(
-              `${relPath} — ${formatBytes(opt.originalBytes)} → ${formatBytes(opt.optimizedBytes)} (−${formatBytes(saved)})`,
-            );
+            log.info(CliComandoOtimizarSvgMensagens.status.linhaLogOtimizacao(relPath, formatBytes(opt.originalBytes), formatBytes(opt.optimizedBytes), formatBytes(saved)));
           } else {
-            log.info(
-              `[dry] ${relPath} — ${formatBytes(opt.originalBytes)} → ${formatBytes(opt.optimizedBytes)} (−${formatBytes(saved)})`,
-            );
+            log.info(CliComandoOtimizarSvgMensagens.status.linhaLogDry(relPath, formatBytes(opt.originalBytes), formatBytes(opt.optimizedBytes), formatBytes(saved)));
           }
         }
 
         if (!candidates) {
-          log.info('Nenhum SVG acima do limiar de otimização.');
+          log.info(CliComandoOtimizarSvgMensagens.status.nenhumSugerido);
           sair(ExitCode.Ok);
           return;
         }
 
-        log.info(
-          `Candidatos: ${candidates} | Economia potencial: ${formatBytes(savedBytes)} | Total de SVGs lidos: ${total}`,
-        );
+        log.info(CliComandoOtimizarSvgMensagens.status.resumoCandidatos(candidates, formatBytes(savedBytes), total));
 
         if (write) {
-          log.sucesso(
-            `Otimização aplicada em ${optimized}/${candidates} arquivos.`,
-          );
+          log.sucesso(CliComandoOtimizarSvgMensagens.status.concluidoWrite(optimized, candidates));
         } else {
-          log.info('Use --write para aplicar as otimizações.');
+          log.info(CliComandoOtimizarSvgMensagens.status.avisoDicaWrite);
         }
 
         sair(ExitCode.Ok);
       } catch (err) {
-        log.erro(
-          `Falha ao otimizar SVGs: ${err instanceof Error ? err.message : String(err)}`,
-        );
+        log.erro(CliComandoOtimizarSvgMensagens.erros.falhaOtimizar(err instanceof Error ? err.message : String(err)));
         sair(ExitCode.Failure);
       }
     });

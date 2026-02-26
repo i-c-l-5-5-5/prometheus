@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
+import { createI18nMessages } from '@shared/helpers/i18n.js';
 
-export const ExcecoesMensagens = {
+export const ExcecoesMensagens = createI18nMessages({
   // CLI
   exit1: 'exit:1',
   requireMutateFsAutoFix: 'Auto-fix indisponível',
@@ -44,4 +45,37 @@ export const ExcecoesMensagens = {
   mapaReversaoCorrompido: 'Mapa de reversão corrompido',
   // Relatórios
   semPkg: 'sem pkg'
-} as const;
+}, {
+  exit1: 'exit:1',
+  requireMutateFsAutoFix: 'Auto-fix unavailable',
+  autoFixTimeout: (timeoutMs: number) => `Auto-fix timeout after ${timeoutMs}ms`,
+  pluginsDesabilitadosSafeMode: 'Plugin loading disabled in SAFE_MODE. Set PROMETHEUS_ALLOW_PLUGINS=1 to allow.',
+  pluginBloqueado: (erro: string) => `Plugin blocked: ${erro}`,
+  caminhoPluginNaoResolvido: 'Plugin path not resolved',
+  pluginRegistradoNaoPodeSerObtido: (name: string) => `Plugin ${name} is registered but cannot be obtained`,
+  pluginCarregandoPromiseNaoPodeSerObtida: (name: string) => `Plugin ${name} is loading but promise cannot be obtained`,
+  naoFoiPossivelCarregarPlugin: (name: string, errMsg: string) => `Could not load plugin '${name}': ${errMsg}`,
+  pluginDeveTerNomeValido: 'Plugin must have a valid name',
+  pluginDeveTerVersaoValida: 'Plugin must have a valid version',
+  pluginDeveDefinirPeloMenosUmaExtensao: 'Plugin must define at least one extension',
+  pluginDeveImplementarMetodoParse: 'Plugin must implement parse() method',
+  definicaoAnalistaInvalida: 'Invalid analyst definition',
+  analistaSemFuncaoAplicar: (nome: string) => `Analyst ${nome} without apply function`,
+  caminhoForaDaCwdNaoPermitido: (p: string) => `Path outside CWD not allowed: ${p}`,
+  persistenciaNegadaForaRaizProjeto: (caminho: string) => `Persistence denied: path outside project root: ${caminho}`,
+  fsWriteFileBinaryIndisponivel: 'fs.writeFile (binary) unavailable in current environment',
+  fsReadFileIndisponivel: 'fs.readFile unavailable in current environment',
+  fsWriteFileIndisponivel: 'fs.writeFile unavailable in current environment',
+  fsRenameIndisponivel: 'fs.rename unavailable in current environment',
+  fsMkdirIndisponivel: 'fs.mkdir unavailable in current environment',
+  versaoSchemaDesconhecida: (versao: string) => `Unknown schema version: ${versao}`,
+  relatorioSchemaInvalido: (erros: string) => `Report with invalid schema: ${erros}`,
+  arquivoNaoEncontrado: (fileCaminho: string) => `File not found: ${fileCaminho}`,
+  validacaoFalhouPara: (fileCaminho: string) => `Validation failed for ${fileCaminho}`,
+  erroAoLer: (fileCaminho: string, errMsg: string) => `Error reading ${fileCaminho}: ${errMsg}`,
+  erroAoEscrever: (fileCaminho: string, errMsg: string) => `Error writing ${fileCaminho}: ${errMsg}`,
+  erroAoDeletar: (fileCaminho: string, errMsg: string) => `Error deleting ${fileCaminho}: ${errMsg}`,
+  statIndefinidoPara: (fullCaminho: string) => `Stat undefined for ${fullCaminho}`,
+  mapaReversaoCorrompido: 'Rollback map corrupted',
+  semPkg: 'no pkg'
+});

@@ -209,6 +209,44 @@ export const ARQUETIPOS: ArquetipoEstruturaDef[] = [
     forbiddenDirs: ['pages', 'api', 'prisma', 'server', 'packages'],
     pesoBase: 1.2, // Estrutura específica mas comum
   },
+  {
+    nome: 'angular-app',
+    descricao: 'Aplicação Angular com estrutura de módulos/componentes e assets',
+    requiredDirs: ['src', 'src/app'],
+    optionalDirs: [
+      'src/assets',
+      'src/environments',
+      'src/app/core',
+      'src/app/shared',
+      'src/app/modules',
+      'src/app/components',
+      'src/app/services',
+    ],
+    dependencyHints: [
+      '@angular/core',
+      '@angular/common',
+      'rxjs',
+      'zone.js',
+      '@angular/platform-browser',
+    ],
+    rootFilesAllowed: [
+      'package.json',
+      'tsconfig.json',
+      'angular.json',
+      'README.md',
+      '.editorconfig',
+      'karma.conf.js',
+    ],
+    forbiddenDirs: [
+      'pages',
+      'api',
+      'prisma',
+      'server',
+      'packages',
+      'electron-app',
+    ],
+    pesoBase: 1.3,
+  },
 ];
 
 export function normalizarCaminho(p: string): string {

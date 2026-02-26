@@ -11,3 +11,5 @@ coverage
 *.tsbuildinfo
 *.swp
 *.swo
+.aider*
+.dev-toolkit

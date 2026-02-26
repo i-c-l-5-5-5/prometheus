@@ -77,8 +77,8 @@ git checkout -b feature/sua-contribuicao-descritiva
 
 ### 🐛 Correção de Bugs
 
-- Issues com label [`bug`](https://github.com/md-555/prometheus/labels/bug)
-- Issues com label [`good-first-issue`](https://github.com/md-555/prometheus/labels/good-first-issue)
+- Issues com label [`bug`](https://github.com/i-c-l-5-5-5/prometheus/labels/bug)
+- Issues com label [`good-first-issue`](https://github.com/i-c-l-5-5-5/prometheus/labels/good-first-issue)
 - Priorize bugs críticos e regressions
 
 ### ✨ Novas Funcionalidades

@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 
 import { config } from '@core/config/config.js';
 import { formatMs } from '@core/config/format.js';
-import { log, logCore } from '@core/messages/index.js';
+import { log, logCore, MENSAGENS_EXECUTOR } from '@core/messages/index.js';
 import { logAnalistas } from '@core/messages/log/log-helper.js';
 import { createDefaultReporter } from '@core/reporting/default-reporter.js';
 import { WorkerPool } from '@core/workers/worker-pool.js';
@@ -129,7 +129,7 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
           });
         }
         if (opts?.verbose) {
-          log.sucesso(`Técnica global "${tecnica.nome}"`);
+          log.sucesso(MENSAGENS_EXECUTOR.tecnicaGlobalSucesso(tecnica.nome || 'desconhecido'));
         }
         if (config.LOG_ESTRUTURADO) {
           log.info(JSON.stringify({
@@ -144,17 +144,16 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
         const err = error as Error;
         const isTempoLimite = err.message.includes('Timeout: analista global');
         const nivelLog = isTempoLimite ? 'aviso' : 'erro';
-        const prefixo = isTempoLimite ? '⏰' : '❌';
 
         // Log apropriado baseado no tipo de erro
         if (nivelLog === 'aviso') {
-          log.aviso(`${prefixo} ${err.message}`);
+          log.aviso(MENSAGENS_EXECUTOR.tecnicaGlobalTimeout(tecnica.nome || 'desconhecido'));
         } else {
-          log.erro(`${prefixo} Erro na técnica global '${tecnica.nome}': ${err.message}`);
+          log.erro(MENSAGENS_EXECUTOR.tecnicaGlobalErro(tecnica.nome || 'desconhecido', err.message));
           // Exibe stack trace em modo verbose ou debug
           if (err.stack) {
             if (opts?.verbose || config.DEV_MODE) {
-              log.info('Stack trace:');
+              log.info(MENSAGENS_EXECUTOR.stackTrace);
               log.info(err.stack);
             }
           }
@@ -162,7 +161,9 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
 
         // Registra ocorrência de erro/timeout
         ocorrencias.push(ocorrenciaErroAnalista({
-          mensagem: isTempoLimite ? `Timeout na técnica global '${tecnica.nome}': ${timeoutMs}ms excedido` : `Falha na técnica global '${tecnica.nome}': ${err.message}`,
+          mensagem: isTempoLimite
+            ? MENSAGENS_EXECUTOR.tecnicaGlobalTimeoutOcorrencia(tecnica.nome || 'desconhecido', timeoutMs)
+            : MENSAGENS_EXECUTOR.tecnicaGlobalErroOcorrencia(tecnica.nome || 'desconhecido', err.message),
           relPath: '[execução global]',
           origem: tecnica.nome,
           stack: !isTempoLimite && err.stack ? err.stack : undefined
@@ -173,7 +174,7 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
 
   // Modo Fast: usar WorkerPool para processamento paralelo
   if (opts?.fast && fileEntriesComAst.length > 0) {
-    log.info('🚀 Modo rápido ativado: processamento paralelo com Workers');
+    log.info(MENSAGENS_EXECUTOR.fastModeAtivado);
     const workerPool = new WorkerPool({
       enabled: true,
       maxWorkers: config.WORKER_POOL_MAX_WORKERS || undefined,
@@ -190,7 +191,7 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
     ocorrencias.push(...resultadoWorkers.occurrences);
     metricasAnalistas.push(...resultadoWorkers.metrics);
     const duracaoTotal = performance.now() - inicioExecucao;
-    log.sucesso(`✅ Análise rápida concluída: ${fileEntriesComAst.length} arquivos em ${formatMs(duracaoTotal)}`);
+    log.sucesso(MENSAGENS_EXECUTOR.analiseRapidaConcluida(fileEntriesComAst.length, formatMs(duracaoTotal)));
 
     // Salvar estado incremental (se habilitado)
     if (config.ANALISE_INCREMENTAL_ENABLED) {
@@ -269,7 +270,6 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
     if (total <= 500) return 25;
     return 100;
   }
-  const frames = ['->', '=>', '>>', '=>'] as const;
   const stepVerbose = passoDeLog(totalArquivos);
   const detalharPorArquivo = (opts?.verbose ?? false) && totalArquivos <= LIMIAR_DETALHE_TOTAL;
   const permitirArquivoXY = (opts?.verbose ?? false) && totalArquivos <= LIMIAR_DETALHE_LIMITADO_MAX;
@@ -280,24 +280,23 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
     arquivoAtual++;
     if (opts?.compact) {
       if (arquivoAtual === totalArquivos) {
-        log.info(`Arquivos analisados: ${totalArquivos}`);
+        log.info(MENSAGENS_EXECUTOR.arquivosAnalisadosTotal(totalArquivos));
       }
     } else if (opts?.verbose) {
       // Em verbose: detalha por arquivo somente até o limiar; entre 101-250 mostra "Arquivo X/Y" com throttle; acima disso, só resumo de progresso.
       if (permitirArquivoXY) {
         if (arquivoAtual === 1 || arquivoAtual % stepVerbose === 0 || arquivoAtual === totalArquivos) {
-          const seta = frames[arquivoAtual % frames.length];
-          log.info(`${seta} Arquivo ${arquivoAtual}/${totalArquivos}: ${entry.relPath}`);
+          log.info(MENSAGENS_EXECUTOR.arquivoProcessando(arquivoAtual, totalArquivos, entry.relPath));
         }
       } else {
         if (arquivoAtual === 1 || arquivoAtual % stepVerbose === 0 || arquivoAtual === totalArquivos) {
-          log.info(`Arquivos analisados: ${arquivoAtual}/${totalArquivos}`);
+          log.info(MENSAGENS_EXECUTOR.arquivosAnalisadosProgress(arquivoAtual, totalArquivos));
         }
       }
     } else if (arquivoAtual % 50 === 0 || arquivoAtual === totalArquivos) {
       // Modo padrão: log apenas a cada 50 arquivos para reduzir ruído
       if (arquivoAtual === totalArquivos) {
-        __infoD(`Arquivos analisados: ${arquivoAtual}/${totalArquivos}`);
+        __infoD(MENSAGENS_EXECUTOR.arquivosAnalisadosProgress(arquivoAtual, totalArquivos));
       }
     }
     // Verifica incremento
@@ -376,7 +375,7 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
         const ocorrenciasContagem = Array.isArray(resultado) ? resultado.length : resultado ? 1 : 0;
         logAnalistas.concluido(tecnica.nome || 'analista-desconhecido', entry.relPath, ocorrenciasContagem, duracaoMs);
         if (detalharPorArquivo) {
-          log.info(`📄 '${tecnica.nome}' analisou ${entry.relPath} em ${formatMs(duracaoMs)}`);
+          log.info(MENSAGENS_EXECUTOR.analiseCompleta(tecnica.nome || 'desconhecido', entry.relPath, formatMs(duracaoMs)));
         }
         if (config.LOG_ESTRUTURADO) {
           log.info(JSON.stringify({
@@ -391,7 +390,6 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
         const err = error as Error;
         const isTempoLimite = err.message.includes('Timeout: analista');
         const nivelLog = isTempoLimite ? 'aviso' : 'erro';
-        const prefixo = isTempoLimite ? '⏰' : '❌';
 
         // Log adaptativo para erros e timeouts
         if (isTempoLimite) {
@@ -403,13 +401,13 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
 
         // Log apropriado baseado no tipo de erro
         if (nivelLog === 'aviso') {
-          log.aviso(`${prefixo} ${err.message}`);
+          log.aviso(MENSAGENS_EXECUTOR.tecnicaLocalErro(tecnica.nome || 'desconhecido', entry.relPath, err.message));
         } else {
-          log.erro(`${prefixo} Erro em '${tecnica.nome}' para ${entry.relPath}: ${err.message}`);
+          log.erro(MENSAGENS_EXECUTOR.tecnicaLocalErro(tecnica.nome || 'desconhecido', entry.relPath, err.message));
           // Exibe stack trace em modo verbose ou debug
           if (err.stack) {
             if (opts?.verbose || config.DEV_MODE) {
-              log.info('Stack trace:');
+              log.info(MENSAGENS_EXECUTOR.stackTrace);
               log.info(err.stack);
             }
           }
@@ -417,7 +415,9 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
 
         // Registra ocorrência de erro/timeout com stack trace
         ocorrencias.push(ocorrenciaErroAnalista({
-          mensagem: isTempoLimite ? `Timeout na técnica '${tecnica.nome}' para ${entry.relPath}: ${timeoutMs}ms excedido` : `Falha na técnica '${tecnica.nome}' para ${entry.relPath}: ${err.message}`,
+          mensagem: isTempoLimite
+            ? MENSAGENS_EXECUTOR.tecnicaLocalTimeoutOcorrencia(tecnica.nome || 'desconhecido', entry.relPath, timeoutMs)
+            : MENSAGENS_EXECUTOR.tecnicaLocalErroOcorrencia(tecnica.nome || 'desconhecido', entry.relPath, err.message),
           relPath: entry.relPath,
           origem: tecnica.nome,
           stack: !isTempoLimite && err.stack ? err.stack : undefined
@@ -466,7 +466,7 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
   // Agregação de métricas
   let metricasExecucao: MetricaExecucao | null = null;
   if (config.ANALISE_METRICAS_ENABLED) {
-    const metricasGlobais: MetricasGlobais = (globalThis as unknown as Record<string, unknown>).__SENSEI_METRICAS__ as MetricasGlobais || {
+    const metricasGlobais: MetricasGlobais = (globalThis as unknown as Record<string, unknown>).__PROMETHEUS_METRICAS__ as MetricasGlobais || {
       parsingTimeMs: 0,
       cacheHits: 0,
       cacheMiss: 0
@@ -504,7 +504,7 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
       }
     } catch (e) {
       // Sempre registra em DEV e também em execução normal para visibilidade dos testes
-      log.erro(`Falha ao persistir histórico de métricas: ${(e as Error).message}`);
+      log.erro(MENSAGENS_EXECUTOR.falhaPersistirMetricas((e as Error).message));
     }
   }
 
@@ -542,8 +542,8 @@ export async function executarInquisicao(fileEntriesComAst: FileEntryWithAst[], 
 export function registrarUltimasMetricas(metricas: MetricaExecucao | undefined): void {
   try {
     (globalThis as unknown as {
-      __ULTIMAS_METRICAS_SENSEI__?: MetricaExecucao | null;
-    }).__ULTIMAS_METRICAS_SENSEI__ = metricas || null;
+      __ULTIMAS_METRICAS_PROMETHEUS__?: MetricaExecucao | null;
+    }).__ULTIMAS_METRICAS_PROMETHEUS__ = metricas || null;
   } catch {
     /* ignore */
   }

@@ -309,7 +309,7 @@ export class CorePlugin implements ParserPlugin {
   }
 
   /**
-   * Wrapper para criar BabelFile compatível com senseiExtra
+   * Wrapper para criar BabelFile compatível com prometheusExtra
    */
   private wrapMinimal(lang: string, rawAst: unknown): BabelFileExtra {
     return {
@@ -322,7 +322,7 @@ export class CorePlugin implements ParserPlugin {
       },
       comments: [],
       tokens: [],
-      senseiExtra: { lang, rawAst: rawAst as RawAst },
+      prometheusExtra: { lang, rawAst: rawAst as RawAst },
     };
   }
 

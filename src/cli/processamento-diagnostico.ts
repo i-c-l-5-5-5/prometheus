@@ -14,7 +14,7 @@ import { ExcecoesMensagens } from '@core/messages/core/excecoes-messages.js';
 import { log, logGuardian, logRelatorio, logSistema, MENSAGENS_AUTOFIX } from '@core/messages/index.js';
 import { aplicarSupressaoOcorrencias } from '@core/parsing/filters.js';
 import { scanSystemIntegrity } from '@guardian/sentinela.js';
-import { emitirConselhoSenseial } from '@relatorios/conselheiro-senseial.js';
+import { emitirConselhoPrometheus } from '@relatorios/conselheiro-prometheus.js';
 import { gerarRelatorioMarkdown } from '@relatorios/gerador-relatorio.js';
 import fragmentarRelatorio from '@shared/data-processing/fragmentar-relatorio.js';
 import { stringifyJsonEscaped } from '@shared/data-processing/json.js';
@@ -591,7 +591,7 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
             // Validação ESLint pós-auto-fix para harmonia total
             if (process.env.PROMETHEUS_ESLINT_VALIDATION !== '0' && autoCorrecaoConfiguracao.validateAfterFix) {
               try {
-                log.info(MENSAGENS_AUTOFIX.logs.validacaoEslint);
+                log.info(MENSAGENS_AUTOFIX.logs.validarEslint);
                 const {
                   spawn
                 } = await import('node:child_process');
@@ -1118,8 +1118,8 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
         }
 
         // Ler parse erros das variáveis globais (para testes e cenários especiais)
-        const parseErrosGlobais = (globalThis as Record<string, unknown>).__SENSEI_PARSE_ERROS__ as unknown[] || [];
-        const parseErrosOriginais = (globalThis as Record<string, unknown>).__SENSEI_PARSE_ERROS_ORIGINAIS__ as number || 0;
+        const parseErrosGlobais = (globalThis as Record<string, unknown>).__PROMETHEUS_PARSE_ERROS__ as unknown[] || [];
+        const parseErrosOriginais = (globalThis as Record<string, unknown>).__PROMETHEUS_PARSE_ERROS_ORIGINAIS__ as number || 0;
 
         // Adicionar parse erros globais à contagem
         if (parseErrosGlobais.length > 0 || parseErrosOriginais > 0) {
@@ -1211,7 +1211,7 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
           // Adicionar metadados de versão do schema e timestamp para compatibilidade
           const schemaMeta = {
             schemaVersion: '1.0.0',
-            senseiVersion: '0.0.0',
+            prometheusVersion: '0.0.0',
             timestamp: new Date().toISOString()
           };
           const saidaComMeta = {
@@ -1279,9 +1279,9 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
 
         // Mensagem final
         // Emitir 'Tudo pronto' apenas uma vez
-        if (!config.COMPACT_MODE && !process.env.__SENSEI_TUDO_PRONTO_EMITIDO) {
+        if (!config.COMPACT_MODE && !process.env.__PROMETHEUS_TUDO_PRONTO_EMITIDO) {
           log.info(CliProcessamentoDiagnosticoMensagens.tudoPronto);
-          (process.env as unknown as Record<string, string>).__SENSEI_TUDO_PRONTO_EMITIDO = '1';
+          (process.env as unknown as Record<string, string>).__PROMETHEUS_TUDO_PRONTO_EMITIDO = '1';
         }
 
         // Log de diagnóstico concluído para testes
@@ -1302,7 +1302,7 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
           totalOcorrenciasAnaliticas: totalOcorrencias,
           integridadeGuardian: guardianResultado?.status || 'nao-verificado'
         };
-        emitirConselhoSenseial(contextoConselho);
+        emitirConselhoPrometheus(contextoConselho);
         if (config.REPORT_EXPORT_ENABLED) {
           const ts = new Date().toISOString().replace(/[:.]/g, '-');
           const dir = typeof config.REPORT_OUTPUT_DIR === 'string' ? config.REPORT_OUTPUT_DIR : path.join(baseDir, 'prometheus-reports');
@@ -1468,9 +1468,9 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
             log.imprimirBloco(tituloResumo, [...cabecalho, ...linhasResumo]);
           }
         }
-        if (!config.COMPACT_MODE && !process.env.__SENSEI_TUDO_PRONTO_EMITIDO) {
+        if (!config.COMPACT_MODE && !process.env.__PROMETHEUS_TUDO_PRONTO_EMITIDO) {
           log.info(CliProcessamentoDiagnosticoMensagens.tudoPronto);
-          (process.env as unknown as Record<string, string>).__SENSEI_TUDO_PRONTO_EMITIDO = '1';
+          (process.env as unknown as Record<string, string>).__PROMETHEUS_TUDO_PRONTO_EMITIDO = '1';
         }
       } catch { }
     }
@@ -1535,8 +1535,8 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
           parseErros.totalExibidos++;
         }
       }
-      const parseErrosGlobais = (globalThis as Record<string, unknown>).__SENSEI_PARSE_ERROS__ as unknown[] || [];
-      const parseErrosOriginais = (globalThis as Record<string, unknown>).__SENSEI_PARSE_ERROS_ORIGINAIS__ as number || 0;
+      const parseErrosGlobais = (globalThis as Record<string, unknown>).__PROMETHEUS_PARSE_ERROS__ as unknown[] || [];
+      const parseErrosOriginais = (globalThis as Record<string, unknown>).__PROMETHEUS_PARSE_ERROS_ORIGINAIS__ as number || 0;
       if (parseErrosGlobais.length > 0 || parseErrosOriginais > 0) {
         parseErros.totalOriginais = Math.max(parseErros.totalOriginais, parseErrosOriginais);
         if (parseErrosGlobais.length > 0) {
@@ -1605,7 +1605,7 @@ export async function processarDiagnostico(opts: OpcoesProcessamentoDiagnostico)
           } catch { }
           const schemaMeta = {
             schemaVersion: '1.0.0',
-            senseiVersion: pkgVersion,
+            prometheusVersion: pkgVersion,
             timestamp: new Date().toISOString()
           };
           const saidaComMeta = {

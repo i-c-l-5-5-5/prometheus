@@ -42,10 +42,10 @@ if (process.env.VITEST) {
     scoreArquetipo: typeof scoreArquetipo;
   };
   const g = globalThis as unknown as {
-    __SENSEI_TESTS__?: TestExports;
+    __PROMETHEUS_TESTS__?: TestExports;
   };
-  const prev = g.__SENSEI_TESTS__ ?? {} as TestExports;
-  g.__SENSEI_TESTS__ = {
+  const prev = g.__PROMETHEUS_TESTS__ ?? {} as TestExports;
+  g.__PROMETHEUS_TESTS__ = {
     ...prev,
     scoreArquetipo
   };

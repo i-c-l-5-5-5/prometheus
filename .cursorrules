@@ -1,0 +1,24 @@
+# Prometheus AI Rules & Autonomy
+
+Estas regras definem o comportamento e as permissões da IA neste projeto.
+
+## 🚀 Autonomia e Eficácia
+
+1.  **Permissão de Execução**: A IA tem permissão total para usar `SafeToAutoRun: true` em comandos de:
+    *   `npm install`, `npm run build`, `npm run typecheck`, `npm run lint`.
+    *   Execução de testes (`npm test`).
+    *   Execução do binário local do Prometheus (`node dist/bin/index.js`).
+    *   Comandos Git de diagnóstico (ex: `git status`, `git diff`).
+2.  **Workflow Turbo**: Sempre que solicitado um ciclo de validação, use o workflow `/turbo-ciclo`.
+3.  **Foco em Resultados**: A IA deve focar em completar a tarefa e apresentar o resultado final, reduzindo pedidos de confirmação para passos intermediários técnicos.
+
+## 🛠️ Padrões Técnicos (Ref: .skills/)
+
+1.  **Internacionalização (i18n)**: Use sempre o sistema de mensagens em `src/core/messages` e o helper `createI18nMessages`.
+2.  **Tipagem**: Proibido o uso de `any` em novos códigos. Se um tipo for desconhecido, use `unknown` ou defina uma interface apropriada.
+3.  **Documentação**: Mantenha o `CHANGELOG.md` e o `README.md` atualizados em cada release ou mudança significativa.
+4.  **Segurança**: Use o helper `resolveAndSanitize` para todas as operações de arquivo com caminhos relativos.
+
+---
+
+**Nota para o Usuário**: Com estas regras, eu serei muito mais rápido e proativo. Se eu precisar deletar arquivos ou fazer alterações críticas fora do escopo, ainda pedirei sua confirmação.

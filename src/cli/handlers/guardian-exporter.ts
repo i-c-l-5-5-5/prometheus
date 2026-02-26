@@ -63,22 +63,22 @@ async function gerarRelatorioMarkdown(caminho: string, options: GuardianExportOp
     warnings
   } = options;
   const lines: string[] = [];
-
+  const msg = CliExportersMensagens.guardian.markdown;
   // Cabeçalho
-  lines.push('# Relatório Guardian - Verificação de Integridade');
+  lines.push(msg.titulo);
   lines.push('');
-  lines.push(`**Gerado em:** ${new Date().toISOString()}`);
-  lines.push(`**Comando:** \`prometheus guardian\``);
+  lines.push(msg.geradoEm(new Date().toISOString()));
+  lines.push(msg.comando);
   lines.push('');
 
   // Status
   const statusIcon = status === 'ok' ? '[SUCESSO]' : status === 'erro' ? '[ERRO]' : '[AVISO]';
-  lines.push(`## ${statusIcon} Status: ${status}`);
+  lines.push(msg.statusTitulo(statusIcon, status || 'desconhecido'));
   lines.push('');
 
   // Baseline
   if (baseline) {
-    lines.push('## [INFO] Baseline');
+    lines.push(msg.baselineTitulo);
     lines.push('');
     lines.push('```json');
     lines.push(JSON.stringify(baseline, null, 2));
@@ -88,22 +88,22 @@ async function gerarRelatorioMarkdown(caminho: string, options: GuardianExportOp
 
   // Drift
   if (drift) {
-    lines.push('## 🔄 Drift Detectado');
+    lines.push(msg.driftTitulo);
     lines.push('');
-    lines.push(`- **Arquétipo alterado:** ${drift.alterouArquetipo ? 'Sim' : 'Não'}`);
+    lines.push(msg.arquetipoAlterado(drift.alterouArquetipo ? 'Sim' : 'Não'));
     if (drift.deltaConfidence) {
-      lines.push(`- **Delta de confiança:** ${drift.deltaConfidence}%`);
+      lines.push(msg.deltaConfianca(drift.deltaConfidence));
     }
     if (drift.arquivosNovos && drift.arquivosNovos.length > 0) {
       lines.push('');
-      lines.push('### Arquivos Novos');
+      lines.push(msg.arquivosNovos);
       drift.arquivosNovos.forEach(arquivo => {
         lines.push(`- ${arquivo}`);
       });
     }
     if (drift.arquivosRemovidos && drift.arquivosRemovidos.length > 0) {
       lines.push('');
-      lines.push('### Arquivos Removidos');
+      lines.push(msg.arquivosRemovidos);
       drift.arquivosRemovidos.forEach(arquivo => {
         lines.push(`- ${arquivo}`);
       });
@@ -113,7 +113,7 @@ async function gerarRelatorioMarkdown(caminho: string, options: GuardianExportOp
 
   // Erros
   if (erros && erros.length > 0) {
-    lines.push('## [ERRO] Erros');
+    lines.push(msg.errosTitulo);
     lines.push('');
     erros.forEach((erro, idx) => {
       lines.push(`### ${idx + 1}. ${erro.arquivo}`);
@@ -125,7 +125,7 @@ async function gerarRelatorioMarkdown(caminho: string, options: GuardianExportOp
 
   // Warnings
   if (warnings && warnings.length > 0) {
-    lines.push('## [AVISO] Avisos');
+    lines.push(msg.avisosTitulo);
     lines.push('');
     warnings.forEach((warning, idx) => {
       lines.push(`### ${idx + 1}. ${warning.arquivo}`);
@@ -136,16 +136,16 @@ async function gerarRelatorioMarkdown(caminho: string, options: GuardianExportOp
   }
 
   // Recomendações
-  lines.push('## [INFO] Recomendações');
+  lines.push(msg.recomendacoesTitulo);
   lines.push('');
   if (status === 'ok') {
-    lines.push('- [SUCESSO] Projeto está íntegro - nenhuma ação necessária');
+    lines.push(msg.recomendacaoOk);
   } else if (status === 'erro') {
-    lines.push('- [ERRO] Resolver erros críticos antes de prosseguir');
-    lines.push('- [INFO] Revisar arquivos listados acima');
+    lines.push(msg.recomendacaoErro);
+    lines.push(msg.recomendacaoErroRevise);
   } else if (drift?.alterouArquetipo) {
-    lines.push('- [AVISO] Drift de arquétipo detectado - revisar mudanças');
-    lines.push('- [INFO] Considerar atualizar baseline se mudanças forem intencionais');
+    lines.push(msg.recomendacaoDrift);
+    lines.push(msg.recomendacaoDriftInfo);
   }
   await fs.writeFile(caminho, lines.join('\n'));
 }

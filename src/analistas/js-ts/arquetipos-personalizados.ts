@@ -80,9 +80,9 @@ export async function salvarArquetipoPersonalizado(arquetipo: Omit<ArquetipoPers
   const novoCaminho = PROMETHEUS_ARQUIVOS.ESTRUTURA_ARQUETIPO;
 
   // Garantir que o diretório .prometheus existe
-  const senseiDir = path.dirname(novoCaminho);
+  const prometheusDir = path.dirname(novoCaminho);
   try {
-    await fs.mkdir(senseiDir, {
+    await fs.mkdir(prometheusDir, {
       recursive: true
     });
   } catch {

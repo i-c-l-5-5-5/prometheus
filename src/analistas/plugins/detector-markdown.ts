@@ -99,7 +99,7 @@ function isWhitelisted(relPath: string, whitelist: MarkdownWhitelistConfig): boo
 function hasRiskReferenceMarker(content: string): boolean {
   return /<!--\s*RISCO_REFERENCIA_OK\s*-->/i.test(content);
 }
-function hasSenseiIgnoreMarker(content: string, key: string): boolean {
+function hasPrometheusIgnoreMarker(content: string, key: string): boolean {
   // Ex.: <!-- prometheus-ignore: license-check -->
   const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return new RegExp(`<!--\\s*prometheus-ignore\\s*:\\s*${escaped}\\s*-->`, 'i').test(content);
@@ -162,7 +162,7 @@ async function analisarArquivoMarkdown(fullCaminho: string, relPath: string, opt
   const whitelisted = isWhitelisted(relPath, whitelist);
   const temRiscoOk = hasRiskReferenceMarker(content);
   const temProveniencia = hasProvenienciaHeader(content, options.headerLines || 30);
-  const ignoreLicencaCheck = hasSenseiIgnoreMarker(content, 'license-check');
+  const ignoreLicencaCheck = hasPrometheusIgnoreMarker(content, 'license-check');
 
   // Verificar proveniência
   if (options.checkProveniencia !== false && !temProveniencia && !whitelisted) {

@@ -1,17 +1,19 @@
 // SPDX-License-Identifier: MIT
+import { createI18nMessages } from '@shared/helpers/i18n.js';
+
 /**
  * Sistema de mensagens de log centralizadas e contextuais
  * Adapta-se automaticamente ao tipo e complexidade do projeto
  */
-
 import { ICONES_ACAO, ICONES_ARQUIVO, ICONES_COMANDO, ICONES_DIAGNOSTICO, ICONES_FEEDBACK, ICONES_NIVEL, ICONES_RELATORIO, ICONES_STATUS } from '../ui/icons.js';
 
-export const LogMensagens = {
+export const LogMensagens = createI18nMessages({
   sistema: {
     inicializacao: {
       sucesso: `${ICONES_FEEDBACK.foguete} Prometheus inicializado em {tempo}ms`,
       falha: `${ICONES_STATUS.falha} Falha na inicialização: {erro}`,
-      configuracao: `${ICONES_ARQUIVO.config} Configuração carregada: {fonte} ({campos} campos)`
+      configuracao: `${ICONES_ARQUIVO.config} Configuração carregada: {fonte} ({campos} campos)`,
+      erro_generico: `${ICONES_STATUS.falha} Erro: {mensagem}`
     },
     shutdown: `${ICONES_STATUS.ok} Análise concluída graciosamente`,
     atualizacao: {
@@ -99,19 +101,21 @@ export const LogMensagens = {
     inicio: `${ICONES_DIAGNOSTICO.inicio} Iniciando varredura em: {diretorio}`,
     progresso: `${ICONES_ARQUIVO.diretorio} Escaneando: {diretorio} ({arquivos} arquivos)`,
     filtros: `${ICONES_DIAGNOSTICO.stats} Filtros aplicados: {include} includes, {exclude} excludes`,
-    completo: `${ICONES_STATUS.ok} Varredura concluída: {arquivos} arquivos em {diretorios} diretórios`
+    completo: `${ICONES_STATUS.ok} Varredura concluída: {arquivos} arquivos em {diretorios} diretórios`,
+    arquivo_lido: `${ICONES_STATUS.ok} Arquivo lido: {arquivo}`
   },
   analistas: {
     execucao: {
-      // Logs simples para projetos pequenos
       inicio_simples: `${ICONES_DIAGNOSTICO.inicio} Analisando {arquivo}`,
       sucesso_simples: `${ICONES_STATUS.ok} {arquivo}: {ocorrencias} issues`,
-      // Logs detalhados para projetos complexos
       inicio_detalhado: `${ICONES_DIAGNOSTICO.inicio} Executando '{analista}' em {arquivo} ({tamanho}kb)`,
       sucesso_detalhado: `${ICONES_STATUS.ok} '{analista}' concluído: {ocorrencias} ocorrências ({tempo}ms)`,
       timeout: `${ICONES_FEEDBACK.atencao} Timeout do analista '{analista}' após {tempo}ms`,
       erro: `${ICONES_STATUS.falha} Erro no analista '{analista}': {erro}`,
-      skip: `${ICONES_STATUS.pulado} Pulando '{arquivo}' (suprimido por configuração)`
+      skip: `${ICONES_STATUS.pulado} Pulando '{arquivo}' (suprimido por configuração)`,
+      batch_progresso: `${ICONES_DIAGNOSTICO.progresso} Progresso: {arquivos}/{total} ({percentual}%)`,
+      batch_concluido_simples: `${ICONES_STATUS.ok} Análise concluída - {total} problemas encontrados`,
+      batch_concluido_detalhado: `${ICONES_STATUS.ok} Verificações concluídas - {total} problemas detectados em {duracao}s`
     },
     metricas: {
       performance: `${ICONES_DIAGNOSTICO.stats} Performance: {analistas} analistas, {media}ms/arquivo médio`,
@@ -151,7 +155,9 @@ export const LogMensagens = {
     repositorio_impecavel: 'Repositório impecável',
     ocorrencias_encontradas: 'Encontradas {total} ocorrências',
     fim_padroes_uso: `\n${ICONES_STATUS.ok} Fim do relatório de padrões de uso.\n`,
-    funcoes_longas: `${ICONES_FEEDBACK.atencao} Funções longas encontradas:`
+    funcoes_longas: `${ICONES_FEEDBACK.atencao} Funções longas encontradas:`,
+    gerado: `${ICONES_ARQUIVO.arquivo} Relatório {formato} gerado: {caminho}`,
+    erro_geracao: `${ICONES_STATUS.falha} Erro ao gerar relatório: {erro}`
   },
   conselheiro: {
     volume_alto: `${ICONES_FEEDBACK.info} volume de tarefas alto? O código não foge; burnout sim.`,
@@ -168,13 +174,12 @@ export const LogMensagens = {
     modo_permissivo: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.aviso} Modo permissivo: prosseguindo sob risco.`,
     scan_only: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.info} Modo scan-only: {arquivos} arquivos mapeados.`,
     avisos_encontrados: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.aviso} Há ocorrências de nível aviso`,
-    // Comando Guardian
     full_scan_aviso: `${ICONES_NIVEL.aviso} --full-scan ativo: baseline NÃO será persistido com escopo expandido.`,
     full_scan_warning_baseline: `${ICONES_NIVEL.aviso} --full-scan ativo, mas será criado baseline com escopo expandido temporariamente.`,
     aceitando_baseline: `\n${ICONES_COMANDO.atualizar} Aceitando novo baseline de integridade...\n`,
     baseline_aceito_sucesso: `${ICONES_STATUS.ok} Novo baseline de integridade aceito com sucesso!`,
     comparando_integridade: `\n${ICONES_DIAGNOSTICO.stats} Comparando integridade do Prometheus com o baseline...\n`,
-    diferencas_detectadas: `${ICONES_RELATORIO.error} Diferenças detectadas:`,
+    diferencas_detectadas: `${ICONES_RELATORIO.error} Differences detected:`,
     diferenca_item: '  - {diferenca}',
     comando_diff_recomendado: 'Execute com --diff para mostrar diferenças detalhadas ou --accept para aceitar novo baseline.',
     integridade_preservada: `${ICONES_STATUS.ok} Nenhuma diferença detectada. Integridade preservada.`,
@@ -182,7 +187,9 @@ export const LogMensagens = {
     baseline_criado_console: `${ICONES_DIAGNOSTICO.guardian} Guardian baseline criado`,
     baseline_atualizado: `${ICONES_DIAGNOSTICO.guardian} Baseline atualizado e aceito`,
     alteracoes_suspeitas: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.erro} Alterações suspeitas detectadas!`,
-    erro_guardian: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_STATUS.falha} Erro no Guardian: {erro}`
+    erro_guardian: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_STATUS.falha} Erro no Guardian: {erro}`,
+    info: `${ICONES_FEEDBACK.info} {mensagem}`,
+    aviso: `${ICONES_FEEDBACK.atencao} {mensagem}`
   },
   metricas: {
     execucoes_registradas: `\n${ICONES_DIAGNOSTICO.stats} Execuções registradas: {quantidade}`,
@@ -219,7 +226,226 @@ export const LogMensagens = {
       reaproveitado_incremental: `${ICONES_DIAGNOSTICO.rapido} Reaproveitado {arquivo} (incremental)`
     }
   }
-} as const;
+}, {
+  sistema: {
+    inicializacao: {
+      sucesso: `${ICONES_FEEDBACK.foguete} Prometheus initialized in {tempo}ms`,
+      falha: `${ICONES_STATUS.falha} Initialization failure: {erro}`,
+      configuracao: `${ICONES_ARQUIVO.config} Configuration loaded: {fonte} ({campos} fields)`,
+      erro_generico: `${ICONES_STATUS.falha} Error: {mensagem}`
+    },
+    shutdown: `${ICONES_STATUS.ok} Analysis concluded gracefully`,
+    atualizacao: {
+      executando: `${ICONES_ACAO.import} Running: {comando}`,
+      sucesso: `${ICONES_STATUS.ok} Update completed successfully!`,
+      falha: `${ICONES_STATUS.falha} Update aborted or failed.`,
+      detalhes: `${ICONES_FEEDBACK.atencao} {detalhe}`
+    },
+    performance: {
+      regressao_detectada: `${ICONES_FEEDBACK.atencao} Regression above {limite}% detected.`,
+      sem_regressoes: `${ICONES_STATUS.ok} No significant regressions.`
+    },
+    poda: {
+      cancelada: `${ICONES_STATUS.falha} Pruning canceled.`,
+      concluida: `${ICONES_STATUS.ok} Pruning completed: Orphaned files removed successfully!`
+    },
+    reversao: {
+      nenhum_move: `${ICONES_STATUS.falha} No move found for file: {arquivo}`,
+      revertendo: `${ICONES_COMANDO.reverter} Reverting moves for: {arquivo}`,
+      sucesso: `${ICONES_STATUS.ok} File reverted successfully: {arquivo}`,
+      falha: `${ICONES_STATUS.falha} Failed to revert file: {arquivo}`
+    },
+    auto: {
+      mapa_reversao: {
+        erro_carregar: `${ICONES_STATUS.falha} Error loading rollback map: {erro}`,
+        erro_salvar: `${ICONES_STATUS.falha} Error saving rollback map: {erro}`,
+        move_nao_encontrado: `${ICONES_STATUS.falha} Move not found: {id}`,
+        arquivo_destino_nao_encontrado: `${ICONES_STATUS.falha} Target file not found: {destino}`,
+        arquivo_existe_origem: `${ICONES_FEEDBACK.atencao} File already exists at origin: {origem}`,
+        erro_reverter: `${ICONES_STATUS.falha} Error reverting move: {erro}`,
+        nenhum_move: `${ICONES_FEEDBACK.atencao} No move found for: {arquivo}`,
+        revertendo_move: `${ICONES_COMANDO.reverter} Reverting move: {id}`,
+        move_revertido: `${ICONES_STATUS.ok} Move reverted successfully: {id}`,
+        falha_reverter_move: `${ICONES_STATUS.falha} Failed to revert move: {id}`,
+        carregado: `${ICONES_RELATORIO.lista} Rollback map loaded: {moves} moves registered`,
+        nenhum_encontrado: `${ICONES_RELATORIO.lista} No rollback map found, starting new one`
+      },
+      poda: {
+        nenhum_arquivo: `${ICONES_STATUS.ok} No files to prune in this cycle.\n`,
+        podando: `${ICONES_COMANDO.podar} Pruning {quantidade} files...`,
+        podando_simulado: `${ICONES_COMANDO.podar} Pruning {quantidade} files... (SIMULATED)`,
+        arquivo_movido: `${ICONES_STATUS.ok} {arquivo} moved to abandoned.`
+      },
+      corretor: {
+        erro_criar_diretorio: `${ICONES_STATUS.falha} Failed to create directory for {destino}: {erro}`,
+        destino_existe: `${ICONES_FEEDBACK.atencao} Destination already exists: {arquivo} → {destino}`,
+        erro_mover: `${ICONES_STATUS.falha} Failed to move {arquivo} via rename: {erro}`
+      }
+    },
+    correcoes: {
+      nenhuma_disponivel: `${ICONES_STATUS.ok} No automatic corrections available`,
+      aplicando: `${ICONES_ACAO.correcao} Applying automatic corrections in {modo} mode...`,
+      arquivo_nao_encontrado: `${ICONES_FEEDBACK.atencao} File not found for correction: {arquivo}`,
+      aplicada: `${ICONES_STATUS.ok} {titulo} (confidence: {confianca}%)`,
+      corrigido: `${ICONES_STATUS.ok} Fixed: {arquivo}`,
+      falha: `${ICONES_FEEDBACK.atencao} Failed to apply quick fix {id}: {erro}`,
+      nenhuma_aplicada: `${ICONES_FEEDBACK.atencao} No corrections could be applied`,
+      estatisticas: `${ICONES_STATUS.ok} {estatisticas}`,
+      eslint_harmonia: `${ICONES_STATUS.ok} ESLint validation completed - harmony maintained`,
+      eslint_ajustes: `${ICONES_STATUS.ok} ESLint applied additional adjustments for total harmony`,
+      eslint_falha: `${ICONES_STATUS.falha} ESLint validation failed: {erro}`
+    },
+    processamento: {
+      fix_detectada: `${ICONES_ACAO.correcao} --fix flag detected: activating automatic corrections`,
+      eslint_output: `${ICONES_RELATORIO.lista} ESLint output: {output}`,
+      resumo_ocorrencias: `${ICONES_DIAGNOSTICO.stats} Summary of {total} occurrences:`,
+      dicas_contextuais: `${ICONES_FEEDBACK.dica} Contextual tips:`,
+      detalhamento_ocorrencias: `${ICONES_DIAGNOSTICO.stats} Details of {total} occurrences:`,
+      erros_criticos: `${ICONES_RELATORIO.error} {total} critical errors found - prioritize these first`,
+      avisos_encontrados: `${ICONES_RELATORIO.warning} {total} warnings found`,
+      quick_fixes_muitos: `${ICONES_ACAO.correcao} {total} automatic corrections available:`,
+      quick_fixes_comando: '   → PROMETHEUS_ALLOW_MUTATE_FS=1 npm run diagnosticar --fix',
+      quick_fixes_executar: '   (command ready to execute)',
+      todos_muitos: `${ICONES_RELATORIO.lista} {total} TODOs found - consider --include to focus on specific area`,
+      todos_poucos: `${ICONES_RELATORIO.lista} {total} TODOs found - good control!`,
+      muitas_ocorrencias: `${ICONES_FEEDBACK.atencao} Many occurrences - use --executive for high-level view`,
+      filtrar_pasta: `${ICONES_ARQUIVO.diretorio} Or filter by folder: --include "src/cli" or --include "src/analistas"`,
+      usar_full: `${ICONES_DIAGNOSTICO.completo} Use --full for complete details`,
+      usar_json: `${ICONES_ARQUIVO.json} Use --json for structured output (CI/scripts)`,
+      projeto_limpo: `${ICONES_STATUS.ok} Clean project! Use --guardian-check for integrity check`,
+      analistas_problemas: `${ICONES_DIAGNOSTICO.inicio} Analysts that found problems: {quantidade}`
+    }
+  },
+  scanner: {
+    inicio: `${ICONES_DIAGNOSTICO.inicio} Starting scan in: {diretorio}`,
+    progresso: `${ICONES_ARQUIVO.diretorio} Scanning: {diretorio} ({arquivos} files)`,
+    filtros: `${ICONES_DIAGNOSTICO.stats} Filters applied: {include} includes, {exclude} excludes`,
+    completo: `${ICONES_STATUS.ok} Scan completed: {arquivos} files in {diretorios} directories`,
+    arquivo_lido: `${ICONES_STATUS.ok} File read: {arquivo}`
+  },
+  analistas: {
+    execucao: {
+      inicio_simples: `${ICONES_DIAGNOSTICO.inicio} Analyzing {arquivo}`,
+      sucesso_simples: `${ICONES_STATUS.ok} {arquivo}: {ocorrencias} issues`,
+      inicio_detalhado: `${ICONES_DIAGNOSTICO.inicio} Running '{analista}' in {arquivo} ({tamanho}kb)`,
+      sucesso_detalhado: `${ICONES_STATUS.ok} '{analista}' completed: {ocorrencias} occurrences ({tempo}ms)`,
+      timeout: `${ICONES_FEEDBACK.atencao} Analyst '{analista}' timed out after {tempo}ms`,
+      erro: `${ICONES_STATUS.falha} Error in analyst '{analista}': {erro}`,
+      skip: `${ICONES_STATUS.pulado} Skipping '{arquivo}' (suppressed by configuration)`,
+      batch_progresso: `${ICONES_DIAGNOSTICO.progresso} Progress: {arquivos}/{total} ({percentual}%)`,
+      batch_concluido_simples: `${ICONES_STATUS.ok} Analysis concluded - {total} problems found`,
+      batch_concluido_detalhado: `${ICONES_STATUS.ok} Checks completed - {total} problems detected in {duracao}s`
+    },
+    metricas: {
+      performance: `${ICONES_DIAGNOSTICO.stats} Performance: {analistas} analysts, {media}ms/file average`,
+      cache_hit: `${ICONES_DIAGNOSTICO.rapido} Cache hit: {hits}/{total} ({percentual}%)`,
+      worker_pool: `${ICONES_STATUS.executando} Worker pool: {ativos}/{total} active workers`
+    }
+  },
+  filtros: {
+    incluindo: ` ${ICONES_ACAO.criar} Including: {pattern} ({matches} files)`,
+    excluindo: ` ${ICONES_ACAO.deletar} Excluding: {pattern} ({matches} files)`,
+    supressao: `${ICONES_STATUS.pausado} Suppressed {count} occurrences: {motivo}`,
+    cli_override: `${ICONES_DIAGNOSTICO.stats} CLI override: {tipo} patterns overriding configuration`
+  },
+  projeto: {
+    detectado: `${ICONES_RELATORIO.lista} Project detected: {tipo} ({confianca}% confidence)`,
+    estrutura: `${ICONES_DIAGNOSTICO.stats} Structure: {arquivos} files, {linguagens} languages`,
+    complexidade: `${ICONES_DIAGNOSTICO.stats} Complexity: {nivel} (based on {metricas})`,
+    recomendacao: `${ICONES_FEEDBACK.dica} Recommendation: {acao} for this type of project`
+  },
+  contexto: {
+    desenvolvedor_novo: `${ICONES_FEEDBACK.info} Simple project detected - simplified logs activated`,
+    equipe_experiente: `${ICONES_FEEDBACK.info} Enterprise project detected - detailed logs activated`,
+    ci_cd: `${ICONES_FEEDBACK.info} CI/CD environment detected - structured logs activated`,
+    debug_mode: `${ICONES_FEEDBACK.info} Debug mode active - verbose logs activated`
+  },
+  ocorrencias: {
+    critica: `${ICONES_NIVEL.critico} CRITICAL: {mensagem} in {arquivo}:{linha}`,
+    aviso: `${ICONES_NIVEL.aviso} Warning: {mensagem} ({categoria})`,
+    info: `${ICONES_NIVEL.info} Info: {mensagem}`,
+    sugestao: `${ICONES_FEEDBACK.dica} Suggestion: {mensagem} - {acao_sugerida}`
+  },
+  relatorio: {
+    resumo: `${ICONES_DIAGNOSTICO.stats} Summary: {total} issues ({criticos} critical, {avisos} warnings)`,
+    categorias: `${ICONES_RELATORIO.lista} Top: {top_categorias}`,
+    arquivo_problema: `${ICONES_FEEDBACK.atencao} More issues: {arquivo} ({count} occurrences)`,
+    tendencia: `${ICONES_DIAGNOSTICO.stats} Trend: {direcao} compared to baseline`,
+    repositorio_impecavel: 'Impeccable repository',
+    ocorrencias_encontradas: 'Found {total} occurrences',
+    fim_padroes_uso: `\n${ICONES_STATUS.ok} End of usage patterns report.\n`,
+    funcoes_longas: `${ICONES_FEEDBACK.atencao} Long functions found:`,
+    gerado: `${ICONES_ARQUIVO.arquivo} {formato} report generated: {caminho}`,
+    erro_geracao: `${ICONES_STATUS.falha} Error generating report: {erro}`
+  },
+  conselheiro: {
+    volume_alto: `${ICONES_FEEDBACK.info} High task volume? Code doesn't run away; burnout does.`,
+    respira: `${ICONES_FEEDBACK.info} Hey, just a second: breathe for a moment.`,
+    cuidado: `${ICONES_FEEDBACK.info} Take care of yourself: drink some water, stretch, close your eyes for 5 min. We'll continue later.\n`,
+    madrugada: `${ICONES_FEEDBACK.atencao} It's past {hora}. Code compiles tomorrow; you rest now.`
+  },
+  guardian: {
+    integridade_ok: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_STATUS.ok} Guardian: integrity preserved.`,
+    baseline_criado: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.info} Guardian baseline created.`,
+    baseline_aceito: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.aviso} Guardian: new baseline accepted — run again.`,
+    alteracoes_detectadas: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.erro} Guardian: suspicious changes detected! Consider running 'prometheus guardian --diff'.`,
+    bloqueado: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_STATUS.falha} Guardian blocked: suspicious changes or fatal error.`,
+    modo_permissivo: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.aviso} Permissive mode: proceeding at risk.`,
+    scan_only: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.info} Scan-only mode: {arquivos} files mapped.`,
+    avisos_encontrados: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.aviso} There are warning-level occurrences`,
+    full_scan_aviso: `${ICONES_NIVEL.aviso} --full-scan active: baseline will NOT be persisted with expanded scope.`,
+    full_scan_warning_baseline: `${ICONES_NIVEL.aviso} --full-scan active, but a baseline with expanded scope will be temporarily created.`,
+    aceitando_baseline: `\n${ICONES_COMANDO.atualizar} Accepting new integrity baseline...\n`,
+    baseline_aceito_sucesso: `${ICONES_STATUS.ok} New integrity baseline accepted successfully!`,
+    comparando_integridade: `\n${ICONES_DIAGNOSTICO.stats} Comparing Prometheus integrity with baseline...\n`,
+    diferencas_detectadas: `${ICONES_RELATORIO.error} Differences detected:`,
+    diferenca_item: '  - {diferenca}',
+    comando_diff_recomendado: 'Run with --diff to show detailed differences or --accept to accept new baseline.',
+    integridade_preservada: `${ICONES_STATUS.ok} No differences detected. Integrity preserved.`,
+    verificando_integridade: `\n${ICONES_DIAGNOSTICO.guardian} Verifying Prometheus integrity...\n`,
+    baseline_criado_console: `${ICONES_DIAGNOSTICO.guardian} Guardian baseline created`,
+    baseline_atualizado: `${ICONES_DIAGNOSTICO.guardian} Baseline updated and accepted`,
+    alteracoes_suspeitas: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_NIVEL.erro} Suspicious changes detected!`,
+    erro_guardian: `${ICONES_DIAGNOSTICO.guardian} ${ICONES_STATUS.falha} Guardian error: {erro}`,
+    info: `${ICONES_FEEDBACK.info} {mensagem}`,
+    aviso: `${ICONES_FEEDBACK.atencao} {mensagem}`
+  },
+  metricas: {
+    execucoes_registradas: `\n${ICONES_DIAGNOSTICO.stats} Registered executions: {quantidade}`,
+    nenhum_historico: 'No metrics history found yet. Run a diagnosis with --metricas active.'
+  },
+  auto: {
+    plugin_ignorado: `${ICONES_NIVEL.aviso} Plugin ignored ({plugin}): {erro}`,
+    caminho_nao_resolvido: `${ICONES_NIVEL.aviso} Plugin path not resolved: {plugin}`,
+    plugin_falhou: `${ICONES_STATUS.falha} Plugin failed: {plugin} — {erro}`,
+    move_removido: `${ICONES_ACAO.deletar} Move removed from map: {id}`
+  },
+  core: {
+    parsing: {
+      erro_babel: `${ICONES_NIVEL.aviso} Babel parsing error in {arquivo}: {erro}`,
+      erro_ts: `${ICONES_NIVEL.aviso} TS compiler parse error in {arquivo}: {erro}`,
+      erro_xml: `${ICONES_NIVEL.aviso} XML parse error in {arquivo}: {erro}`,
+      erro_html: `${ICONES_NIVEL.aviso} HTML parse error in {arquivo}: {erro}`,
+      erro_css: `${ICONES_NIVEL.aviso} CSS parse error in {arquivo}: {erro}`,
+      nenhum_parser: `${ICONES_NIVEL.aviso} No parser available for extension: {extensao}`,
+      timeout_parsing: `${ICONES_NIVEL.aviso} Parsing timeout after {timeout}ms for extension {extensao}`,
+      plugin_nao_encontrado: `${ICONES_NIVEL.aviso} Plugin not found for {extensao}, using legacy system`,
+      sistema_plugins_falhou: `${ICONES_STATUS.falha} Plugin system failed: {erro}, using legacy system`,
+      plugins_registrados: `${ICONES_DIAGNOSTICO.inicio} Default plugins registered in the system`,
+      usando_plugin: `${ICONES_DIAGNOSTICO.inicio} Using plugin '{nome}' for {extensao}`
+    },
+    plugins: {
+      erro_carregar: `${ICONES_STATUS.falha} Error loading plugin {nome}: {erro}`,
+      tentando_autoload: `${ICONES_DIAGNOSTICO.inicio} Attempting autoload for extension {extensao}`,
+      autoload_falhou: `${ICONES_STATUS.falha} Autoload failed for {nome}`,
+      extensao_nao_suportada: `${ICONES_NIVEL.aviso} Extension {extensao} not supported by core plugin`,
+      registrando: `${ICONES_DIAGNOSTICO.inicio} Registering plugin: {nome} v{versao}`
+    },
+    executor: {
+      reaproveitado_incremental: `${ICONES_DIAGNOSTICO.rapido} Reused {arquivo} (incremental)`
+    }
+  }
+});
 
 /**
  * Configuração de contexto adaptativo para diferentes tipos de projeto

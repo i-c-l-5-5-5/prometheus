@@ -108,5 +108,5 @@ export function resolveFilePath(newPath: string): string {
 /**
  * Tipo para caminhos de arquivos do Prometheus
  */
-export type SenseiFilePath = (typeof PROMETHEUS_ARQUIVOS)[keyof typeof PROMETHEUS_ARQUIVOS];
-export type SenseiDirPath = (typeof PROMETHEUS_DIRS)[keyof typeof PROMETHEUS_DIRS];
+export type PrometheusFilePath = (typeof PROMETHEUS_ARQUIVOS)[keyof typeof PROMETHEUS_ARQUIVOS];
+export type PrometheusDirPath = (typeof PROMETHEUS_DIRS)[keyof typeof PROMETHEUS_DIRS];

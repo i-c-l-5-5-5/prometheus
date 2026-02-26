@@ -8,22 +8,47 @@ import { type CasoTipoInseguro, exportarRelatoriosFixTypes } from '@cli/handlers
 import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
 import { expandIncludePatterns, processPatternList } from '@cli/helpers/pattern-helpers.js';
 import { config } from '@core/config/config.js';
-import { DICAS, formatarTipoInseguro, gerarResumoCategoria, ICONES_FIX_TYPES as ICONES, log, MENSAGENS_AUTOFIX, MENSAGENS_CLI_CORRECAO_TIPOS, MENSAGENS_ERRO_FIX_TYPES as MENSAGENS_ERRO, MENSAGENS_INICIO_FIX_TYPES as MENSAGENS_INICIO, MENSAGENS_PROGRESSO_FIX_TYPES as MENSAGENS_PROGRESSO, MENSAGENS_RESUMO, MENSAGENS_SUCESSO_FIX_TYPES as MENSAGENS_SUCESSO, TEMPLATE_RESUMO_FINAL, TEXTOS_CATEGORIZACAO_CORRECAO_TIPOS } from '@core/messages/index.js';
+import { CliComandoFixTypesMensagens } from '@core/messages/cli/cli-comando-fix-types-messages.js';
+import { log, MENSAGENS_AUTOFIX } from '@core/messages/index.js';
 import { PROJETO_RAIZ } from '@core/registry/paths.js';
 import { Command } from 'commander';
 
 import type { FixTypesOptions, Ocorrencia } from '@';
 import { asTecnicas, extrairMensagemErro } from '@';
 
+const {
+  DICAS,
+  formatarTipoInseguro,
+  gerarResumoCategoria,
+  ICONES,
+  MENSAGENS_CLI_CORRECAO_TIPOS,
+  MENSAGENS_ERRO,
+  MENSAGENS_INICIO,
+  MENSAGENS_PROGRESSO,
+  MENSAGENS_RESUMO,
+  MENSAGENS_SUCESSO,
+  TEMPLATE_RESUMO_FINAL,
+  TEXTOS_CATEGORIZACAO_CORRECAO_TIPOS
+} = CliComandoFixTypesMensagens;
+
 export function criarComandoFixTypes(): Command {
   const cmd = new Command('fix-types');
-  cmd.description('Detecta e corrige tipos inseguros (any/unknown) no código').option('--dry-run', 'Mostra o que seria corrigido sem aplicar mudanças', false).option('--target <path>', 'Diretório ou arquivo específico para analisar', 'src').option('--confidence <number>', 'Nível mínimo de confiança para aplicar correções (0-100)', '85').option('--verbose', 'Mostra detalhes de cada correção', false).option('--interactive', 'Modo interativo: confirma cada correção', false).option('--export', 'Exporta relatórios JSON e Markdown para pasta relatorios/', false).option('--include <padrao>', 'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)', (val: string, prev: string[]) => {
-    prev.push(val);
-    return prev;
-  }, [] as string[]).option('--exclude <padrao>', 'Glob pattern a EXCLUIR adicionalmente (pode repetir a flag ou usar vírgulas / espaços)', (val: string, prev: string[]) => {
-    prev.push(val);
-    return prev;
-  }, [] as string[]).action(async (options: FixTypesOptions) => {
+  cmd.description(CliComandoFixTypesMensagens.descricao)
+    .option('--dry-run', CliComandoFixTypesMensagens.opcoes.dryRun, false)
+    .option('--target <path>', CliComandoFixTypesMensagens.opcoes.target, 'src')
+    .option('--confidence <number>', CliComandoFixTypesMensagens.opcoes.confidence, '85')
+    .option('--verbose', CliComandoFixTypesMensagens.opcoes.verbose, false)
+    .option('--interactive', CliComandoFixTypesMensagens.opcoes.interactive, false)
+    .option('--export', CliComandoFixTypesMensagens.opcoes.export, false)
+    .option('--include <padrao>', CliComandoFixTypesMensagens.opcoes.include, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
+    .option('--exclude <padrao>', CliComandoFixTypesMensagens.opcoes.exclude, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
+    .action(async (options: FixTypesOptions) => {
     try {
       await executarFixTypes(options);
     } catch (err) {

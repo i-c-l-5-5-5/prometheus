@@ -23,16 +23,28 @@ import { asTecnicas, extrairMensagemErro } from '@';
  * Aplica correções estruturais e otimizações ao repositório
  */
 export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void): Command {
-  return new Command('reestruturar').description('Aplica correções estruturais e otimizações ao repositório.').option('-a, --auto', 'Aplica correções automaticamente sem confirmação (CUIDADO!)', false).option('--aplicar', 'Alias de --auto (deprecated futuramente)', false).option('--somente-plano', 'Exibe apenas o plano sugerido e sai (dry-run)', false).option('--domains', 'Organiza por domains/<entidade>/<categoria>s (opcional; preset prometheus usa flat)', false).option('--flat', 'Organiza por src/<categoria>s (sem domains)', false).option('--prefer-estrategista', 'Força uso do estrategista (ignora plano de arquitetos)', false).option('--preset <nome>', 'Preset de estrutura (prometheus|node-community|ts-lib). Se omitido, não sugere estrutura automaticamente.').option('--categoria <pair>', 'Override de categoria no formato chave=valor (ex.: controller=handlers). Pode repetir a flag.', (val: string, prev: string[]) => {
-    prev.push(val);
-    return prev;
-  }, [] as string[]).option('--include <padrao>', 'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)', (val: string, prev: string[]) => {
-    prev.push(val);
-    return prev;
-  }, [] as string[]).option('--exclude <padrao>', 'Glob pattern a EXCLUIR adicionalmente (pode repetir a flag ou usar vírgulas / espaços)', (val: string, prev: string[]) => {
-    prev.push(val);
-    return prev;
-  }, [] as string[]).action(async function (this: Command, opts: {
+  return new Command('reestruturar')
+    .description(CliComandoReestruturarMensagens.descricao)
+    .option('-a, --auto', CliComandoReestruturarMensagens.opcoes.auto, false)
+    .option('--aplicar', CliComandoReestruturarMensagens.opcoes.aplicar, false)
+    .option('--somente-plano', CliComandoReestruturarMensagens.opcoes.somentePlano, false)
+    .option('--domains', CliComandoReestruturarMensagens.opcoes.domains, false)
+    .option('--flat', CliComandoReestruturarMensagens.opcoes.flat, false)
+    .option('--prefer-estrategista', CliComandoReestruturarMensagens.opcoes.preferEstrategista, false)
+    .option('--preset <nome>', CliComandoReestruturarMensagens.opcoes.preset)
+    .option('--categoria <pair>', CliComandoReestruturarMensagens.opcoes.categoria, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
+    .option('--include <padrao>', CliComandoReestruturarMensagens.opcoes.include, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
+    .option('--exclude <padrao>', CliComandoReestruturarMensagens.opcoes.exclude, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
+    .action(async function (this: Command, opts: {
     auto?: boolean;
     aplicar?: boolean;
     somentePlano?: boolean;
@@ -278,7 +290,10 @@ export function comandoReestruturar(aplicarFlagsGlobais: (opts: Record<string, u
               input: process.stdin,
               output: process.stdout
             });
-            answer = await rl.question(chalk.yellow('Tem certeza que deseja aplicar essas correções? (s/N) '));
+            const {
+              CliCommonMensagens
+            } = await import('@core/messages/cli/cli-common-messages.js');
+            answer = await rl.question(chalk.yellow(CliCommonMensagens.confirmacao.certeza));
             rl.close();
           } catch {
             // Se readline falhar, cancela por segurança

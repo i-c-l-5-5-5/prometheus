@@ -4,6 +4,7 @@ import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
 import chalk from '@core/config/chalk-safe.js';
 import { config } from '@core/config/config.js';
 import { iniciarInquisicao } from '@core/execution/inquisidor.js';
+import { CliComandoAtualizarMensagens } from '@core/messages/cli/cli-comando-atualizar-messages.js';
 import { ICONES_DIAGNOSTICO, log, logSistema } from '@core/messages/index.js';
 import { executarShellSeguro } from '@core/utils/exec-safe.js';
 import { scanSystemIntegrity } from '@guardian/sentinela.js';
@@ -16,8 +17,8 @@ export function comandoAtualizar(
   aplicarFlagsGlobais: (opts: Record<string, unknown>) => void,
 ): Command {
   return new Command('atualizar')
-    .description('Atualiza o Prometheus se a integridade estiver preservada')
-    .option('--global', 'atualiza globalmente via npm i -g')
+    .description(CliComandoAtualizarMensagens.descricao)
+    .option('--global', CliComandoAtualizarMensagens.opcoes.global)
     .action(async function (this: Command, opts: { global?: boolean }) {
       try {
         await aplicarFlagsGlobais(
@@ -26,14 +27,12 @@ export function comandoAtualizar(
             : {},
         );
       } catch (err) {
-        log.erro(
-          `Falha ao aplicar flags: ${err instanceof Error ? err.message : String(err)}`,
-        );
+        log.erro(CliComandoAtualizarMensagens.erros.falhaFlags(err instanceof Error ? err.message : String(err)));
         sair(ExitCode.Failure);
         return;
       }
 
-      log.info(chalk.bold('\n🔄 Iniciando processo de atualização...\n'));
+      log.info(chalk.bold(CliComandoAtualizarMensagens.status.inicio));
 
       const baseDir = process.cwd();
       let fileEntries: FileEntryWithAst[] = [];
@@ -55,16 +54,10 @@ export function comandoAtualizar(
           guardianResultado.status ===
             ('baseline-aceito' as typeof guardianResultado.status)
         ) {
-          log.sucesso(
-            `${ICONES_DIAGNOSTICO.sucesso} Guardian: integridade validada. Prosseguindo atualização.`,
-          );
+          log.sucesso(CliComandoAtualizarMensagens.status.guardianOk(ICONES_DIAGNOSTICO.sucesso));
         } else {
-          log.aviso(
-            '🌀 Guardian gerou novo baseline ou detectou alterações. Prosseguindo com cautela.',
-          );
-          log.info(
-            'Recomendado: `prometheus guardian --diff` e `prometheus guardian --accept-baseline` antes de atualizar.',
-          );
+          log.aviso(CliComandoAtualizarMensagens.status.guardianAviso);
+          log.info(CliComandoAtualizarMensagens.status.guardianDica);
         }
 
         const cmd = opts.global

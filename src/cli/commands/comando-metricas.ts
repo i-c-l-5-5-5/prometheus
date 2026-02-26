@@ -56,7 +56,13 @@ function agregados(historico: RegistroHistorico[]) {
   };
 }
 export function comandoMetricas(): Command {
-  return new Command('metricas').description('Inspeciona histórico de métricas de execuções anteriores').option('-j, --json', 'Saída em JSON bruto (historico e agregados)').option('-l, --limite <n>', 'Quantidade de registros mais recentes (default 10)', v => Number(v), 10).option('-e, --export <arquivo>', 'Exporta histórico completo em JSON para arquivo').option('-a, --analistas', 'Exibe tabela agregada por analista (top 5)').action(async (opts: {
+  return new Command('metricas')
+    .description(CliComandoMetricasMensagens.descricao)
+    .option('-j, --json', CliComandoMetricasMensagens.opcoes.json)
+    .option('-l, --limite <n>', CliComandoMetricasMensagens.opcoes.limite, v => Number(v), 10)
+    .option('-e, --export <arquivo>', CliComandoMetricasMensagens.opcoes.export)
+    .option('-a, --analistas', CliComandoMetricasMensagens.opcoes.analistas)
+    .action(async (opts: {
     json?: boolean;
     limite?: number;
     export?: string;
@@ -108,7 +114,7 @@ export function comandoMetricas(): Command {
         log.info(CliComandoMetricasMensagens.medias(formatMs(agg.mediaAnaliseMs), formatMs(agg.mediaParsingMs)));
       }
     } catch (err) {
-      log.erro(`Falha ao processar métricas: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoMetricasMensagens.erroProcessar(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
   });

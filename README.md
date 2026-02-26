@@ -9,13 +9,13 @@
 
 ## 🌟 Status do Projeto
 
-**Versão Atual:** 0.3.9 | **Node.js:** >=24.12.0 | **Licença:** MIT
+**Versão Atual:** 0.4.0 | **Node.js:** >=24.12.0 | **Licença:** MIT
 
-[![Stars](https://img.shields.io/github/stars/md-555-37/prometheus?style=social)](https://github.com/md-555-37/prometheus/stargazers)
-[![Forks](https://img.shields.io/github/forks/md-555-37/prometheus?style=social)](https://github.com/md-555-37/prometheus/network/members)
-[![Issues](https://img.shields.io/github/issues/md-555-37/prometheus)](https://github.com/md-555-37/prometheus/issues)
-[![Contributors](https://img.shields.io/github/contributors/md-555-37/prometheus)](https://github.com/md-555-37/prometheus/graphs/contributors)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/md-555-37/prometheus/blob/main/CONTRIBUTING.md)
+[![Stars](https://img.shields.io/github/stars/i-c-l-5-5-5/prometheus?style=social)](https://github.com/i-c-l-5-5-5/prometheus/stargazers)
+[![Forks](https://img.shields.io/github/forks/i-c-l-5-5-5/prometheus?style=social)](https://github.com/i-c-l-5-5-5/prometheus/network/members)
+[![Issues](https://img.shields.io/github/issues/i-c-l-5-5-5/prometheus)](https://github.com/i-c-l-5-5-5/prometheus/issues)
+[![Contributors](https://img.shields.io/github/contributors/i-c-l-5-5-5/prometheus)](https://github.com/i-c-l-5-5-5/prometheus/graphs/contributors)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/i-c-l-5-5-5/prometheus/blob/main/CONTRIBUTING.md)
 
 ## 🚀 Demo Rápido
 
@@ -30,8 +30,9 @@ npx github:md-555/prometheus diagnosticar --help
 - 🔒 **Segurança**: Guardian verifica integridade de arquivos via hashing
 - 📊 **Métricas Inteligentes**: Pontuação adaptativa baseada no tamanho do projeto
 - 🌐 **Multi-linguagem**: Suporte completo a JS/TS + suporte heurístico para tailwind/css/html/xml
+- 🌍 **Internacionalização**: Suporte nativo a Português e Inglês para mensagens, logs e relatórios
 - 🛠️ **Modular**: Sistema de analistas extensível com detecção automática de padrões
-- 📈 **CI/CD Ready**: Outputs JSON estruturados para integração com pipelines
+- 📈 **CI/CD Ready**: Outputs JSON estruturados e Workflows GitHub Actions integrados
 
 ---
 
@@ -47,7 +48,7 @@ Prometheus é uma CLI modular para analisar, diagnosticar e manter projetos (JS/
 
 ```bash
 # Clone o repositório
-git clone https://github.com/md-555-37/prometheus.git
+git clone https://github.com/i-c-l-5-5-5/prometheus.git
 cd prometheus
 
 # Instale dependências e compile
@@ -61,7 +62,7 @@ node dist/bin/index.js diagnosticar --json
 **Windows (PowerShell):**
 
 ```powershell
-git clone https://github.com/md-555-37/prometheus.git; cd prometheus; npm install; npm run build; node dist/bin/index.js diagnosticar --json
+git clone https://github.com/i-c-l-5-5-5/prometheus.git; cd prometheus; npm install; npm run build; node dist/bin/index.js diagnosticar --json
 ```
 
 ### Instalação Global (Opcional)
@@ -101,6 +102,8 @@ prometheus guardian --diff
 - Poda de arquivos órfãos (`podar`)
 - Relatórios & métricas agregadas (`metricas`)
 - Pool de Workers (paralelização por arquivo)
+- Internacionalização Completa (PT-BR/EN)
+- Integração GitHub (CI, CodeQL, Templates)
 - Schema Versioning (compatibilidade backward)
 - Pontuação Adaptativa (tamanho do projeto)
 
@@ -224,7 +227,33 @@ prometheus diagnosticar --json
 
 # Verificar integridade
 prometheus guardian --diff --json
+
+# Alterar idioma para inglês
+PROMETHEUS_LANGUAGE=en prometheus diagnosticar
 ```
+
+## 🌍 Internacionalização (i18n)
+
+O Prometheus agora é totalmente bilíngue! Você pode alternar entre Português (Brasil) e Inglês para todas as saídas (terminal, logs, relatórios).
+
+### Configuração de Idioma
+
+1.  **Via Configuração (`prometheus.config.json`):**
+    ```json
+    { "LANGUAGE": "en" }
+    ```
+2.  **Via Variável de Ambiente:**
+    ```bash
+    export PROMETHEUS_LANGUAGE=en
+    ```
+
+## 🐙 Integração GitHub
+
+O repositório vem pronto para colaboração profissional:
+
+- **Workflows**: CI (Build/Test/Lint), CodeQL (Segurança) e Stale/Dependabot.
+- **Templates**: Modelos estruturados para Pull Requests e Bug Reports.
+- **Governança**: Configuração de `CODEOWNERS` e `FUNDING`.
 
 ### Debug de Problemas
 
@@ -298,8 +327,8 @@ PONTUACAO_MODO=conservador prometheus diagnosticar
 
 ## 📚 Comandos Principais
 
-| Comando        | Descrição                             | Uso Comum                              |
-| -------------- | ------------------------------------- | -------------------------------------- |
+| Comando        | Descrição                             | Uso Comum                                 |
+| -------------- | ------------------------------------- | ----------------------------------------- |
 | `diagnosticar` | Análise completa do projeto           | `prometheus diagnosticar --json`          |
 | `guardian`     | Verificação de integridade            | `prometheus guardian --diff`              |
 | `podar`        | Remoção segura de arquivos órfãos     | `prometheus podar --dry-run`              |
@@ -310,7 +339,7 @@ PONTUACAO_MODO=conservador prometheus diagnosticar
 | `perf`         | Análise de performance                | `prometheus perf compare`                 |
 | `analistas`    | Listar analistas disponíveis          | `prometheus analistas --json`             |
 | `otimizar-svg` | Otimização de arquivos SVG            | `prometheus otimizar-svg --write`         |
-| `atualizar`    | Atualização segura do Prometheus         | `prometheus atualizar`                    |
+| `atualizar`    | Atualização segura do Prometheus      | `prometheus atualizar`                    |
 | `reverter`     | Reverter mudanças de reestruturação   | `prometheus reverter listar`              |
 | `names`        | Extrair nomes para tradução           | `prometheus names`                        |
 | `rename`       | Aplicar renomeação de variáveis       | `prometheus rename`                       |
@@ -414,6 +443,9 @@ export LOG_ESTRUTURADO=true
 
 # Modo de desenvolvimento
 export DEV_MODE=true
+
+# Idioma (pt-BR ou en)
+export PROMETHEUS_LANGUAGE=en
 ```
 
 ### Configurações de Segurança
@@ -730,4 +762,5 @@ prometheus diagnosticar --json
 ``
 MIT. Avisos de terceiros: `THIRD-PARTY-NOTICES.txt`.
 ``
-### md-555-37
+### i-c-l-5-5-5
+````

@@ -102,13 +102,20 @@ function compararSnapshots(base: SnapshotPerf, atual: SnapshotPerf) {
 export function comandoPerf(): Command {
   /* istanbul ignore next */
   if (false) 0;
-  return new Command('perf').description('Operações de baseline e comparação de performance sintética').option('-d, --dir <dir>', 'Diretório de snapshots', config.PERF_SNAPSHOT_DIR).option('-j, --json', 'Saída JSON').option('-l, --limite <n>', 'Limite para regressão (%)', v => Number(v), 30).addCommand(new Command('baseline').description('Gera uma nova baseline. Usa métricas globais da última execução se disponíveis.').action(async (opts, cmd) => {
+  return new Command('perf')
+    .description(CliComandoDesempMensagens.descricao)
+    .option('-d, --dir <dir>', CliComandoDesempMensagens.opcoes.dir, config.PERF_SNAPSHOT_DIR)
+    .option('-j, --json', CliComandoDesempMensagens.opcoes.json)
+    .option('-l, --limite <n>', CliComandoDesempMensagens.opcoes.limite, v => Number(v), 30)
+    .addCommand(new Command('baseline')
+      .description(CliComandoDesempMensagens.subcomandos.baseline.descricao)
+      .action(async (opts, cmd) => {
     try {
       const parent = cmd.parent?.opts?.() || {};
       const dir = parent.dir ? String(parent.dir) : config.PERF_SNAPSHOT_DIR;
       const metricas = (globalThis as unknown as {
-        __ULTIMAS_METRICAS_SENSEI__?: Partial<MetricaExecucaoLike> | null;
-      }).__ULTIMAS_METRICAS_SENSEI__;
+        __ULTIMAS_METRICAS_PROMETHEUS__?: Partial<MetricaExecucaoLike> | null;
+      }).__ULTIMAS_METRICAS_PROMETHEUS__;
       const snap = await gerarBaseline(dir, metricas || undefined);
       if (parent.json) {
         console.log(JSON.stringify({
@@ -119,11 +126,14 @@ export function comandoPerf(): Command {
         log.sucesso(`Baseline gerada: commit=${snap.commit || 'n/a'} parsing=${snap.tempoParsingMs}ms analise=${snap.tempoAnaliseMs}ms`);
       }
     } catch (err) {
-      log.erro(`Falha na geração de baseline: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoDesempMensagens.subcomandos.baseline.erro(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
       return;
     }
-  })).addCommand(new Command('compare').description('Compara os dois últimos snapshots e sinaliza regressão').action(async (opts, cmd) => {
+  }))
+  .addCommand(new Command('compare')
+    .description(CliComandoDesempMensagens.subcomandos.compare.descricao)
+    .action(async (opts, cmd) => {
     const parent = cmd.parent?.opts?.() || {};
     const dir = parent.dir ? String(parent.dir) : config.PERF_SNAPSHOT_DIR;
     const limite = parent.limite;
@@ -131,12 +141,12 @@ export function comandoPerf(): Command {
     try {
       snaps = await carregarSnapshots(dir);
     } catch (err) {
-      log.erro(`Falha ao carregar snapshots: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoDesempMensagens.subcomandos.compare.erroSnapshots(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
       return;
     }
     if (snaps.length < 2) {
-      const msg = 'Menos de dois snapshots para comparar';
+      const msg = CliComandoDesempMensagens.subcomandos.compare.erroMenosDeDois;
       if (parent.json) console.log(JSON.stringify({
         erro: msg
       }));else log.aviso(msg);
