@@ -114,7 +114,7 @@ async function listMarkdown() {
       if (e.isDirectory()) {
         // Ignora diretórios comuns e diretórios especiais do projeto (escape de pontos)
         if (
-          /^(node_modules|dist|\.git|pre-public|preview-md-555-37|coverage|relatorios|\.md-555-37)$/i.test(
+          /^(node_modules|dist|\.git|pre-public|preview-i-c-l-5-5-5|coverage|relatorios|\.i-c-l-5-5-5)$/i.test(
             e.name,
           )
         )

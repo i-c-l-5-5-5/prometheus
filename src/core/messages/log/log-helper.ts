@@ -10,7 +10,6 @@
 import { config } from '@core/config/config.js';
 import { logEngine } from '@core/messages/log/log-engine.js';
 import { LogMensagens } from '@core/messages/log/log-messages.js';
-import { ICONES_ARQUIVO, ICONES_DIAGNOSTICO, ICONES_FEEDBACK, ICONES_STATUS } from '@core/messages/ui/icons.js';
 
 /**
  * Sistema de logs para analistas com controle de spam unificado
@@ -78,9 +77,9 @@ export const logAnalistas = {
     // Atualiza o progresso em intervalos adaptativos com anti-spam
     if (porcentagem - this.ultimoProgressoGlobal >= passo || this.contadorArquivos === this.totalArquivos) {
       if (agora - this.ultimoEmitMs >= minIntervalMs || this.contadorArquivos === this.totalArquivos) {
-        logEngine.log('info', `${ICONES_DIAGNOSTICO.progresso} Progresso: {arquivosProcessados}/{totalArquivos} ({percentual}%)`, {
-          arquivosProcessados: this.contadorArquivos.toString(),
-          totalArquivos: this.totalArquivos.toString(),
+        logEngine.log('info', LogMensagens.analistas.execucao.batch_progresso, {
+          arquivos: this.contadorArquivos.toString(),
+          total: this.totalArquivos.toString(),
           percentual: porcentagem.toString()
         });
         this.ultimoProgressoGlobal = porcentagem;
@@ -91,12 +90,12 @@ export const logAnalistas = {
   /** Finaliza batch de análise */
   finalizarBatch(totalOcorrencias: number, duracaoTotal: number): void {
     if (logEngine.contexto === 'simples') {
-      logEngine.log('info', `${ICONES_STATUS.ok} Análise concluída - {totalOcorrencias} problemas encontrados`, {
-        totalOcorrencias: totalOcorrencias.toString()
+      logEngine.log('info', LogMensagens.analistas.execucao.batch_concluido_simples, {
+        total: totalOcorrencias.toString()
       });
     } else {
-      logEngine.log('info', `${ICONES_STATUS.ok} Verificações concluídas - {totalOcorrencias} problemas detectados em {duracao}s`, {
-        totalOcorrencias: totalOcorrencias.toString(),
+      logEngine.log('info', LogMensagens.analistas.execucao.batch_concluido_detalhado, {
+        total: totalOcorrencias.toString(),
         duracao: (duracaoTotal / 1000).toFixed(1)
       });
     }
@@ -163,6 +162,13 @@ export const logVarredor = {
       arquivos: arquivos.toString(),
       diretorios: diretorios.toString()
     });
+  },
+  arquivoLido(arquivo: string): void {
+    if (config.VERBOSE) {
+      logEngine.log('info', LogMensagens.scanner.arquivo_lido, {
+        arquivo
+      });
+    }
   }
 };
 
@@ -182,7 +188,9 @@ export const logSistema = {
   },
   erro(mensagem: string, detalhes?: string): void {
     const detalhesStr = detalhes ? ` - ${detalhes}` : '';
-    logEngine.log('erro', `${ICONES_STATUS.falha} Erro: ${mensagem}${detalhesStr}`, {});
+    logEngine.log('erro', LogMensagens.sistema.inicializacao.erro_generico, {
+      mensagem: `${mensagem}${detalhesStr}`
+    });
   },
   // Correções automáticas
   autoFixNenhumaCorrecao(): void {
@@ -435,7 +443,7 @@ export const logProjeto = {
   }): void {
     if (logEngine.contexto === 'complexo' || config.DEV_MODE) {
       const throughput = dados.throughput ? ` (${dados.throughput.toFixed(1)} arq/s)` : '';
-      logEngine.log('info', `${ICONES_DIAGNOSTICO.stats} Performance: {analistas} analistas em {duracao}s{throughput}`, {
+      logEngine.log('info', LogMensagens.analistas.metricas.performance, {
         analistas: dados.analistas.toString(),
         duracao: (dados.duracao / 1000).toFixed(1),
         throughput
@@ -469,10 +477,15 @@ export const logOcorrencias = {
  */
 export const logRelatorio = {
   gerado(caminho: string, formato: string): void {
-    logEngine.log('info', `${ICONES_ARQUIVO.arquivo} Relatório ${formato} gerado: ${caminho}`, {});
+    logEngine.log('info', LogMensagens.relatorio.gerado, {
+      formato,
+      caminho
+    });
   },
   erro(erro: string): void {
-    logEngine.log('erro', `${ICONES_STATUS.falha} Erro ao gerar relatório: ${erro}`, {});
+    logEngine.log('erro', LogMensagens.relatorio.erro_geracao, {
+      erro
+    });
   },
   repositorioImpecavel(): void {
     logEngine.log('info', LogMensagens.relatorio.repositorio_impecavel, {});
@@ -695,15 +708,19 @@ export const logGuardian = {
   },
   // Método genérico para outras mensagens Guardian
   info(mensagem: string): void {
-    logEngine.log('info', `${ICONES_FEEDBACK.info} ${mensagem}`, {});
+    logEngine.log('info', LogMensagens.guardian.info, {
+      mensagem
+    });
   },
   aviso(mensagem: string): void {
-    logEngine.log('aviso', `${ICONES_FEEDBACK.atencao} ${mensagem}`, {});
+    logEngine.log('aviso', LogMensagens.guardian.aviso, {
+      mensagem
+    });
   }
 };
 
 /**
- * Conselheiro senseial para bem-estar do desenvolvedor
+ * Conselheiro prometheus para bem-estar do desenvolvedor
  */
 export const logConselheiro = {
   volumeAlto(): void {

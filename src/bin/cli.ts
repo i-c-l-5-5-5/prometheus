@@ -16,7 +16,7 @@ import type { CommanderError } from 'commander';
 import { Command } from 'commander';
 
 // 🌐 Flags globais aplicáveis em todos os comandos
-import type { ErrorLike,SenseiGlobalFlags } from '@';
+import type { ErrorLike,PrometheusGlobalFlags } from '@';
 import { extrairMensagemErro } from '@';
 
 // caminho do módulo (usado para localizar arquivos de configuração)
@@ -44,7 +44,7 @@ const program = new Command();
 
 // �️ Função para aplicar flags globais
 async function aplicarFlagsGlobais(opts: unknown) {
-  const flags = opts as SenseiGlobalFlags;
+  const flags = opts as PrometheusGlobalFlags;
   // Sanitização e normalização (pode lançar)
   try {
     // lazy import para não criar ciclo
@@ -84,7 +84,7 @@ export async function mainCli(): Promise<void> {
   // Inicializa memória de conversas
 
   // Handler de rejeições não tratadas com mensagem identificável (usado por testes e ops)
-  function __sensei_unhandledRejectionHandler(err: ErrorLike) {
+  function __prometheus_unhandledRejectionHandler(err: ErrorLike) {
     const MARCADOR = 'Prometheus: unhandled rejection';
     const mensagem = extrairMensagemErro(err);
     console.error(MARCADOR, mensagem);
@@ -97,7 +97,7 @@ export async function mainCli(): Promise<void> {
       process.exit(1);
     }
   }
-  process.on('unhandledRejection', __sensei_unhandledRejectionHandler);
+  process.on('unhandledRejection', __prometheus_unhandledRejectionHandler);
 
   // Mantemos handler para exceções não capturadas — garante comportamento crítico em produção
   process.on('uncaughtException', (err: ErrorLike) => {
@@ -202,7 +202,7 @@ export async function mainCli(): Promise<void> {
 
 // Global handler para reduzir falsos-positivos e capturar rejeições não tratadas.
 // A mensagem contém um marcador único para que testes possam verificar o registro.
-function __sensei_unhandledRejectionHandler(err: ErrorLike) {
+function __prometheus_unhandledRejectionHandler(err: ErrorLike) {
   const MARCADOR = 'Prometheus: unhandled rejection';
   const mensagem = extrairMensagemErro(err);
   // Mensagem identificável: usada pelos testes unitários para detectar o handler
@@ -221,7 +221,7 @@ function __sensei_unhandledRejectionHandler(err: ErrorLike) {
     process.exit(1);
   }
 }
-process.on('unhandledRejection', __sensei_unhandledRejectionHandler);
+process.on('unhandledRejection', __prometheus_unhandledRejectionHandler);
 
 // Invoca a função principal apenas quando o arquivo for executado como entrypoint.
 // Isso evita efeitos colaterais ao importar o módulo em testes ou ferramentas de análise.

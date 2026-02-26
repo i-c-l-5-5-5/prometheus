@@ -41,8 +41,8 @@ export type {
   NivelLog,
   OpcoesProcessamentoFiltros,
   OtimizarSvgOptions,
+  PrometheusGlobalFlags,
   ResultadoValidacao,
-  SenseiGlobalFlags,
   TipoLinguagemProjeto,
 } from './cli/options.js';
 export * from './cli/processamento-diagnostico.js';

@@ -34,7 +34,7 @@ export interface RelatorioJson {
       globalExclude?: string[];
     };
     /** Versão do Prometheus */
-    senseiVersion?: string;
+    prometheusVersion?: string;
     /** Nome do projeto */
     projectNome?: string;
   };

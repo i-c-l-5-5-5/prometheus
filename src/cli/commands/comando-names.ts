@@ -5,6 +5,7 @@ import traverseModule from '@babel/traverse';
 import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
 import { getSourceFiles } from '@cli/helpers/get-files-src.js';
 import chalk from '@core/config/chalk-safe.js';
+import { CliComandoNamesMensagens } from '@core/messages/cli/cli-comando-names-messages.js';
 import { log } from '@core/messages/index.js';
 import { Command } from 'commander';
 import * as fs from 'fs';
@@ -16,15 +17,11 @@ export function comandoNames(
   aplicarFlagsGlobais: (opts: Record<string, unknown>) => void,
 ): Command {
   return new Command('names')
-    .description(
-      'Varre o repositório em busca de nomes de variáveis e gera arquivos de mapeamento (estrutura fragmentada em names/).',
-    )
-    .option(
-      '--legacy',
-      'Gera também names/name.txt único (compatibilidade com fluxo antigo).',
-      false,
-    )
-    .action(async function (this: Command, opts: { legacy?: boolean }) {
+    .description(CliComandoNamesMensagens.descricao)
+    .option('--legacy', CliComandoNamesMensagens.opcoes.legacy, false)
+    .action(async function (this: Command, opts: {
+    legacy?: boolean;
+  }) {
       try {
         await aplicarFlagsGlobais(
           this.parent && typeof this.parent.opts === 'function'
@@ -32,9 +29,7 @@ export function comandoNames(
             : {},
         );
       } catch (err) {
-        log.erro(
-          `Falha ao aplicar flags: ${err instanceof Error ? err.message : String(err)}`,
-        );
+        log.erro(CliComandoNamesMensagens.erros.falhaFlags(err instanceof Error ? err.message : String(err)));
         sair(ExitCode.Failure);
         return;
       }
@@ -47,7 +42,7 @@ export function comandoNames(
         fs.mkdirSync(SAIDA_DIR, { recursive: true });
       }
 
-      log.info(chalk.cyan('Iniciando varredura de nomes de variáveis...'));
+      log.info(chalk.cyan(CliComandoNamesMensagens.status.inicio));
 
       const files = getSourceFiles(SRC_DIR);
       const allNomes = new Set<string>();
@@ -86,24 +81,19 @@ export function comandoNames(
             arquivosComNomes++;
           }
         } catch {
-          console.warn(
-            `[Aviso] Erro ao processar ${path.relative(RAIZ_DIR, file)}`,
-          );
+          console.warn(CliComandoNamesMensagens.erros.erroProcessar(path.relative(RAIZ_DIR, file)));
         }
       }
 
       if (opts.legacy) {
         const SAIDA_ARQUIVO = path.resolve(SAIDA_DIR, 'name.txt');
         const sortedNomes = Array.from(allNomes).sort();
-        const content = sortedNomes.map((name) => `${name} = `).join('\n');
+        const content = sortedNomes.map(name => `${name} = `).join('\n');
         fs.writeFileSync(SAIDA_ARQUIVO, content);
-        log.sucesso(
-          `Varredura concluída! ${sortedNomes.length} variáveis em ${arquivosComNomes} arquivos. Mapeamento fragmentado em ${chalk.bold('names/')} e agregado em ${chalk.bold(path.relative(RAIZ_DIR, SAIDA_ARQUIVO))}.`,
-        );
+        const relSaida = path.relative(RAIZ_DIR, SAIDA_ARQUIVO);
+        log.sucesso(CliComandoNamesMensagens.status.concluidoLegacy(sortedNomes.length, arquivosComNomes, chalk.bold(relSaida)));
       } else {
-        log.sucesso(
-          `Varredura concluída! ${allNomes.size} variáveis em ${arquivosComNomes} arquivos. Mapeamento em ${chalk.bold('names/')} (estrutura espelhada).`,
-        );
+        log.sucesso(CliComandoNamesMensagens.status.concluido(allNomes.size, arquivosComNomes));
       }
     });
 }

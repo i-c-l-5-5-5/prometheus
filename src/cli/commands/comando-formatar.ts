@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-// SENSEI: Revisar ocorrências 'unhandled-async' (1). Ver relatorio:
+// PROMETHEUS: Revisar ocorrências 'unhandled-async' (1). Ver relatorio:
 // relatorios/prometheus-relatorio-summary-2026-02-24T22-21-50-731Z.json
 
 
@@ -12,11 +12,9 @@ import { configurarFiltros } from '@cli/processing/filters.js';
 import chalk from '@core/config/chalk-safe.js';
 import { config } from '@core/config/config.js';
 import { scanRepository } from '@core/execution/scanner.js';
+import { CliComandoFormatarMensagens } from '@core/messages/cli/cli-comando-formatar-messages.js';
 import { log } from '@core/messages/index.js';
-import {
-  formatarComPrettierProjeto,
-  formatarPrettierMinimo,
-} from '@shared/impar/formater.js';
+import { formatarComPrettierProjeto, formatarPrettierMinimo } from '@shared/impar/formater.js';
 import { salvarEstado } from '@shared/persistence/persistencia.js';
 import { Command } from 'commander';
 import micromatch from 'micromatch';
@@ -41,44 +39,29 @@ export function comandoFormatar(
   aplicarFlagsGlobais: (opts: Record<string, unknown>) => void,
 ): Command {
   return new Command('formatar')
-    .description(
-      'Aplica a formatação interna estilo Prometheus (whitespace, seções, finais de linha)',
-    )
-    .option(
-      '--check',
-      'Apenas verifica se arquivos precisariam de formatação (default)',
-      true,
-    )
-    .option('--write', 'Aplica as mudanças no filesystem', false)
-    .option(
-      '--engine <engine>',
-      'Motor de formatação: auto|interno|prettier (auto tenta usar Prettier do projeto e cai no interno)',
-      'auto',
-    )
-    .option(
-      '--include <padrao>',
-      'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)',
-      (val: string, prev: string[]) => {
-        prev.push(val);
-        return prev;
-      },
-      [] as string[],
-    )
-    .option(
-      '--exclude <padrao>',
-      'Glob pattern a EXCLUIR adicionalmente (pode repetir a flag ou usar vírgulas / espaços)',
-      (val: string, prev: string[]) => {
-        prev.push(val);
-        return prev;
-      },
-      [] as string[],
-    )
+    .description(CliComandoFormatarMensagens.descricao)
+    .option('--check', CliComandoFormatarMensagens.opcoes.check, true)
+    .option('--write', CliComandoFormatarMensagens.opcoes.write, false)
+    .option('--engine <engine>', CliComandoFormatarMensagens.opcoes.engine, 'auto')
+    .option('--include <padrao>', CliComandoFormatarMensagens.opcoes.include, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
+    .option('--exclude <padrao>', CliComandoFormatarMensagens.opcoes.exclude, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
     .action(async function (this: Command, opts: FormatarCommandOpts) {
       try {
-        const parentOpts = this.parent && typeof this.parent.opts === 'function'
-          ? await Promise.resolve(this.parent.opts())
-          : {};
-        await aplicarFlagsGlobais(parentOpts);
+        try {
+          const parentOpts = this.parent && typeof this.parent.opts === 'function' ? await Promise.resolve(this.parent.opts()) : {};
+          await aplicarFlagsGlobais(parentOpts);
+        } catch (err) {
+          log.erro(CliComandoFormatarMensagens.erros.falhaFlags(err instanceof Error ? err.message : String(err)));
+          sair(ExitCode.Failure);
+          return;
+        }
+
         const write = Boolean(opts.write);
         const check = write ? false : Boolean(opts.check ?? true);
 
@@ -117,11 +100,9 @@ export function comandoFormatar(
           arquivosMudaram: [],
         };
 
-        log.info(chalk.bold('🧽 FORMATAR'));
+        log.info(chalk.bold(CliComandoFormatarMensagens.status.titulo));
         if (config.SCAN_ONLY) {
-          log.aviso(
-            'SCAN_ONLY ativo; o comando formatar precisa ler conteúdo.',
-          );
+          log.aviso(CliComandoFormatarMensagens.erros.scanOnlyAviso);
         }
 
         const fileMap = await scanRepository(baseDir, {
@@ -154,6 +135,7 @@ export function comandoFormatar(
           }
 
           const src = typeof e.content === 'string' ? e.content : '';
+          let resolved: { ok: boolean; error?: string; parser?: string; changed?: boolean; formatted?: string } | undefined;
           try {
             const res =
               engine === 'interno'
@@ -173,7 +155,7 @@ export function comandoFormatar(
                     });
                   })();
 
-            var resolved =
+            resolved =
               engine === 'auto'
                 ? await (async () => {
                   const r = await res;
@@ -181,16 +163,16 @@ export function comandoFormatar(
                   if (r.parser !== 'unknown') return r;
                   return formatarPrettierMinimo({ code: src, relPath });
                 })()
-                : await Promise.resolve(res);
-          } catch (e) {
+                : (await Promise.resolve(res)) as unknown as import('@').FormatadorMinimoResult;
+          } catch (error) {
             result.erros++;
-            log.erro(`Falha ao executar formatação para ${relPath}: ${e instanceof Error ? e.message : String(e)}`);
+            log.erro(CliComandoFormatarMensagens.erros.falhaExecucaoArquivo(relPath, error instanceof Error ? error.message : String(error)));
             continue;
           }
 
-          if (!resolved.ok) {
+          if (!resolved || !resolved.ok) {
             result.erros++;
-            log.erro(`Falha ao formatar ${relPath}: ${resolved.error}`);
+            log.erro(CliComandoFormatarMensagens.erros.falhaArquivo(relPath, resolved?.error || 'Unknown error'));
             continue;
           }
 
@@ -214,35 +196,31 @@ export function comandoFormatar(
         }
 
         if (result.erros > 0) {
-          log.erro(`Erros: ${result.erros}`);
+          log.erro(CliComandoFormatarMensagens.erros.totalErros(result.erros));
           sair(ExitCode.Failure);
           return;
         }
 
         if (check) {
           if (result.mudaram > 0) {
-            log.aviso(
-              `Encontrados ${result.mudaram} arquivo(s) que precisam de formatação. Use --write para aplicar.`,
-            );
+            log.aviso(CliComandoFormatarMensagens.status.precisamFormatacao(result.mudaram));
             sair(ExitCode.Failure);
             return;
           }
-          log.sucesso('Tudo formatado.');
+          log.sucesso(CliComandoFormatarMensagens.status.tudoFormatado);
           sair(ExitCode.Ok);
           return;
         }
 
         // write
         if (result.mudaram > 0) {
-          log.sucesso(`Formatados ${result.mudaram} arquivo(s).`);
+          log.sucesso(CliComandoFormatarMensagens.status.concluidoWrite(result.mudaram));
         } else {
-          log.info('Nenhuma mudança necessária.');
+          log.info(CliComandoFormatarMensagens.status.nenhumaMudanca);
         }
         sair(ExitCode.Ok);
       } catch (err) {
-        log.erro(
-          `Falha ao formatar: ${err instanceof Error ? err.message : String(err)}`,
-        );
+        log.erro(CliComandoFormatarMensagens.erros.falhaFormatar(err instanceof Error ? err.message : String(err)));
         sair(ExitCode.Failure);
       }
     });

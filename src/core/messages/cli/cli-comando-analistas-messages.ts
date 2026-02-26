@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: MIT
 
+import { CliCommonMensagens } from './cli-common-messages.js';
+
 export const CliComandoAnalistasMensagens = {
+  descricao: 'Lista analistas registrados e seus metadados atuais',
+  opcoes: {
+    json: CliCommonMensagens.opcoes.json,
+    output: 'Arquivo para exportar JSON de analistas',
+    doc: 'Gera documentação Markdown dos analistas'
+  },
+  erroListar: (erro: string) => `Falha ao listar analistas: ${erro}`,
   fastModeTitulo: '\n?? Analistas registrados (FAST MODE):\n',
   fastModeTotalZero: '\nTotal: 0',
   docMdTitulo: 'CABECALHOS.analistas.mdTitulo',

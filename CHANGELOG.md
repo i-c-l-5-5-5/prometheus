@@ -12,16 +12,28 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-02-25
+
 ### Adicionado
 
-- **Desacoplamento (plano em planejamento/)**:
-  - **IoC no motor**: Comandos da CLI (`podar`, `guardian`, `reestruturar`, `fix-types`, `atualizar`) passam explicitamente a lista de técnicas (`registroAnalistas`) para `iniciarInquisicao`, permitindo que o Core não importe o registro de analistas quando orquestrado pela CLI.
-  - **Eventos no Executor**: `executarInquisicao` aceita opcionalmente `opts.events` (interface `ExecutorEventEmitter`). Quando fornecido, emite `file:processed` (por arquivo) e `analysis:complete` (ao final), permitindo que frontends (CLI, Web, extensões) reajam ao progresso sem acoplar ao Core.
-  - **Autodiscovery de plugins**: Já existente; analistas em `src/analistas/plugins/` com prefixo `analista-` ou `detector-` são descobertos automaticamente e mesclados ao registro.
+- **Internacionalização (i18n)**:
+  - Suporte completo para mensagens, logs e relatórios em Inglês e Português (pt-BR).
+  - Novo helper `createI18nMessages` para gerenciamento dinâmico de idiomas.
+  - Configuração de idioma via `prometheus.config.json` ou variável de ambiente `PROMETHEUS_LANGUAGE`.
+- **Infraestrutura GitHub**:
+  - Workflows de CI (Build/Test/Lint) e Segurança (CodeQL).
+  - Automação para issues/PRs paradas (Stale) e dependências (Dependabot).
+  - Templates profissionais para Pull Requests e Issues (Bug/Feature).
+  - Arquivos de comunidade: `CODEOWNERS` e `FUNDING.yml`.
+- **Desacoplamento do Core**:
+  - IoC no motor: Comandos passam técnicas explicitamente para `iniciarInquisicao`.
+  - Eventos no Executor: Emissão de progresso (`file:processed`, `analysis:complete`) via EventEmitter.
 
 ### Alterado
 
-- **Names/Rename fragmentados**: Em projetos grandes, o comando `names` passa a gerar uma estrutura em `names/` espelhando `src/` (um `.txt` por arquivo fonte), em vez de um único `name.txt` monolítico. O `rename` usa `names/name.txt` se existir (retrocompatível), caso contrário agrega todos os `names/**/*.txt`. Opção `names --legacy` gera também o arquivo único `names/name.txt`.
+- **Names/Rename fragmentados**: Estrutura em `names/` espelhando `src/` para projetos grandes.
+- **Reporting**: Relatórios Markdown e JSON agora suportam tradução dinâmica.
+- **Scripts**: Script `lint` adicionado ao `package.json` para verificações em CI.
 
 ## [0.3.9] - 2026-02-19
 

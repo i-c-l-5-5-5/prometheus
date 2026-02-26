@@ -6,7 +6,9 @@ import { ICONES_DIAGNOSTICO, log, logAuto, logSistema } from '@core/messages/ind
 import { Command } from 'commander';
 
 export function registrarComandoReverter(program: Command): void {
-  program.command('reverter').description('Gerencia mapa de reversão para moves aplicados').hook('preAction', async () => {
+  program.command('reverter')
+    .description(CliComandoReverterMensagens.descricao)
+    .hook('preAction', async () => {
     if (process.env.PROMETHEUS_TEST_FAST === '1') {
       try {
         await mapaReversao.carregar();
@@ -14,7 +16,7 @@ export function registrarComandoReverter(program: Command): void {
         // Em modo de teste rápido, falhas ao carregar o mapa são ignoradas para evitar timeout.
         // Porém, em outros ambientes, registramos um aviso para reduzir casos de promises 'swallowed'.
         if (process.env.VITEST === '1') return;
-        log.aviso(`Falha ao carregar mapa de reversão (fast-mode): ${err instanceof Error ? err.message : String(err)}`);
+        log.aviso(CliComandoReverterMensagens.falhaCarregarMapaFast(err instanceof Error ? err.message : String(err)));
       }
     }
   }).addCommand(new Command('listar').description('Lista todos os moves registrados no mapa de reversão').action(async () => {
@@ -22,10 +24,14 @@ export function registrarComandoReverter(program: Command): void {
       await mapaReversao.carregar();
       const _lista = mapaReversao.listarMoves();
     } catch (err) {
-      log.erro(`Falha ao listar moves: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoReverterMensagens.subcomandos.listar.erro(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
-  })).addCommand(new Command('arquivo').description('Reverte todos os moves de um arquivo específico').argument('<arquivo>', 'Caminho do arquivo para reverter').action(async (arquivo: string) => {
+  }))
+  .addCommand(new Command('arquivo')
+    .description(CliComandoReverterMensagens.subcomandos.arquivo.descricao)
+    .argument('<arquivo>', CliComandoReverterMensagens.subcomandos.arquivo.argumento)
+    .action(async (arquivo: string) => {
     try {
       await mapaReversao.carregar();
       if (!mapaReversao.podeReverterArquivo(arquivo)) {
@@ -43,10 +49,14 @@ export function registrarComandoReverter(program: Command): void {
         return;
       }
     } catch (err) {
-      log.erro(`Falha ao reverter arquivo: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoReverterMensagens.subcomandos.arquivo.erro(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
-  })).addCommand(new Command('move').description('Reverte um move específico pelo ID').argument('<id>', 'ID do move para reverter').action(async (id: string) => {
+  }))
+  .addCommand(new Command('move')
+    .description(CliComandoReverterMensagens.subcomandos.move.descricao)
+    .argument('<id>', CliComandoReverterMensagens.subcomandos.move.argumento)
+    .action(async (id: string) => {
     try {
       await mapaReversao.carregar();
       logAuto.mapaReversaoRevertendoMove(id);
@@ -59,10 +69,14 @@ export function registrarComandoReverter(program: Command): void {
         return;
       }
     } catch (err) {
-      log.erro(`Falha ao reverter move: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoReverterMensagens.subcomandos.move.erro(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
-  })).addCommand(new Command('limpar').description('Limpa todo o mapa de reversão (perde histórico)').option('-f, --force', 'Não pede confirmação').action(async (options: {
+  }))
+  .addCommand(new Command('limpar')
+    .description(CliComandoReverterMensagens.subcomandos.limpar.descricao)
+    .option('-f, --force', CliComandoReverterMensagens.opcoes.force)
+    .action(async (options: {
     force?: boolean;
   }) => {
     try {
@@ -74,10 +88,13 @@ export function registrarComandoReverter(program: Command): void {
       await mapaReversao.limpar();
       log.sucesso(CliComandoReverterMensagens.mapaLimpoComSucesso(ICONES_DIAGNOSTICO.sucesso));
     } catch (err) {
-      log.erro(`Falha ao limpar mapa: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoReverterMensagens.subcomandos.limpar.erro(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
-  })).addCommand(new Command('status').description('Mostra status do mapa de reversão').action(async () => {
+  }))
+  .addCommand(new Command('status')
+    .description(CliComandoReverterMensagens.subcomandos.status.descricao)
+    .action(async () => {
     try {
       await mapaReversao.carregar();
       const moves = mapaReversao.obterMoves();
@@ -87,7 +104,7 @@ export function registrarComandoReverter(program: Command): void {
         log.info(CliComandoReverterMensagens.ultimoMove(dataPtBr));
       }
     } catch (err) {
-      log.erro(`Falha ao obter status: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoReverterMensagens.subcomandos.status.erro(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
   }));

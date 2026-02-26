@@ -1,11 +1,11 @@
 ﻿// SPDX-License-Identifier: MIT
-// Gera a pasta preview-md-555-37/ contendo build, docs e um package.json de produção
+// Gera a pasta preview-i-c-l-5-5-5/ contendo build, docs e um package.json de produção
 import fs from 'fs/promises';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 
 const ROOT = process.cwd();
-const OUT_DIR = path.join(ROOT, 'preview-md-555-37');
+const OUT_DIR = path.join(ROOT, 'preview-i-c-l-5-5-5');
 const DIST = path.join(ROOT, 'dist');
 const DOCS = path.join(ROOT, 'docs');
 const PKG_PATH = path.join(ROOT, 'package.json');
@@ -103,7 +103,7 @@ async function synthesizeProdPackageJson() {
       '.': './dist/bin/cli.js',
     },
     bin: {
-      md-555-37: './dist/bin/index.js',
+      'i-c-l-5-5-5': './dist/bin/index.js',
     },
     engines: pkg.engines || { node: '>=24.0.4' },
     preferGlobal: true,
@@ -174,30 +174,35 @@ async function insertProvenienciaInPreview() {
       if (!marker.test(head)) {
         await fs.writeFile(f, `${aviso}\n\n${c.trimStart()}\n`, 'utf-8');
       }
-    }// console.log('[preview] Aviso de proveniência inserido nos .md de preview-md-555-37.'); // TODO: Remover antes da produção
+    }
+console.log('[preview] Aviso de proveniência inserido nos .md de preview-i-c-l-5-5-5.'); 
   } catch (e) {
     console.warn('[preview] Aviso de proveniência não inserido:', e?.message || e);
   }
 }
 
-async function main() {// console.log('[preview] buildando projeto...'); // TODO: Remover antes da produção
-  execSync('npm run build', { stdio: 'inherit' });// console.log('[preview] limpando pasta alvo...'); // TODO: Remover antes da produção
+async function main() {
+console.log('[preview] buildando projeto...'); 
+  execSync('npm run build', { stdio: 'inherit' });
+console.log('[preview] limpando pasta alvo...'); 
   await fs.rm(OUT_DIR, { recursive: true, force: true });
-  await ensureDir(OUT_DIR);// console.log('[preview] copiando dist...'); // TODO: Remover antes da produção
+  await ensureDir(OUT_DIR);
+console.log('[preview] copiando dist...'); 
   if (!(await exists(DIST))) throw new Error('dist não encontrado após o build');
   await copySafe(DIST, path.join(OUT_DIR, 'dist'));
 
   console.log('[preview] copiando docs (se existir)...');
   if (await exists(DOCS)) {
     await copySafe(DOCS, path.join(OUT_DIR, 'docs'));
-  }// console.log('[preview] copiando arquivos de raiz...'); // TODO: Remover antes da produção
+  }
+console.log('[preview] copiando arquivos de raiz...'); 
   const rootFiles = [
     'README.md',
     'LICENSE',
     'LICENSE.md',
     'THIRD-PARTY-NOTICES.txt',
-    'md-555-37.config.json',
-    'md-555-37.config.safe.json',
+    'i-c-l-5-5-5.config.json',
+    'i-c-l-5-5-5.config.safe.json',
     'tsconfig.json',
     'tsconfig.eslint.json',
     'package-lock.json',
@@ -207,14 +212,15 @@ async function main() {// console.log('[preview] buildando projeto...'); // TOD
     if (await exists(src)) {
       await copySafe(src, path.join(OUT_DIR, f));
     }
-  }// console.log('[preview] gerando package.json de produção...'); // TODO: Remover antes da produção
+  }
+console.log('[preview] gerando package.json de produção...'); 
   const prodPkg = await synthesizeProdPackageJson();
   await fs.writeFile(path.join(OUT_DIR, 'package.json'), JSON.stringify(prodPkg, null, 2), 'utf-8');
 
-  console.log('[preview] gerando md-555-37.repo.arquetipo.json (exemplo)...');
+  console.log('[preview] gerando i-c-l-5-5-5.repo.arquetipo.json (exemplo)...');
   const arq = generateRepoArquetipoExample();
   await fs.writeFile(
-    path.join(OUT_DIR, 'md-555-37.repo.arquetipo.json'),
+    path.join(OUT_DIR, 'i-c-l-5-5-5.repo.arquetipo.json'),
     JSON.stringify(arq, null, 2),
     'utf-8',
   );
@@ -231,11 +237,12 @@ Este diretório foi gerado pelo script preview para revisão do que seria public
 - Este arquivo não será incluído em publicação real; serve apenas como aviso/guia de revisão.
 
 Conteúdo adicional incluído:
-- md-555-37.repo.arquetipo.json (exemplo de arquétipo de repositório para você editar)
+- i-c-l-5-5-5.repo.arquetipo.json (exemplo de arquétipo de repositório para você editar)
 
 Data/Horário de geração: ${new Date().toISOString()}
 `;
-  await fs.writeFile(path.join(OUT_DIR, 'PREVIEW.md'), previewNote, 'utf-8');// console.log('[preview] pronto. Veja a pasta preview-md-555-37/.'); // TODO: Remover antes da produção
+  await fs.writeFile(path.join(OUT_DIR, 'PREVIEW.md'), previewNote, 'utf-8');
+console.log('[preview] pronto. Veja a pasta preview-i-c-l-5-5-5/.'); 
 }
 
 main().catch((e) => {

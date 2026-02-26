@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
+import { createI18nMessages, i18n } from '@shared/helpers/i18n.js';
+
 /**
  * Mensagens e descrições centralizadas para exportação JSON
  * Define textos explicativos, labels e metadados para campos JSON
  */
-
 import type { JsonComMetadados } from '@';
 
-export const JsonMensagens = {
+export const JsonMensagens = createI18nMessages({
   /* -------------------------- CAMPOS COMUNS -------------------------- */
   comum: {
     timestamp: {
@@ -247,7 +248,190 @@ export const JsonMensagens = {
       }
     }
   }
-};
+}, {
+  comum: {
+    timestamp: { label: 'timestamp', descricao: 'Report generation date and time (ISO 8601)' },
+    versao: { label: 'versao', descricao: 'Prometheus version that generated this report' },
+    schemaVersion: { label: 'schemaVersion', descricao: 'JSON schema version (for backward compatibility)' },
+    duracao: { label: 'duracaoMs', descricao: 'Total execution duration in milliseconds' }
+  },
+  diagnostico: {
+    root: { label: 'diagnostico', descricao: 'Complete project diagnosis result' },
+    totalArquivos: { label: 'totalArquivos', descricao: 'Total number of scanned files' },
+    ocorrencias: {
+      label: 'ocorrencias',
+      descricao: 'List of all occurrences detected by analysts',
+      campos: {
+        tipo: 'Occurrence type/category',
+        nivel: 'Severity level (info, warning, error)',
+        mensagem: 'Detailed problem description',
+        relPath: 'Relative file path',
+        linha: 'Line where the problem occurs',
+        coluna: 'Column where the problem occurs',
+        contexto: 'Additional context (code snippet)'
+      }
+    },
+    metricas: {
+      label: 'metricas',
+      descricao: 'Aggregated project metrics',
+      campos: {
+        totalLinhas: 'Total lines of code analyzed',
+        totalArquivos: 'Total files processed',
+        arquivosComErro: 'Files that failed parsing',
+        tempoTotal: 'Total processing time'
+      }
+    },
+    linguagens: {
+      label: 'linguagens',
+      descricao: 'Language usage statistics in the project',
+      campos: { total: 'Total code files', extensoes: 'Extension -> count map' }
+    },
+    parseErros: {
+      label: 'parseErros',
+      descricao: 'Grouped parsing errors',
+      campos: {
+        total: 'Total parsing errors',
+        porArquivo: 'File -> error list map',
+        agregado: 'Indicates if errors were aggregated'
+      }
+    }
+  },
+  estrutura: {
+    root: { label: 'estruturaIdentificada', descricao: 'Identification of project structure and archetype' },
+    melhores: {
+      label: 'melhores',
+      descricao: 'Ordered list of best archetype candidates',
+      campos: {
+        nome: 'Archetype name',
+        score: 'Calculated score',
+        confidence: 'Confidence level (%)',
+        descricao: 'Archetype description',
+        matchedRequired: 'Required files found',
+        missingRequired: 'Missing required files',
+        matchedOptional: 'Optional files found'
+      }
+    },
+    baseline: {
+      label: 'baseline',
+      descricao: 'Saved structure snapshot for drift detection',
+      campos: {
+        arquetipo: 'Identified archetype',
+        confidence: 'Confidence when saved',
+        timestamp: 'Snapshot date',
+        arquivosRaiz: 'List of files at root'
+      }
+    },
+    drift: {
+      label: 'drift',
+      descricao: 'Detected changes relative to baseline',
+      campos: {
+        alterouArquetipo: 'Whether archetype changed',
+        deltaConfidence: 'Confidence percentage variation',
+        arquivosRaizNovos: 'New files at root',
+        arquivosRaizRemovidos: 'Removed files from root'
+      }
+    }
+  },
+  guardian: {
+    root: { label: 'guardian', descricao: 'Integrity verification and code protection' },
+    status: {
+      label: 'status',
+      opcoes: {
+        sucesso: 'Verification successful, no changes',
+        alteracoes: 'Changes detected in protected files',
+        baseline: 'Baseline created (first run)',
+        erro: 'Error during verification',
+        naoExecutada: 'Guardian was not executed'
+      }
+    },
+    totalArquivos: { label: 'totalArquivos', descricao: 'Number of protected files' },
+    alteracoes: {
+      label: 'alteracoes',
+      descricao: 'List of detected changes',
+      campos: {
+        arquivo: 'Modified file path',
+        hashAnterior: 'Previous SHA-256 hash',
+        hashAtual: 'Current SHA-256 hash',
+        acao: 'Action type (modified, added, removed)'
+      }
+    }
+  },
+  poda: {
+    root: { label: 'poda', descricao: 'Report of files/directories marked for removal' },
+    pendencias: {
+      label: 'pendencias',
+      descricao: 'List of pending removal items',
+      campos: {
+        caminho: 'Full path',
+        tipo: 'file or directory',
+        motivoOriginal: 'Reason for marking',
+        timestamp: 'Date of marking'
+      }
+    },
+    reativar: { label: 'listaReativar', descricao: 'List of items marked for reactivation' },
+    historico: {
+      label: 'historico',
+      descricao: 'History of executed pruning actions',
+      campos: {
+        acao: 'Action type (remove, reactivate, pending)',
+        caminho: 'Affected path',
+        timestamp: 'Action date',
+        usuario: 'User who executed'
+      }
+    }
+  },
+  reestruturar: {
+    root: { label: 'reestruturacao', descricao: 'Project restructuring plan' },
+    movimentos: {
+      label: 'movimentos',
+      descricao: 'List of planned file movements',
+      campos: {
+        id: 'Unique movement ID',
+        origem: 'Source path',
+        destino: 'Destination path',
+        razao: 'Reason for movement',
+        status: 'Status (green-zone, blocked, pending)',
+        dependencias: 'Affected dependent files'
+      }
+    },
+    conflitos: {
+      label: 'conflitos',
+      descricao: 'Detected conflicts preventing movements',
+      campos: {
+        tipo: 'Conflict type',
+        arquivos: 'Files involved',
+        descricao: 'Conflict description',
+        resolucaoSugerida: 'How to resolve'
+      }
+    },
+    resumo: {
+      label: 'resumo',
+      descricao: 'Plan statistical summary',
+      campos: {
+        total: 'Total movements',
+        zonaVerde: 'Safe movements',
+        bloqueados: 'Blocked movements',
+        impactoEstimado: 'Number of affected files'
+      }
+    }
+  },
+  filtroInteligente: {
+    root: { label: 'relatorioResumo', descricao: 'Filtered report with prioritized problems' },
+    problemasCriticos: { label: 'problemasCriticos', descricao: 'Critical severity issues (security, data)' },
+    problemasAltos: { label: 'problemasAltos', descricao: 'High priority issues (bugs, fragile code)' },
+    problemasOutros: { label: 'problemasOutros', descricao: 'Other issues (low/medium priority)' },
+    estatisticas: {
+      label: 'estatisticas',
+      descricao: 'Intelligent grouping statistics',
+      campos: {
+        totalOcorrencias: 'Total occurrences processed',
+        arquivosAfetados: 'Number of unique affected files',
+        problemasPrioritarios: 'Critical + high issues',
+        problemasAgrupados: 'Number of groups created'
+      }
+    }
+  }
+});
 
 /**
  * Envolve dados JSON com metadados explicativos
@@ -275,7 +459,7 @@ export function getDescricaoCampo(caminho: string): string {
     if (typeof current === 'object' && current !== null && part in current) {
       current = (current as Record<string, unknown>)[part];
     } else {
-      return `Campo: ${caminho}`;
+      return `${i18n({ 'pt-BR': 'Campo', en: 'Field' })}: ${caminho}`;
     }
   }
 
@@ -287,5 +471,5 @@ export function getDescricaoCampo(caminho: string): string {
       descricao: string;
     }).descricao;
   }
-  return `Campo: ${caminho}`;
+  return `${i18n({ 'pt-BR': 'Campo', en: 'Field' })}: ${caminho}`;
 }

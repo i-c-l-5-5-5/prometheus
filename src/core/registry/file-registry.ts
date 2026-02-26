@@ -20,7 +20,7 @@ import { ExcecoesMensagens } from '@core/messages/core/excecoes-messages.js';
 import type { MigrationResult } from '@';
 
 import { log } from '../messages/log/log.js';
-import { MIGRACAO_MAPA,PROMETHEUS_ARQUIVOS, PROMETHEUS_DIRS, type SenseiFilePath } from './paths.js';
+import { MIGRACAO_MAPA,PROMETHEUS_ARQUIVOS, PROMETHEUS_DIRS, type PrometheusFilePath } from './paths.js';
 
 /**
  * Opções para operações de leitura
@@ -125,7 +125,7 @@ async function tryMigrate(targetPath: string): Promise<MigrationResult> {
  * });
  * ```
  */
-export async function readJSON<T = unknown>(fileCaminho: SenseiFilePath | string, options: ReadOptions<T> = {}): Promise<T> {
+export async function readJSON<T = unknown>(fileCaminho: PrometheusFilePath | string, options: ReadOptions<T> = {}): Promise<T> {
   const {
     default: defaultValue,
     migrate = true,
@@ -182,7 +182,7 @@ export async function readJSON<T = unknown>(fileCaminho: SenseiFilePath | string
  * });
  * ```
  */
-export async function writeJSON<T = unknown>(fileCaminho: SenseiFilePath | string, data: T, options: WriteOptions = {}): Promise<void> {
+export async function writeJSON<T = unknown>(fileCaminho: PrometheusFilePath | string, data: T, options: WriteOptions = {}): Promise<void> {
   const {
     createDirs = true,
     backup = false,
@@ -216,7 +216,7 @@ export async function writeJSON<T = unknown>(fileCaminho: SenseiFilePath | strin
  * @param filePath Caminho do arquivo (use PROMETHEUS_FILES.*)
  * @param options Opções de deleção
  */
-export async function deleteJSON(fileCaminho: SenseiFilePath | string, options: {
+export async function deleteJSON(fileCaminho: PrometheusFilePath | string, options: {
   backup?: boolean;
 } = {}): Promise<void> {
   const {

@@ -70,15 +70,15 @@ async function main() {
     } else {
 // console.log('Todos os arquivos elegíveis já possuem SPDX.'); // TODO: Remover antes da produção
     }
-// console.log(
+    console.log(
       `Concluído. Escaneados: ${scanned} | Elegíveis: ${eligible} | Sem SPDX: ${missing.length}`,
-    ); // TODO: Remover antes da produção
+    ); 
     if (CHECK_ONLY && missing.length) process.exitCode = 2;
     return;
   }
-// console.log(
+  console.log(
     `Concluído. Escaneados: ${scanned} | Elegíveis: ${eligible} | Atualizados: ${changed}`,
-  ); // TODO: Remover antes da produção
+  );
 }
 
 main().catch((e) => {

@@ -1,6 +1,4 @@
-// SPDX-License-Identifier: MIT
-// Opções do comando diagnosticar centralizadas para facilitar manutenção e testes
-// Siga o padrão do projeto para adicionar novas opções
+import { CliComandoDiagnosticarMensagens, CliCommonMensagens } from '@core/messages/index.js';
 
 type OptionBase = {
   flags: string;
@@ -23,52 +21,52 @@ type DiagnosticarOption = OptionWithParser | OptionWithDefault | OptionSimple;
 export const optionsDiagnosticar: DiagnosticarOption[] = [
   {
     flags: '--listar-analistas',
-    desc: 'lista técnicas/analistas ativos antes da análise',
+    desc: CliComandoDiagnosticarMensagens.opcoes.listarAnalistas,
     defaultValue: false,
   },
   {
     flags: '-g, --guardian-check',
-    desc: 'Executa verificação de integridade (guardian) no diagnóstico',
+    desc: CliComandoDiagnosticarMensagens.opcoes.guardianCheck,
     defaultValue: false,
   },
   {
     flags: '--json',
-    desc: 'Saída JSON estruturada (para CI/integracoes)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.json,
     defaultValue: false,
   },
   {
     flags: '--json-ascii',
-    desc: 'Força saída JSON com escape ASCII (\\uXXXX) para compatibilidade legada',
+    desc: CliComandoDiagnosticarMensagens.opcoes.jsonAscii,
     defaultValue: false,
   },
   {
     flags: '--fast',
-    desc: 'Modo rápido: análise superficial paralelizada (menos checks, mais desempenho)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.fast,
     defaultValue: false,
   },
   {
     flags: '--trust-compiler',
-    desc: 'Reduz falsos positivos confiando em TS/ESLint quando não há erros',
+    desc: CliComandoDiagnosticarMensagens.opcoes.trustCompiler,
     defaultValue: false,
   },
   {
     flags: '--verify-cycles',
-    desc: 'Verifica ciclos de dependência com checagem adicional e rebaixa alertas não confirmados',
+    desc: CliComandoDiagnosticarMensagens.opcoes.verifyCycles,
     defaultValue: false,
   },
   {
     flags: '--criar-arquetipo',
-    desc: 'Cria um arquétipo personalizado baseado na estrutura atual do projeto',
+    desc: CliComandoDiagnosticarMensagens.opcoes.criarArquetipo,
     defaultValue: false,
   },
   {
     flags: '--salvar-arquetipo',
-    desc: 'Salva o arquétipo personalizado gerado automaticamente (use com --criar-arquetipo)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.salvarArquetipo,
     defaultValue: false,
   },
   {
     flags: '--include <padrao>',
-    desc: 'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)',
+    desc: CliCommonMensagens.opcoes.include,
     parser: (val: string, prev: string[]): string[] => {
       prev.push(val);
       return prev;
@@ -77,7 +75,7 @@ export const optionsDiagnosticar: DiagnosticarOption[] = [
   },
   {
     flags: '--exclude <padrao>',
-    desc: 'Glob pattern a EXCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)',
+    desc: CliCommonMensagens.opcoes.exclude,
     parser: (val: string, prev: string[]): string[] => {
       prev.push(val);
       return prev;
@@ -86,73 +84,73 @@ export const optionsDiagnosticar: DiagnosticarOption[] = [
   },
   {
     flags: '--exclude-tests',
-    desc: 'Ignora arquivos de teste na análise (equivalente a excluir **/*.test.*, **/*.spec.*, tests/**, __tests__/**)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.excludeTests,
     defaultValue: false,
   },
   {
     flags: '--full',
-    desc: 'Gera relatório detalhado com todas as informações (ao invés do resumido padrão)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.full,
     defaultValue: false,
   },
   {
     flags: '--compact',
-    desc: 'Modo compacto: consolida logs de progresso e mostra apenas o essencial (padrão quando não usa --full)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.compact,
     defaultValue: false,
   },
   {
     flags: '--log-level <nivel>',
-    desc: 'Controla verbosidade dos logs: erro, aviso, info, debug (padrão: info)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.logLevel,
     defaultValue: 'info',
   },
   {
     flags: '--executive',
-    desc: 'Modo executivo: mostra apenas problemas críticos e de alta prioridade (ideal para tomada de decisão)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.executive,
     defaultValue: false,
   },
   {
     flags: '--auto-fix',
-    desc: 'Aplica correções automáticas (quick fixes) detectadas.',
+    desc: CliComandoDiagnosticarMensagens.opcoes.autoFix,
     defaultValue: false,
   },
   {
     flags: '--auto-fix-mode <modo>',
-    desc: 'Modo de correção automática: conservative (mais seguro), balanced (padrão), aggressive (mais correções)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.autoFixMode,
     defaultValue: 'balanced',
   },
   {
     flags: '--auto-fix-conservative',
-    desc: 'Atalho para --auto-fix --auto-fix-mode conservative (aplica apenas correções com alta confiança)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.autoFixConservative,
     defaultValue: false,
   },
   // 🚀 NOVAS FLAGS INTUITIVAS
   {
     flags: '--fix',
-    desc: 'Alias intuitivo para --auto-fix (aplica correções automáticas detectadas)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.fix,
     defaultValue: false,
   },
   {
     flags: '--fix-safe',
-    desc: 'Alias intuitivo para --auto-fix-conservative (apenas correções de alta confiança)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.fixSafe,
     defaultValue: false,
   },
   {
     flags: '--show-fixes',
-    desc: 'Mostra detalhes das correções disponíveis sem aplicar',
+    desc: CliComandoDiagnosticarMensagens.opcoes.showFixes,
     defaultValue: false,
   },
   {
     flags: '--export',
-    desc: 'Exporta relatórios para disco (JSON/Markdown)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.export,
     defaultValue: false,
   },
   {
     flags: '--export-full',
-    desc: 'Exporta relatório completo (pode ser fragmentado)',
+    desc: CliComandoDiagnosticarMensagens.opcoes.exportFull,
     defaultValue: false,
   },
   {
     flags: '--export-to <dir>',
-    desc: 'Diretório para export de relatórios',
+    desc: CliComandoDiagnosticarMensagens.opcoes.exportTo,
     defaultValue: 'relatorios',
   },
   // Adicione outras opções futuras aqui, seguindo o mesmo padrão.

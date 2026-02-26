@@ -16,13 +16,18 @@ import type { ArquivoFantasma, ResultadoPoda, Tecnica } from '@';
 import { asTecnicas } from '@';
 
 export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void): Command {
-  return new Command('podar').description('Remove arquivos órfãos e lixo do repositório.').option('-f, --force', 'Remove arquivos sem confirmação (CUIDADO!)', false).option('--include <padrao>', 'Glob pattern a INCLUIR (pode repetir a flag ou usar vírgulas / espaços para múltiplos)', (val: string, prev: string[]) => {
-    prev.push(val);
-    return prev;
-  }, [] as string[]).option('--exclude <padrao>', 'Glob pattern a EXCLUIR adicionalmente (pode repetir a flag ou usar vírgulas / espaços)', (val: string, prev: string[]) => {
-    prev.push(val);
-    return prev;
-  }, [] as string[]).action(async function (this: Command, opts: {
+  return new Command('podar')
+    .description(CliComandoPodarMensagens.descricao)
+    .option('-f, --force', CliComandoPodarMensagens.opcoes.force, false)
+    .option('--include <padrao>', CliComandoPodarMensagens.opcoes.include, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
+    .option('--exclude <padrao>', CliComandoPodarMensagens.opcoes.exclude, (val: string, prev: string[]) => {
+      prev.push(val);
+      return prev;
+    }, [] as string[])
+    .action(async function (this: Command, opts: {
     force?: boolean;
     include?: string[];
     exclude?: string[];
@@ -30,7 +35,8 @@ export function comandoPodar(aplicarFlagsGlobais: (opts: Record<string, unknown>
     try {
       await aplicarFlagsGlobais(this.parent && typeof this.parent.opts === 'function' ? this.parent.opts() : {});
     } catch (err) {
-      log.erro(`Falha ao aplicar flags: ${err instanceof Error ? err.message : String(err)}`);
+      const msg = err instanceof Error ? err.message : String(err);
+      log.erro(CliComandoPodarMensagens.erroDurantePoda(msg));
       sair(ExitCode.Failure);
       return;
     }

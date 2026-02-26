@@ -12,7 +12,7 @@ import ora from 'ora';
 import type { ParentWithOpts } from '@';
 
 export function comandoDiagnosticar(aplicarFlagsGlobais: (opts: Record<string, unknown>) => void): Command {
-  const cmd = new Command('diagnosticar').alias('diag').description('Executa uma análise completa do repositório');
+  const cmd = new Command('diagnosticar').alias('diag').description(CliComandoDiagnosticarMensagens.descricao);
 
   // Em modo padrão, ignoramos opções desconhecidas para evitar saídas forçadas do Commander
   // (comportamento desejado também pelos testes de opções inválidas)

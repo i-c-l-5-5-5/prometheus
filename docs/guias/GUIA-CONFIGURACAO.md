@@ -62,6 +62,7 @@ Arquivo de configuração principal na raiz do projeto.
   },
   "ESTRUTURA_ARQUIVOS_RAIZ_MAX": 50,
   "REPO_ARQUETIPO": "meu-projeto",
+  "LANGUAGE": "pt-BR",
   "STRUCTURE_AUTO_FIX": false,
   "REPORT_EXPORT_ENABLED": false,
   "coverageGate": {
@@ -87,6 +88,7 @@ Arquivo de configuração principal na raiz do projeto.
 | `INCLUDE_EXCLUDE_RULES`       | object  | Controle de arquivos incluídos/excluídos |
 | `ESTRUTURA_ARQUIVOS_RAIZ_MAX` | number  | Máximo de arquivos raiz exibidos         |
 | `REPO_ARQUETIPO`              | string  | Arquétipo base do repositório            |
+| `LANGUAGE`                    | string  | Idioma das mensagens (`pt-BR`, `en`)     |
 | `STRUCTURE_AUTO_FIX`          | boolean | Ativa correções automáticas estruturais  |
 | `REPORT_EXPORT_ENABLED`       | boolean | Permite export de relatórios             |
 | `coverageGate`                | object  | Limiares de cobertura de testes          |
@@ -159,6 +161,7 @@ PONTUACAO_FATOR_ESCALA=1.5
 # === Logs e Saída ===
 LOG_LEVEL=info              # debug | info | warn | error
 LOG_ESTRUTURADO=false
+PROMETHEUS_LANGUAGE=pt-BR   # pt-BR | en
 
 # === Type Safety ===
 TYPE_SAFETY_ENABLED=true
@@ -484,5 +487,5 @@ prometheus diagnosticar --include "src/**/*.ts"
 
 ---
 
-**Última atualização:** 29 de dezembro de 2025
-**Versão:** 2.0.0
+**Última atualização:** 25 de fevereiro de 2026
+**Versão:** 0.4.0

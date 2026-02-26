@@ -1,7 +1,7 @@
 # 🚀 Guia de Início Rápido do Prometheus
 
 > Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
-> Última atualização: 15 de janeiro de 2026
+> Última atualização: 25 de fevereiro de 2026
 
 ---
 
@@ -9,171 +9,16 @@
 
 O **Prometheus** é uma ferramenta de linha de comando (CLI) para analisar, diagnosticar e manter projetos JavaScript/TypeScript (e com suporte heurístico para outras linguagens). Ele identifica problemas de código, verifica integridade de arquivos e sugere melhorias estruturais.
 
-**Requisitos:** Node.js >=25.0.0
-
-# 🚀 Guia de Início Rápido do Prometheus
-
->
-> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
-Sugerimos usar um gerenciador de versões (nvm/fnm/volta). Exemplo com nvm:
-
-## O que é o Prometheus?
-
-O **Prometheus** é uma ferramenta de linha de comando (CLI) para analisar, diagnosticar e manter projetos JavaScript/TypeScript (e com suporte heurístico para outras linguagens). Ele identifica problemas de código, verifica integridade de arquivos e sugere melhorias estruturais.
-
-```bash
-nvm install 25
-nvm use 25
-cd prometheus
-node --version  # deve ser v25.x
-```
-
-O projeto também inclui um arquivo `.nvmrc` com o valor `25`. Ao clonar, execute `nvm use` para ativar automaticamente a versão correta.
-npm link
----
-
-## Instalação
-
-npm install --save-dev /caminho/para/prometheus
-
-npx prometheus diagnosticar
-
-```bash
-npx github:ossmoralus/prometheus diagnosticar --help
-git clone https://github.com/ossmoralus/prometheus.git
-prometheus diagnosticar
-
-O Prometheus irá:
-# Instale as dependências e compile
-npm install
-prometheus diagnosticar
-
-prometheus diagnosticar --full
-npm link
-prometheus diagnosticar --scan-only
-
-### Opção 2: Instalação Local
-prometheus diagnosticar --json
-```bash
-prometheus diagnosticar --export
-npm install --save-dev /caminho/para/prometheus
-
-prometheus diagnosticar --include "src/**"
-npx prometheus diagnosticar
-prometheus diagnosticar --exclude "**/*.test.ts"
-
-prometheus diagnosticar --include "src/**" --exclude "**/*.test.ts"
-
-```bash
-prometheus diagnosticar --auto-fix --auto-fix-mode conservative
-npx github:ossmoralus/prometheus diagnosticar --help
-prometheus diagnosticar --auto-fix --dry-run
-
----
-prometheus guardian
-## Primeiro Diagnóstico
-prometheus guardian --diff
-Execute o comando básico no diretório do seu projeto:
-prometheus guardian --accept
-```bash
-# Criar prometheus.config.json na raiz do projeto
-cat > prometheus.config.json << 'EOF'
-```
-
-// @prometheus-disable-next-line tipo-inseguro-any
-const dados: any = respostaExterna;
-
-// @prometheus-disable hardcoded-secrets
-const configKey = "chave_configuracao_publica";
-2. 🔍 **Analisar** código em busca de problemas
-3. 📊 **Exibir** um resumo com ocorrências encontradas
-name: Prometheus CI
-
-### Saída Típica
-
-```
-✅ Varredura concluída: 120 arquivos em 15 diretórios
-
-📊 Resumo das 25 ocorrências:
-
-  📋 Principais tipos:
-     • problemas-teste: 18
-     • tipo-inseguro-any: 4
-      - name: Instalar Prometheus
-        run: |
-          npm install
-          npm run build
-     • src/services/api.ts (5)
-        run: npx prometheus diagnosticar --json --export
-     • tests/unit/api.test.ts (2)
-
-prometheus diagnosticar --include "packages/my-package/**"
-```
-
-prometheus diagnosticar \
----
-
-## Comandos Essenciais
-
-// prometheus.config.json
-
-### 1. Diagnóstico do Projeto
-
-```bash
-# Diagnóstico básico (modo compacto)
-prometheus diagnosticar
-
-# Diagnóstico detalhado
-prometheus diagnosticar --full
-
-# Apenas visualizar arquivos (sem análise)
-prometheus diagnosticar --scan-only
-```
-
-### 2. Exportar Resultados
-
-```bash
-# Saída JSON para CI/CD
-prometheus diagnosticar --json
-
-# Exportar relatório para arquivo
-prometheus diagnosticar --export
-```
-
-### 3. Filtrar Análise
-
-```bash
-# Analisar apenas pasta src/
-prometheus diagnosticar --include "src/**"
-
-## Configuração Rápida
-## Casos de Uso Comuns
-          node-version: "20"
-```bash
-
-# 🚀 Guia de Início Rápido do Prometheus
-
-> Proveniência e Autoria: Este documento integra o projeto Prometheus (licença MIT).
-> Última atualização: 15 de janeiro de 2026
-
----
-
-## O que é o Prometheus?
-
-O **Prometheus** é uma ferramenta de linha de comando (CLI) para analisar, diagnosticar e manter projetos JavaScript/TypeScript (e com suporte heurístico para outras linguagens). Ele identifica problemas de código, verifica integridade de arquivos e sugere melhorias estruturais.
-
-**Requisitos:** Node.js >=25.0.0
+**Requisitos:** Node.js >=24.12.0
 
 Sugerimos usar um gerenciador de versões (nvm/fnm/volta). Exemplo com nvm:
 
 ```bash
-nvm install 25
-nvm use 25
+nvm install 24
+nvm use 24
 # Confirme
-node --version  # deve ser v25.x
+node --version  # deve ser v24.x
 ```
-
-O projeto também inclui um arquivo `.nvmrc` com o valor `25`. Ao clonar, execute `nvm use` para ativar automaticamente a versão correta.
 
 ---
 
@@ -183,7 +28,7 @@ O projeto também inclui um arquivo `.nvmrc` com o valor `25`. Ao clonar, execut
 
 ```bash
 # Clone o repositório
-git clone https://github.com/ossmoralus/prometheus.git
+git clone https://github.com/i-c-l-5-5-5/prometheus.git
 cd prometheus
 
 # Instale as dependências e compile
@@ -191,7 +36,7 @@ npm install
 npm run build
 
 # Link global (permite usar 'prometheus' de qualquer diretório)
-npm link
+npm install -g .
 ```
 
 ### Opção 2: Instalação Local
@@ -208,7 +53,7 @@ npx prometheus diagnosticar
 
 ```bash
 # Requer Node.js 24+
-npx github:ossmoralus/prometheus diagnosticar --help
+npx github:i-c-l-5-5-5/prometheus diagnosticar --help
 ```
 
 ---
@@ -271,13 +116,13 @@ prometheus diagnosticar --scan-only
 prometheus diagnosticar --json
 
 # Exportar relatório para arquivo
-prometheus diagnosticar --export
+prometheus diagnosticar --export relatorio.md
 ```
 
 ### 3. Filtrar Análise
 
 ```bash
-# Analisar apenas pasta src/
+# Analisar com modo rápido
 prometheus diagnosticar --fast
 
 # Excluir testes
@@ -291,10 +136,10 @@ prometheus diagnosticar --include "src/**" --exclude "**/*.test.ts"
 
 ```bash
 # Correção conservadora (segura)
-
+prometheus diagnosticar --auto-fix --auto-fix-mode conservative
 
 # Preview das correções (sem aplicar)
-# Limite o escopo
+prometheus diagnosticar --auto-fix --dry-run
 ```
 
 ### 5. Verificação de Integridade (Guardian)
@@ -312,6 +157,22 @@ prometheus guardian --accept
 
 ---
 
+## Internacionalização (i18n)
+
+O Prometheus agora suporta múltiplos idiomas!
+
+### Alterar para Inglês
+
+```bash
+# Via variável de ambiente
+PROMETHEUS_LANGUAGE=en prometheus diagnosticar
+
+# Ou configurando no prometheus.config.json
+# { "LANGUAGE": "en" }
+```
+
+---
+
 ## Configuração Rápida
 
 ### Criar arquivo de configuração
@@ -320,6 +181,7 @@ prometheus guardian --accept
 # Criar prometheus.config.json na raiz do projeto
 cat > prometheus.config.json << 'EOF'
 {
+  "LANGUAGE": "pt-BR",
   "INCLUDE_EXCLUDE_RULES": {
     "globalExcludeGlob": [
       "node_modules/**",
@@ -363,14 +225,12 @@ const configKey = "chave_configuracao_publica";
 | `--export`    | Exportar relatório para arquivo     |
 | `--scan-only` | Apenas varrer arquivos, sem análise |
 
-prometheus diagnosticar --include "src/**"
-
 # Aumente workers (paralelização)
 
+```bash
 WORKER_POOL_MAX_WORKERS=4 prometheus diagnosticar
-
 ```
 
 ---
 
-**Versão:** 0.2.0 | **Licença:** MIT
+**Versão:** 0.4.0 | **Licença:** MIT

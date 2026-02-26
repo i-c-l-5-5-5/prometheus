@@ -6,17 +6,21 @@
 import path from 'node:path';
 
 import { ExitCode, sair } from '@cli/helpers/exit-codes.js';
+import { CliComandoLicensasMensagens } from '@core/messages/cli/cli-comando-licensas-messages.js';
 import { log } from '@core/messages/index.js';
 import * as licensas from '@licensas/licensas.js';
 import { Command } from 'commander';
 
 export function comandoLicencas(): Command {
-  const cmd = new Command('licencas').description('Ferramentas relacionadas a licença');
+  const cmd = new Command('licencas').description(CliComandoLicensasMensagens.descricao);
   cmd.allowUnknownOption(true);
   cmd.allowExcessArguments(true);
 
   // subcommand: scan
-  cmd.command('scan').description('Escaneia dependências em busca de licenças desconhecidas').option('--root <path>', 'diretório raiz (padrão: cwd)').action(async (opts: {
+  cmd.command('scan')
+    .description(CliComandoLicensasMensagens.subcomandos.scan.descricao)
+    .option('--root <path>', CliComandoLicensasMensagens.subcomandos.scan.opcoes.root)
+    .action(async (opts: {
     root?: string;
   }) => {
     try {
@@ -27,14 +31,19 @@ export function comandoLicencas(): Command {
       console.log(JSON.stringify(result, null, 2));
       process.exitCode = result.problematic && result.problematic.length > 0 ? 2 : 0;
     } catch (err) {
-      log.erro(`Falha ao escanear licenças: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoLicensasMensagens.subcomandos.scan.falha(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
   });
 
   // subcommand: notices generate
-  const notices = cmd.command('notices').description('Gerenciar avisos/terceiros');
-  notices.command('generate').description('Gerar arquivo THIRD-PARTY/AVISOS').option('--pt-br', 'usar cabeçalho em português').option('--output <file>', 'arquivo de saída').option('--root <path>', 'pasta do projeto').action(async (opts: {
+  const notices = cmd.command('notices').description(CliComandoLicensasMensagens.subcomandos.notices.descricao);
+  notices.command('generate')
+    .description(CliComandoLicensasMensagens.subcomandos.notices.generate.descricao)
+    .option('--pt-br', CliComandoLicensasMensagens.subcomandos.notices.generate.opcoes.ptBr)
+    .option('--output <file>', CliComandoLicensasMensagens.subcomandos.notices.generate.opcoes.output)
+    .option('--root <path>', CliComandoLicensasMensagens.subcomandos.notices.generate.opcoes.root)
+    .action(async (opts: {
     ptBr?: boolean;
     output?: string;
     root?: string;
@@ -46,17 +55,22 @@ export function comandoLicencas(): Command {
         ptBr: Boolean(opts.ptBr),
         output: opts.output
       });
-      console.log('Generated notices:', res);
+      log.info(CliComandoLicensasMensagens.subcomandos.notices.generate.concluido(res));
       sair(ExitCode.Ok);
     } catch (err) {
-      log.erro(`Falha ao gerar notices: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoLicensasMensagens.subcomandos.notices.generate.falha(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
   });
 
   // subcommand: disclaimer
-  const disclaimer = cmd.command('disclaimer').description('Adicionar/verificar disclaimer em markdown');
-  disclaimer.command('add').description('Inserir aviso de proveniência nos arquivos markdown').option('--disclaimer-path <path>', 'caminho do arquivo de disclaimer').option('--root <path>', 'pasta do projeto').option('--dry-run', 'não grava alterações, apenas lista').action(async (opts: {
+  const disclaimer = cmd.command('disclaimer').description(CliComandoLicensasMensagens.subcomandos.disclaimer.descricao);
+  disclaimer.command('add')
+    .description(CliComandoLicensasMensagens.subcomandos.disclaimer.add.descricao)
+    .option('--disclaimer-path <path>', CliComandoLicensasMensagens.subcomandos.disclaimer.add.opcoes.disclaimerPath)
+    .option('--root <path>', CliComandoLicensasMensagens.subcomandos.disclaimer.add.opcoes.root)
+    .option('--dry-run', CliComandoLicensasMensagens.subcomandos.disclaimer.add.opcoes.dryRun)
+    .action(async (opts: {
     disclaimerPath?: string;
     root?: string;
     dryRun?: boolean;
@@ -68,14 +82,18 @@ export function comandoLicencas(): Command {
         disclaimerPath: opts.disclaimerPath,
         dryRun: Boolean(opts.dryRun)
       });
-      console.log('Disclaimer inserted into files:', res.updatedArquivos.length);
+      log.info(CliComandoLicensasMensagens.subcomandos.disclaimer.add.concluido(res.updatedArquivos.length));
       sair(ExitCode.Ok);
     } catch (err) {
-      log.erro(`Falha ao adicionar disclaimer: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoLicensasMensagens.subcomandos.disclaimer.add.falha(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
   });
-  disclaimer.command('verify').description('Verificar se todos os markdown possuem o disclaimer').option('--disclaimer-path <path>').option('--root <path>').action(async (opts: {
+  disclaimer.command('verify')
+    .description(CliComandoLicensasMensagens.subcomandos.disclaimer.verify.descricao)
+    .option('--disclaimer-path <path>')
+    .option('--root <path>')
+    .action(async (opts: {
     disclaimerPath?: string;
     root?: string;
   }) => {
@@ -86,15 +104,15 @@ export function comandoLicencas(): Command {
         disclaimerPath: opts.disclaimerPath
       });
       if (res.missing.length) {
-        console.error('Missing disclaimer in files:');
-        for (const f of res.missing) console.error('-', f);
+        log.erro(CliComandoLicensasMensagens.subcomandos.disclaimer.verify.ausente);
+        for (const f of res.missing) log.erro(`- ${f}`);
         sair(ExitCode.Failure);
         return;
       }
-      console.log('All markdown files include the disclaimer.');
+      log.info(CliComandoLicensasMensagens.subcomandos.disclaimer.verify.todosOk);
       sair(ExitCode.Ok);
     } catch (err) {
-      log.erro(`Falha ao verificar disclaimer: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoLicensasMensagens.subcomandos.disclaimer.verify.falha(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
   });

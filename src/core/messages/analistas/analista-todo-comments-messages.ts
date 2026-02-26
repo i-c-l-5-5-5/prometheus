@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
+import { createI18nMessages } from '@shared/helpers/i18n.js';
 
-export const TodoComentariosMensagens = {
+export const TodoComentariosMensagens = createI18nMessages({
   todoFound: 'Comentário TODO encontrado'
-} as const;
+}, {
+  todoFound: 'TODO comment found'
+});

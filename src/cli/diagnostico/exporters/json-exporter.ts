@@ -49,21 +49,21 @@ export function gerarRelatorioJson(dados: Partial<RelatorioJson>, options: Parti
     'tipo-literal-inline-complexo'
   ]);
 
-  const processedOcorrencias = (opts.includeDetails ? ocorrencias : []).filter((o: any) => {
+  const processedOcorrencias = (opts.includeDetails ? ocorrencias : []).filter((o: Record<string, unknown>) => {
     // omitir tipos configurados explicitamente
     if (o && o.tipo && omitTypes.includes(String(o.tipo))) return false;
     // se não incluir contexto, removemos certos tipos ruidosos
-    if (!opts.includeContext && IGNORE_TIPOS_WHEN_NO_CONTEXT.has(o.tipo)) {
+    if (!opts.includeContext && o.tipo && IGNORE_TIPOS_WHEN_NO_CONTEXT.has(String(o.tipo))) {
       return false;
     }
     return true;
-  }).map((o: any) => {
+  }).map((o: Record<string, unknown>) => {
     // Montar forma reduzida de ocorrência adequada para relatório
     const arquivo = o.relPath || o.arquivo || '';
     const nivel = (o.nivel === 'erro' || o.nivel === 'aviso' || o.nivel === 'info') ? o.nivel : 'info';
-    const mapped: any = {
+    const mapped: Record<string, unknown> = {
       arquivo: String(arquivo),
-      nivel: nivel,
+      nivel,
       tipo: String(o.tipo || 'outros'),
       mensagem: String(o.mensagem || ''),
     };
@@ -72,7 +72,7 @@ export function gerarRelatorioJson(dados: Partial<RelatorioJson>, options: Parti
       if (o.coluna !== undefined) mapped.coluna = Number(o.coluna);
       if (o.contexto) mapped.contexto = o.contexto;
     }
-    return mapped as Ocorrencia;
+    return mapped as unknown as Ocorrencia;
   });
 
   // Construir relatório
@@ -82,7 +82,7 @@ export function gerarRelatorioJson(dados: Partial<RelatorioJson>, options: Parti
       schemaVersion: '1.0.0',
       modo: 'full',
       flags: [],
-      senseiVersion: (() => {
+      prometheusVersion: (() => {
         try {
           // Evita dependência direta de package.json fora do build
           // Em runtime, pode ser enriquecido pela CLI

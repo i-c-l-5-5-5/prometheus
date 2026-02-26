@@ -10,7 +10,12 @@ import { salvarEstado } from '@shared/persistence/persistencia.js';
 import { Command } from 'commander';
 
 export function comandoAnalistas(): Command {
-  return new Command('analistas').description('Lista analistas registrados e seus metadados atuais').option('-j, --json', 'Saída em JSON').option('-o, --output <arquivo>', 'Arquivo para exportar JSON de analistas').option('-d, --doc <arquivo>', 'Gera documentação Markdown dos analistas').action(async (opts: {
+  return new Command('analistas')
+    .description(CliComandoAnalistasMensagens.descricao)
+    .option('-j, --json', CliComandoAnalistasMensagens.opcoes.json)
+    .option('-o, --output <arquivo>', CliComandoAnalistasMensagens.opcoes.output)
+    .option('-d, --doc <arquivo>', CliComandoAnalistasMensagens.opcoes.doc)
+    .action(async (opts: {
     json?: boolean;
     output?: string;
     doc?: string;
@@ -86,7 +91,7 @@ export function comandoAnalistas(): Command {
       log.info(CliComandoAnalistasMensagens.tituloComIcone(ICONES_DIAGNOSTICO.info));
       log.info(CliComandoAnalistasMensagens.total(registroAnalistas.length));
     } catch (err) {
-      log.erro(`Falha ao listar analistas: ${err instanceof Error ? err.message : String(err)}`);
+      log.erro(CliComandoAnalistasMensagens.erroListar(err instanceof Error ? err.message : String(err)));
       sair(ExitCode.Failure);
     }
   });

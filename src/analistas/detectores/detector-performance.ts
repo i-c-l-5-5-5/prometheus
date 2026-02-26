@@ -148,6 +148,18 @@ function detectarPadroesPerformance(src: string, problemas: ProblemaPerformance[
       });
     }
 
+    // Inefficient spread in loops
+    if (dentroLoop > 0 && (linha.includes('= [...') || linha.includes('= { ...'))) {
+      problemas.push({
+        tipo: 'inefficient-spread',
+        descricao: 'Spread operator dentro de loop cria novo objeto/array a cada iteração',
+        impacto: 'alto',
+        linha: numeroLinha,
+        coluna: linha.indexOf('...') + 1,
+        sugestao: 'Use push() ou mutação controlada para evitar criação excessiva de objetos'
+      });
+    }
+
     // Imports de bibliotecas grandes
     if (/import.*from\s+['"]lodash['"]|import.*from\s+['"]moment['"]/.test(linha)) {
       problemas.push({
